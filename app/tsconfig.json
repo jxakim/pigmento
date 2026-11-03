@@ -1,0 +1,14 @@
+{
+	"extends": "$app/tsconfig",
+	"compilerOptions": {
+		"strict": true,
+		"types": [
+			"$app/types",
+			"@digdir/designsystemet-web",
+			"@digdir/designsystemet-types",
+			"@digdir/designsystemet-css/theme" /* or your theme type file, design-tokens-build/types.d.ts */
+		]
+	},
+
+	"include": ["src", "vite.config.ts"]
+}
