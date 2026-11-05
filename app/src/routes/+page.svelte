@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from "../lib/Icon.svelte"
 	import { inquiryCount, today, todayLabel, typeClass, upcomingDays, waitingInquiries } from "../lib/sample-data"
 </script>
 
@@ -9,7 +10,7 @@
 			<p class="sub">{todayLabel} · {today.length} timer i dag · {inquiryCount} venter på svar</p>
 		</div>
 		<button class="ds-button new-booking" type="button">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+			<Icon name="add" size={20} />
 			Ny booking
 		</button>
 	</header>

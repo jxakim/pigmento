@@ -7,7 +7,7 @@
 
 	import favicon from "#lib/assets/favicon.svg"
 	import { page } from "$app/state"
-	import NavIcon from "../lib/NavIcon.svelte"
+	import Icon from "../lib/Icon.svelte"
 	import { inquiryCount } from "../lib/sample-data"
 	import type { LayoutProps } from "./$types"
 
@@ -15,9 +15,9 @@
 
 	const nav = [
 		{ href: "/", label: "Forside", icon: "home", count: 0 },
-		{ href: "/kalender", label: "Kalender", icon: "calendar", count: 0 },
-		{ href: "/kunder", label: "Kunder", icon: "users", count: 0 },
-		{ href: "/avtaler", label: "Avtaler", icon: "list", count: 0 },
+		{ href: "/kalender", label: "Kalender", icon: "calendar_month", count: 0 },
+		{ href: "/kunder", label: "Kunder", icon: "group", count: 0 },
+		{ href: "/avtaler", label: "Avtaler", icon: "format_list_bulleted", count: 0 },
 		{ href: "/foresporsler", label: "Forespørsler", icon: "inbox", count: inquiryCount }
 	] as const
 
@@ -46,7 +46,7 @@
 					{@const active = isActive(item.href)}
 					<li>
 						<a class="nav-link" class:active aria-current={active ? "page" : undefined} href={item.href}>
-							<NavIcon name={item.icon} />
+							<Icon name={item.icon} />
 							<span class="nav-label">{item.label}</span>
 							{#if item.count > 0}
 								<span class="nav-badge">{item.count}</span>
