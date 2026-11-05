@@ -1,99 +1,87 @@
 <script lang="ts">
-	import { inquiryCount, today, todayLabel, typeColor, upcomingDays, waitingInquiries } from "../lib/sample-data"
+	import { inquiryCount, today, todayLabel, typeClass, upcomingDays, waitingInquiries } from "../lib/sample-data"
 </script>
 
 <div class="page">
 	<header class="page-header">
-		<div>
-			<h1 class="ds-heading" data-size="xl">God morgen</h1>
-			<p class="ds-paragraph">
-				{todayLabel} · {today.length} timer i dag · {inquiryCount} venter på svar
-			</p>
+		<div class="intro">
+			<h1>God morgen</h1>
+			<p class="sub">{todayLabel} · {today.length} timer i dag · {inquiryCount} venter på svar</p>
 		</div>
-		<button class="ds-button" type="button">Ny booking</button>
+		<button class="ds-button new-booking" type="button">
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+			Ny booking
+		</button>
 	</header>
 
 	<div class="columns">
-		<div class="column">
+		<div class="column column-main">
 			<section class="section" aria-labelledby="idag">
 				<div class="section-header">
-					<h2 class="ds-heading" data-size="md" id="idag">I dag</h2>
-					<a class="ds-link" href="/kalender">Åpne kalender</a>
+					<h2 id="idag">I dag</h2>
+					<a class="small-link" href="/kalender">Åpne kalender</a>
 				</div>
-
-				{#each today as appointment (appointment.start)}
-					<div class="ds-card appointment">
-						<p class="ds-label time">{appointment.start}–{appointment.end}</p>
-						<div class="grow">
-							<h3 class="ds-heading" data-size="xs">{appointment.client}</h3>
-							<p class="ds-paragraph" data-size="sm">{appointment.note}</p>
-						</div>
-						<span class="ds-tag" data-color={typeColor[appointment.type]}>{appointment.type}</span>
-					</div>
-				{/each}
+				<div class="stack">
+					{#each today as appointment (appointment.start)}
+						<article class="card appointment">
+							<div class="time">
+								<span class="time-start">{appointment.start}</span>
+								<span class="time-end">til {appointment.end}</span>
+							</div>
+							<div class="who">
+								<span class="client">{appointment.client}</span>
+								<span class="note">{appointment.note}</span>
+							</div>
+							<span class="chip {typeClass[appointment.type]}">{appointment.type}</span>
+						</article>
+					{/each}
+				</div>
 			</section>
 
 			<section class="section" aria-labelledby="kommende">
-				<h2 class="ds-heading" data-size="md" id="kommende">Kommende dager</h2>
-
-				<table class="ds-table" data-border>
-					<caption class="ds-sr-only">Kommende avtaler</caption>
-					<thead>
-						<tr>
-							<th>Dag</th>
-							<th>Tid</th>
-							<th>Kunde</th>
-							<th>Type</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each upcomingDays as day (day.label)}
-							{#each day.items as item, i (item.start)}
-								<tr>
-									<td>{i === 0 ? day.label : ''}</td>
-									<td>{item.start}</td>
-									<td>{item.client}</td>
-									<td>
-										<span class="ds-tag" data-color={typeColor[item.type]}>{item.type}</span>
-									</td>
-								</tr>
-							{/each}
-						{/each}
-					</tbody>
-				</table>
+				<h2 id="kommende">Kommende dager</h2>
+				<div class="card days">
+					{#each upcomingDays as day (day.label)}
+						<div class="day">
+							<div class="day-label">{day.label}</div>
+							<ul class="day-items">
+								{#each day.items as item (item.start)}
+									<li class="day-item">
+										<span class="item-time">{item.start}</span>
+										<span class="item-client">{item.client}</span>
+										<span class="chip {typeClass[item.type]}">{item.type}</span>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/each}
+				</div>
 			</section>
 		</div>
 
-		<div class="column">
+		<div class="column column-side">
 			<section class="section" aria-labelledby="venter">
 				<div class="section-header">
-					<h2 class="ds-heading" data-size="md" id="venter">Venter på svar</h2>
-					<a class="ds-link" href="/foresporsler">Se alle {inquiryCount}</a>
+					<h2 id="venter">Venter på svar</h2>
+					<a class="small-link" href="/foresporsler">Se alle {inquiryCount}</a>
 				</div>
-
-				{#each waitingInquiries as inquiry (inquiry.ig)}
-					<div class="ds-card inquiry">
-						<div class="inquiry-top">
-							<h3 class="ds-heading" data-size="xs">{inquiry.ig}</h3>
-							<p class="ds-paragraph" data-size="sm">{inquiry.age}</p>
-						</div>
-						<p class="ds-paragraph" data-size="sm">{inquiry.text}</p>
-						<div class="inquiry-bottom">
-							{#if inquiry.stale}
-								<span class="ds-tag" data-color="warning">Har ventet lenge</span>
-							{/if}
-							<a
-								class="ds-button"
-								data-variant="secondary"
-								href="https://instagram.com/direct/inbox/"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								Åpne på Instagram
-							</a>
-						</div>
-					</div>
-				{/each}
+				<div class="stack">
+					{#each waitingInquiries as inquiry (inquiry.ig)}
+						<article class="card inquiry">
+							<div class="inquiry-top">
+								<span class="ig">{inquiry.ig}</span>
+								<span class="age">{inquiry.age}</span>
+							</div>
+							<p class="inquiry-text">{inquiry.text}</p>
+							<div class="inquiry-bottom">
+								{#if inquiry.stale}
+									<span class="stale">Har ventet lenge</span>
+								{/if}
+								<a class="reply" href="https://instagram.com/direct/inbox/" target="_blank" rel="noopener noreferrer">Åpne på Instagram</a>
+							</div>
+						</article>
+					{/each}
+				</div>
 			</section>
 		</div>
 	</div>
@@ -103,7 +91,7 @@
 	.page {
 		display: flex;
 		flex-direction: column;
-		gap: var(--ds-size-10);
+		gap: 36px;
 	}
 
 	.page-header {
@@ -111,73 +99,256 @@
 		flex-wrap: wrap;
 		align-items: flex-end;
 		justify-content: space-between;
-		gap: var(--ds-size-4);
+		gap: 16px;
+	}
+
+	.intro {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	h1 {
+		font-size: 40px;
+		line-height: 1.1;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+
+	.sub {
+		font-size: 16px;
+		color: var(--pg-ink-muted);
+	}
+
+	/* Primærknappen er Designsystemets knapp i rosa tema; kun form og størrelse justeres */
+	.new-booking {
+		min-height: 44px;
+		padding: 0 18px;
+		border-radius: 8px;
+		font-size: 15px;
+		font-weight: 600;
 	}
 
 	.columns {
-		display: grid;
-		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-		gap: var(--ds-size-10);
-		align-items: start;
-	}
-
-	@media (max-width: 60rem) {
-		.columns {
-			grid-template-columns: minmax(0, 1fr);
-		}
+		display: flex;
+		flex-wrap: wrap;
+		gap: 40px;
+		align-items: flex-start;
 	}
 
 	.column {
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		gap: var(--ds-size-10);
+		gap: 36px;
+	}
+
+	.column-main {
+		flex: 3 1 440px;
+	}
+
+	.column-side {
+		flex: 2 1 300px;
 	}
 
 	.section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--ds-size-4);
+		gap: 14px;
 	}
 
 	.section-header {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: var(--ds-size-3);
+		gap: 12px;
 	}
 
+	h2 {
+		font-size: 24px;
+		font-weight: 700;
+	}
+
+	.small-link {
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.stack {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.card {
+		background: var(--pg-card);
+		border: 1px solid var(--pg-card-border);
+		border-radius: 14px;
+	}
+
+	/* I dag */
 	.appointment {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: var(--ds-size-3) var(--ds-size-5);
+		gap: 12px 20px;
+		padding: 16px 20px;
 	}
 
 	.time {
-		flex: 0 0 8rem;
-	}
-
-	.grow {
-		flex: 1 1 12rem;
-		min-width: 0;
-	}
-
-	.inquiry {
+		flex: 0 0 76px;
+		padding: 8px 0;
+		border-radius: 10px;
+		background: var(--pg-pink-tint);
 		display: flex;
 		flex-direction: column;
-		gap: var(--ds-size-3);
+		align-items: center;
 	}
 
-	.inquiry-top,
+	.time-start {
+		font-family: var(--pg-font-heading);
+		font-size: 22px;
+		font-weight: 700;
+	}
+
+	.time-end {
+		font-size: 12px;
+		color: var(--pg-ink-muted);
+	}
+
+	.who {
+		flex: 1 1 200px;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.client {
+		font-size: 17px;
+		font-weight: 600;
+	}
+
+	.note {
+		font-size: 14px;
+		color: var(--pg-ink-muted);
+	}
+
+	/* Kommende dager */
+	.days {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.day {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		padding: 16px 20px;
+		border-top: 1px solid var(--pg-row-line);
+	}
+
+	.day-label {
+		flex: 0 0 120px;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.day-items {
+		flex: 1 1 240px;
+		min-width: 0;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.day-item {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 6px 14px;
+	}
+
+	.item-time {
+		flex: 0 0 48px;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.item-client {
+		flex: 1 1 140px;
+		font-size: 15px;
+	}
+
+	/* Venter på svar */
+	.inquiry {
+		padding: 18px 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.inquiry-top {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 4px 12px;
+	}
+
+	.ig {
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.age {
+		font-size: 13px;
+		color: var(--pg-ink-muted);
+	}
+
+	.inquiry-text {
+		font-size: 14px;
+		line-height: 1.5;
+		color: #2b2f38;
+	}
+
 	.inquiry-bottom {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		justify-content: space-between;
-		gap: var(--ds-size-2) var(--ds-size-3);
+		justify-content: flex-end;
+		gap: 8px;
 	}
 
-	.inquiry-bottom {
-		justify-content: flex-end;
+	.stale {
+		margin-right: auto;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--pg-pink-deep);
+	}
+
+	.reply {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 44px;
+		padding: 0 14px;
+		border-radius: 8px;
+		border: 1px solid var(--pg-button-border);
+		background: var(--pg-card);
+		color: var(--pg-ink);
+		font-size: 14px;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.reply:hover {
+		background: var(--pg-ink);
+		border-color: var(--pg-ink);
+		color: #ffffff;
 	}
 </style>

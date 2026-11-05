@@ -22,11 +22,11 @@ export interface Inquiry {
 	stale: boolean
 }
 
-/** Farge per timetype, hentet fra temaet i Designsystemet (ikke egne farger). */
-export const typeColor: Record<AppointmentType, "accent" | "brand1" | "brand2" | "neutral"> = {
-	Konsultasjon: "brand1",
-	Tatovering: "neutral",
-	"Touch-up": "brand2"
+/** CSS-klasse per timetype (fargene er definert i app.css). */
+export const typeClass: Record<AppointmentType, string> = {
+	Konsultasjon: "chip-konsult",
+	Tatovering: "chip-tattoo",
+	"Touch-up": "chip-touch"
 }
 
 export const todayLabel = "Torsdag 5. november"
