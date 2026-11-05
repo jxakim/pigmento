@@ -1,0 +1,600 @@
+{
+  "color": {
+    "accent": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.accent.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.accent.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.accent.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.accent.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.accent.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.accent.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.accent.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.accent.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.accent.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.accent.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.accent.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.accent.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.accent.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.accent.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.accent.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.accent.16}"
+      }
+    },
+    "brand1": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.brand1.16}"
+      }
+    },
+    "brand2": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.brand2.16}"
+      }
+    },
+    "neutral": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.neutral.16}"
+      }
+    },
+    "info": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.info.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.info.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.info.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.info.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.info.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.info.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.info.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.info.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.info.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.info.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.info.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.info.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.info.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.info.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.info.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.info.16}"
+      }
+    },
+    "success": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.success.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.success.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.success.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.success.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.success.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.success.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.success.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.success.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.success.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.success.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.success.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.success.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.success.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.success.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.success.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.success.16}"
+      }
+    },
+    "warning": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.warning.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.warning.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.warning.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.warning.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.warning.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.warning.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.warning.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.warning.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.warning.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.warning.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.warning.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.warning.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.warning.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.warning.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.warning.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.warning.16}"
+      }
+    },
+    "danger": {
+      "1": {
+        "$type": "color",
+        "$value": "{pigmento.danger.1}"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "{pigmento.danger.2}"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "{pigmento.danger.3}"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "{pigmento.danger.4}"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "{pigmento.danger.5}"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "{pigmento.danger.6}"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "{pigmento.danger.7}"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "{pigmento.danger.8}"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "{pigmento.danger.9}"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "{pigmento.danger.10}"
+      },
+      "11": {
+        "$type": "color",
+        "$value": "{pigmento.danger.11}"
+      },
+      "12": {
+        "$type": "color",
+        "$value": "{pigmento.danger.12}"
+      },
+      "13": {
+        "$type": "color",
+        "$value": "{pigmento.danger.13}"
+      },
+      "14": {
+        "$type": "color",
+        "$value": "{pigmento.danger.14}"
+      },
+      "15": {
+        "$type": "color",
+        "$value": "{pigmento.danger.15}"
+      },
+      "16": {
+        "$type": "color",
+        "$value": "{pigmento.danger.16}"
+      }
+    },
+    "link": {
+      "visited": {
+        "$type": "color",
+        "$value": "{pigmento.link.visited}"
+      }
+    },
+    "focus": {
+      "inner-color": {
+        "$type": "color",
+        "$value": "{pigmento.focus.inner}"
+      },
+      "outer-color": {
+        "$type": "color",
+        "$value": "{pigmento.focus.outer}"
+      }
+    }
+  },
+  "font-family": {
+    "$type": "fontFamilies",
+    "$value": "{pigmento.font-family}"
+  },
+  "font-weight": {
+    "medium": {
+      "$type": "fontWeights",
+      "$value": "{pigmento.font-weight.medium}"
+    },
+    "semibold": {
+      "$type": "fontWeights",
+      "$value": "{pigmento.font-weight.semibold}"
+    },
+    "regular": {
+      "$type": "fontWeights",
+      "$value": "{pigmento.font-weight.regular}"
+    }
+  },
+  "border-radius": {
+    "1": {
+      "$type": "dimension",
+      "$value": "min({border-radius.base}*0.5,{border-radius.scale})"
+    },
+    "2": {
+      "$type": "dimension",
+      "$value": "min({border-radius.base},{border-radius.scale}*2)"
+    },
+    "3": {
+      "$type": "dimension",
+      "$value": "min({border-radius.base}*2,{border-radius.scale}*5)"
+    },
+    "4": {
+      "$type": "dimension",
+      "$value": "min({border-radius.base}*3,{border-radius.scale}*7)"
+    },
+    "5": {
+      "$type": "dimension",
+      "$value": "{border-radius.base}"
+    },
+    "6": {
+      "$type": "dimension",
+      "$value": "9999"
+    },
+    "base": {
+      "$type": "dimension",
+      "$value": "4"
+    },
+    "scale": {
+      "$type": "dimension",
+      "$value": "4"
+    }
+  }
+}

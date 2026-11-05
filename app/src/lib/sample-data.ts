@@ -23,9 +23,9 @@ export interface Inquiry {
 }
 
 /** Farge per timetype, hentet fra temaet i Designsystemet (ikke egne farger). */
-export const typeColor: Record<AppointmentType, "accent" | "brand1" | "brand2"> = {
-	Konsultasjon: "accent",
-	Tatovering: "brand1",
+export const typeColor: Record<AppointmentType, "accent" | "brand1" | "brand2" | "neutral"> = {
+	Konsultasjon: "brand1",
+	Tatovering: "neutral",
 	"Touch-up": "brand2"
 }
 

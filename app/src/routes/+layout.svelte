@@ -2,7 +2,7 @@
 	// Designsystemet: web-komponenter, komponent-CSS og tema
 	import "@digdir/designsystemet-web"
 	import "@digdir/designsystemet-css"
-	import "@digdir/designsystemet-css/theme"
+	import "../../design-tokens-build/pigmento.css"
 	import "../app.css"
 
 	import favicon from "#lib/assets/favicon.svg"
