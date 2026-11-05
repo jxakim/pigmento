@@ -6,7 +6,7 @@
 			"$app/types",
 			"@digdir/designsystemet-web",
 			"@digdir/designsystemet-types",
-			"@digdir/designsystemet-css/theme" /* or your theme type file, design-tokens-build/types.d.ts */
+			"./design-tokens-build/types.d.ts"
 		]
 	},
 
