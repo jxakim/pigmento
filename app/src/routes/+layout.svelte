@@ -15,10 +15,10 @@
 
 	const nav = [
 		{ href: "/", label: "Forside", icon: "home", count: 0 },
-		{ href: "/kalender", label: "Kalender", icon: "calendar_month", count: 0 },
-		{ href: "/kunder", label: "Kunder", icon: "group", count: 0 },
-		{ href: "/avtaler", label: "Avtaler", icon: "format_list_bulleted", count: 0 },
-		{ href: "/foresporsler", label: "Forespørsler", icon: "inbox", count: inquiryCount }
+		{ href: "/calendar", label: "Kalender", icon: "calendar_month", count: 0 },
+		{ href: "/clients", label: "Kunder", icon: "group", count: 0 },
+		{ href: "/appointments", label: "Avtaler", icon: "format_list_bulleted", count: 1 },
+		{ href: "/requests", label: "Forespørsler", icon: "inbox", count: inquiryCount }
 	] as const
 
 	function isActive(href: string): boolean {
@@ -31,13 +31,11 @@
 	<title>Pigmento</title>
 </svelte:head>
 
-<a class="ds-skip-link" href="#hovedinnhold">Hopp til hovedinnhold</a>
-
-<div class="shell">
+<div class="content-container">
 	<aside class="sidebar">
-		<div class="brand">
+		<div class="logo-container">
 			<img src="/logo.png" alt="" width="52" height="52" />
-			<span class="wordmark">Pigmento</span>
+			<span>Pigmento</span>
 		</div>
 
 		<nav aria-label="Hovedmeny">
@@ -69,42 +67,41 @@
 </div>
 
 <style>
-	.shell {
+	.content-container {
 		display: flex;
 		flex-wrap: wrap;
 		min-height: 100vh;
 	}
 
 	.sidebar {
-		flex: 1 1 230px;
+		flex: 1 1 20rem;
 		display: flex;
 		flex-direction: column;
-		gap: 32px;
-		padding: 28px 16px;
+		gap: 10px;
+		padding: 1rem 0.75rem;
 		background: var(--pg-sidebar);
 		color: var(--pg-page);
 	}
 
-	.brand {
+	.logo-container {
 		display: flex;
 		align-items: center;
-		gap: 12px;
-		padding: 0 8px;
+		gap: 1rem;
+		padding: 1rem 0.5rem;
 	}
 
-	.brand img {
+	.logo-container img {
 		display: block;
 		width: 52px;
 		height: 52px;
-		border-radius: 12px;
+		border-radius: 100%;
 		object-fit: cover;
 	}
 
-	.wordmark {
+	.logo-container > span {
 		font-family: var(--pg-font-heading);
 		font-size: 24px;
 		font-weight: 700;
-		letter-spacing: -0.01em;
 	}
 
 	.nav-list {
@@ -113,19 +110,19 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 0.5rem;
 	}
 
 	.nav-link {
 		display: flex;
 		align-items: center;
-		gap: 12px;
-		min-height: 22px;
-		padding: 11px 12px;
-		border-radius: 8px;
+		gap: 1rem;
+		min-height: 2rem;
+		padding: 0.925rem;
+		border-radius: 0.5rem;
 		color: var(--pg-sidebar-text);
 		text-decoration: none;
-		font-size: 15px;
+		font-size: 0.85em;
 		font-weight: 500;
 	}
 
@@ -145,36 +142,36 @@
 	}
 
 	.nav-badge {
-		padding: 2px 8px;
-		border-radius: 999px;
+		padding: 0.2rem 0.5rem;
+		border-radius: 100%;
 		background: var(--pg-pink);
 		color: var(--pg-ink);
-		font-size: 12px;
+		font-size: 0.7em;
 		font-weight: 700;
 	}
 
 	.user {
 		margin-top: auto;
-		padding: 14px 12px;
+		padding: 0.8rem 0.5rem 0 0.5rem;
 		border-top: 1px solid var(--pg-sidebar-line);
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: 0.5rem;
 	}
 
 	.user-name {
-		font-size: 14px;
+		font-size: 0.8em;
 		font-weight: 600;
 	}
 
 	.user-role {
-		font-size: 13px;
+		font-size: 0.7em;
 		color: #a9b1b7;
 	}
 
 	.content {
 		flex: 999 1 600px;
 		min-width: 0;
-		padding: 40px 48px 56px;
+		padding: 2rem 2rem;
 	}
 </style>
