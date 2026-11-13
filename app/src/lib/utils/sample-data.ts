@@ -22,11 +22,11 @@ export interface Inquiry {
 	stale: boolean
 }
 
-/** CSS-klasse per timetype (fargene er definert i app.css). */
-export const typeClass: Record<AppointmentType, string> = {
-	Konsultasjon: "chip-konsult",
-	Tatovering: "chip-tattoo",
-	"Touch-up": "chip-touch"
+// Designsystemet-farge (data-color) for hver avtaletype
+export const typeColor: Record<AppointmentType, string> = {
+	Konsultasjon: "info",
+	Tatovering: "neutral",
+	"Touch-up": "warning"
 }
 
 export const todayLabel = "Torsdag 5. november"
@@ -63,4 +63,4 @@ export const waitingInquiries: Inquiry[] = [
 ]
 
 /** Totalt antall åpne forespørsler (flere enn de som vises på forsiden). */
-export const inquiryCount = 4
+export const inquiryCount = 8

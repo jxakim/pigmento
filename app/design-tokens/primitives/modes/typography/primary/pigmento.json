@@ -2,7 +2,7 @@
   "pigmento": {
     "font-family": {
       "$type": "fontFamilies",
-      "$value": "Nunito Sans"
+      "$value": "Inter"
     },
     "font-weight": {
       "medium": {

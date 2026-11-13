@@ -11,22 +11,13 @@
 	--pg-sidebar-text: #c9cfd3;
 
 	--pg-pink: #f2a7cf;
-	--pg-pink-hover: #ea8dbf;
 	--pg-pink-tint: #f9ddec;
 	--pg-pink-deep: #9e1b62;
 
 	--pg-page: #fbf4f8;
-	--pg-card: #ffffff;
-	--pg-card-border: #ebd8e3;
-	--pg-row-line: #f1e3eb;
-	--pg-button-border: #d9c3d1;
-
-	--ds-font-family: var(--pg-font-body);
 }
 
-*,
-*::before,
-*::after {
+*, *::before, *::after {
 	box-sizing: border-box;
 }
 
@@ -35,51 +26,14 @@ body {
 	background: var(--pg-page);
 	color: var(--pg-ink);
 	margin: 0;
-	padding: 0;
 }
 
-h1,
-h2,
-h3 {
+h1, h2, p {
+	margin: 0;
+}
+
+h1, h2 {
 	font-family: var(--pg-font-heading);
-	margin: 0;
-}
-
-p {
-	margin: 0;
-}
-
-a {
-	color: var(--pg-ink);
-}
-
-a:hover {
-	color: var(--pg-pink-deep);
-}
-
-/* Type-merker (brukes på forsiden og senere i kalender/avtaler) */
-.chip {
-	display: inline-block;
-	padding: 4px 10px;
-	border-radius: 999px;
-	font-size: 12px;
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-.chip-konsult {
-	background: #e1ecf8;
-	color: #1b4672;
-}
-
-.chip-tattoo {
-	background: var(--pg-ink);
-	color: #ffffff;
-}
-
-.chip-touch {
-	background: #f6e6c4;
-	color: #654500;
 }
 
 /* Ikoner (Google Material Symbols) */
@@ -87,6 +41,7 @@ a:hover {
 	font-family: "Material Symbols Outlined", sans-serif;
 	font-weight: normal;
 	font-style: normal;
+	font-size: 1.3rem;
 	line-height: 1;
 	letter-spacing: normal;
 	text-transform: none;

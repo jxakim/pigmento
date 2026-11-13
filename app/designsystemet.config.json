@@ -1,0 +1,16 @@
+{
+	"outDir": "./design-tokens",
+	"clean": true,
+	"themes": {
+		"pigmento": {
+			"colors": {
+        "accent": "#F2A7CF",
+        "brand1": "#4F7CAC",
+        "brand2": "#7E6BB0",
+        "neutral": "#14171A"
+      },
+			"typography": { "fontFamily": "Inter" },
+			"borderRadius": 7
+		}
+	}
+}
