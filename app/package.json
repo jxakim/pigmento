@@ -31,6 +31,8 @@
 	"dependencies": {
 		"@digdir/designsystemet-css": "^1.23.0",
 		"@digdir/designsystemet-web": "^1.23.0",
+		"fullcalendar": "^7.1.5",
+		"temporal-polyfill": "^1.0.8",
 		"vitest": "^5.1.0"
 	}
 }

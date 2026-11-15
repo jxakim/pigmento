@@ -7,11 +7,34 @@
 	import "./layout.css"
 
 	import favicon from "#lib/assets/favicon.svg"
+	import { setTopbarContent, type TopbarContent } from "#lib/topbarContent.ts"
+	import { afterNavigate } from "$app/navigation"
 	import { page } from "$app/state"
 	import { inquiryCount } from "../lib/utils/sample-data"
 	import type { LayoutProps } from "./$types"
 
 	let { children }: LayoutProps = $props()
+
+	const topbarContent = $state<TopbarContent>({})
+	setTopbarContent(topbarContent)
+
+	let isMenuOpen = $state(false)
+
+	afterNavigate(closeMenu)
+
+	function closeMenu() {
+		isMenuOpen = false
+	}
+
+	function toggleMenu() {
+		isMenuOpen = !isMenuOpen
+	}
+
+	function closeMenuOnEscape(event: KeyboardEvent) {
+		if (event.key === "Escape") {
+			closeMenu()
+		}
+	}
 
 	function isActive(href: string): boolean {
 		return href === "/" ? page.url.pathname === "/" : page.url.pathname.startsWith(href)
@@ -56,8 +79,37 @@
 	<title>Pigmento</title>
 </svelte:head>
 
-<div class="layout">
-	<aside class="sidebar">
+<svelte:window onkeydown={closeMenuOnEscape} />
+
+<div class="layout" class:menu-open={isMenuOpen}>
+	<header class="topbar">
+		<button
+			type="button"
+			class="menu-toggle"
+			aria-expanded={isMenuOpen}
+			aria-controls="sidebar"
+			aria-label={isMenuOpen ? "Lukk meny" : "Åpne meny"}
+			onclick={toggleMenu}
+		>
+			<span class="material-symbols-outlined" aria-hidden="true">{isMenuOpen ? "close" : "menu"}</span>
+		</button>
+		<span class="topbar-title">Pigmento</span>
+		{#if topbarContent.end}
+			<div class="topbar-end">
+				{@render topbarContent.end()}
+			</div>
+		{/if}
+	</header>
+
+	<button
+		type="button"
+		class="menu-backdrop"
+		tabindex="-1"
+		aria-label="Lukk meny"
+		onclick={closeMenu}
+	></button>
+
+	<aside id="sidebar" class="sidebar">
 		<div class="sidebar-logo">
 			<img
 				src="/logo.png"

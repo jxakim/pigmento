@@ -1,18 +1,22 @@
 # Notater
 
-- fullstendig kalender funksjonalitet
+- Fullstendig kalender funksjonalitet
   - Fylle inn dødtid
-  - Tilting
-  - 
+  - Tilting?
+  
+  - Det at man går "lenger og lenger" inn er fokus
+    - Bruk kalender appen i iphone som inspirasjon
+
   - Uke - mnd - dag
     - Mål for mnd uke og dag
     - Stort fokus på mål (stor tekst / flashy)
   - Mulighet for å legge inn bilder med notater for kunder
-  - Dagsplanoversikt
+  - Dagsplan, ukesplan, månedsplan og årsplans oversikt
     - Oppgavefordeling
   - Fordeling med farger er viktig
 
 - Kundenotater
+
 - Id på kunder
   - ÅR
   - F.eks 27001, 27002, 27003
@@ -28,9 +32,6 @@
   - Rød = ikke gjort en dritt
   - gul = holder på
   - osv osv
-
-- Det at man går "lenger" og inn er fokus
-  - Bruk kalender appen i iphone som inspirasjon
 
 - Varsel system
   - legge inn varsler hvis

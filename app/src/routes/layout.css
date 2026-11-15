@@ -91,3 +91,125 @@
 	min-width: 0;
 	padding: 2rem;
 }
+
+.topbar, .menu-backdrop {
+	display: none;
+}
+
+/* Høyden layouten bruker rundt sideinnholdet. Sider som skal fylle skjermen trekker denne fra. */
+:root {
+	--pg-layout-reserved-height: 4rem;
+}
+
+/* 57.5rem = sidebar (20rem) + innhold (37.5rem): punktet der sidebaren ellers ville lagt seg over innholdet. */
+@media (max-width: 57.5rem) {
+	:root {
+		--pg-topbar-height: 3.5rem;
+		--pg-layout-reserved-height: calc(var(--pg-topbar-height) + 2rem);
+	}
+
+	.layout {
+		display: block;
+	}
+
+	.topbar {
+		position: sticky;
+		top: 0;
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		height: var(--pg-topbar-height);
+		padding: 0 0.5rem;
+		background: var(--pg-sidebar);
+		color: var(--pg-page);
+	}
+
+	.topbar-title {
+		font-family: var(--pg-font-heading);
+		font-size: 1.25rem;
+		font-weight: 700;
+	}
+
+	.topbar-end {
+		display: flex;
+		min-width: 0;
+		margin-inline-start: auto;
+		padding-inline-end: 0.5rem;
+		font-size: 1.125rem;
+	}
+
+	@media (max-width: 30rem) {
+		.topbar:has(.topbar-end) .topbar-title {
+			display: none;
+		}
+	}
+
+	.menu-toggle {
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 0;
+		border-radius: 0.5rem;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+	}
+
+	.menu-toggle:hover {
+		background: var(--pg-sidebar-hover);
+	}
+
+	.menu-toggle:focus-visible {
+		outline: 0.125rem solid var(--pg-pink);
+		outline-offset: 0.125rem;
+	}
+
+	.sidebar {
+		position: fixed;
+		top: var(--pg-topbar-height);
+		bottom: 0;
+		left: 0;
+		z-index: 20;
+		width: min(20rem, 85vw);
+		overflow-y: auto;
+		transform: translateX(-100%);
+		/* Hindrer at en lukket meny kan nås med Tab eller skjermleser. */
+		visibility: hidden;
+		transition: transform 0.25s ease, visibility 0.25s;
+	}
+
+	.menu-backdrop {
+		position: fixed;
+		inset: var(--pg-topbar-height) 0 0 0;
+		z-index: 10;
+		display: block;
+		border: 0;
+		padding: 0;
+		background: rgb(0 0 0 / 0.4);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s ease;
+	}
+
+	.layout.menu-open .sidebar {
+		transform: none;
+		visibility: visible;
+	}
+
+	.layout.menu-open .menu-backdrop {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.layout-content {
+		padding: 1rem;
+	}
+}
+
+@media (max-width: 57.5rem) and (prefers-reduced-motion: reduce) {
+	.sidebar, .menu-backdrop {
+		transition: none;
+	}
+}
