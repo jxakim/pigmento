@@ -1,3 +1,4 @@
+import { requestCalendarHome } from "#lib/calendarHome.svelte.ts"
 import { getOpenNotifications } from "#lib/notifications.svelte.ts"
 import { openInquiryCount } from "#lib/sampleData.ts"
 import { page } from "$app/state"
@@ -27,4 +28,10 @@ export function isCurrentPage(href: string): boolean {
 
 export function formatBadgeCount(count: number): string {
 	return count > 99 ? "99+" : String(count)
+}
+
+export function handleNavigationClick(item: NavigationItem) {
+	if (item.href === "/calendar" && isCurrentPage(item.href)) {
+		requestCalendarHome()
+	}
 }

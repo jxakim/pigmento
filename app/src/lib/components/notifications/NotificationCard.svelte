@@ -138,11 +138,13 @@
 		padding: 0;
 	}
 
-	.open-action:hover,
-	.icon-action:hover {
-		border-color: var(--pg-ink);
-		background: var(--pg-ink);
-		color: #ffffff;
+	@media (hover: hover) {
+		.open-action:hover,
+		.icon-action:hover {
+			border-color: var(--pg-ink);
+			background: var(--pg-ink);
+			color: #ffffff;
+		}
 	}
 
 	/* På mobil er kortet kompakt: tittel, beskrivelse og hvor det haster, med to knapper. */
@@ -195,9 +197,11 @@
 			background: transparent;
 		}
 
+	@media (hover: hover) {
 		.icon-action:hover {
-			background: var(--pg-pink-tint);
-			color: var(--pg-ink);
+				background: var(--pg-pink-tint);
+				color: var(--pg-ink);
+			}
 		}
 	}
 </style>

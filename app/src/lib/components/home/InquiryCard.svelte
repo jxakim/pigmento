@@ -89,9 +89,11 @@
 		text-decoration: none;
 	}
 
-	.open-instagram:hover {
-		border-color: var(--pg-ink);
-		background: var(--pg-ink);
-		color: #ffffff;
+	@media (hover: hover) {
+		.open-instagram:hover {
+			border-color: var(--pg-ink);
+			background: var(--pg-ink);
+			color: #ffffff;
+		}
 	}
 </style>

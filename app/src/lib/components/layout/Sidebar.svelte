@@ -18,6 +18,7 @@
 
 <style>
 	.sidebar {
+		view-transition-name: sidebar;
 		display: flex;
 		flex: 1 1 14.375rem;
 		flex-direction: column;

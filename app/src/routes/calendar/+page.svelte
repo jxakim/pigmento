@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { tick } from "svelte"
+	import { tick, untrack } from "svelte"
+	import { calendarHomeRequests } from "#lib/calendarHome.svelte.ts"
 	import { compactScreen } from "#lib/compactScreen.svelte.ts"
 	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
 	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
@@ -16,7 +17,6 @@
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
-	import { longPress } from "#lib/longPress.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 
 	let level = $state<CalendarLevel>("year")
@@ -25,17 +25,25 @@
 	let dayMenu = $state<{ day: Date; position: { x: number; y: number } }>()
 	let viewContainer: HTMLDivElement
 
+	interface CalendarView {
+		level: CalendarLevel
+		date: Date
+		selectedDay?: Date
+	}
+
+	let previousViews = $state<CalendarView[]>([])
+
 	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
 
-	function changeLevel(newLevel: CalendarLevel, newDate: Date, zoomTarget?: Element, newSelectedDay?: Date) {
-		const direction = isZoomingIn(level, newLevel) ? "in" : "out"
+	function showView(view: CalendarView, zoomTarget?: Element) {
+		const direction = isZoomingIn(level, view.level) ? "in" : "out"
 
 		animateZoom(
 			viewContainer,
 			async () => {
-				level = newLevel
-				date = newDate
-				selectedDay = newSelectedDay
+				level = view.level
+				date = view.date
+				selectedDay = view.selectedDay
 				await tick()
 			},
 			direction,
@@ -43,8 +51,37 @@
 		)
 	}
 
+	function openLevel(newLevel: CalendarLevel, newDate: Date, zoomTarget?: Element, newSelectedDay?: Date) {
+		previousViews.push({ level, date, selectedDay })
+		showView({ level: newLevel, date: newDate, selectedDay: newSelectedDay }, zoomTarget)
+	}
+
 	function selectLevel(newLevel: CalendarLevel) {
-		changeLevel(newLevel, selectedDay ?? date, undefined, selectedDay)
+		previousViews = []
+		showView({ level: newLevel, date: selectedDay ?? date, selectedDay })
+	}
+
+	function showYearOfToday() {
+		dayMenu = undefined
+		previousViews = []
+		showView({ level: "year", date: new Date() })
+	}
+
+	let handledHomeRequests = calendarHomeRequests.count
+
+	$effect(() => {
+		const requests = calendarHomeRequests.count
+		if (requests !== handledHomeRequests) {
+			handledHomeRequests = requests
+			untrack(showYearOfToday)
+		}
+	})
+
+	function goBack() {
+		const previousView = previousViews.pop()
+		if (previousView) {
+			showView(previousView)
+		}
 	}
 
 	function moveToPeriod(periods: number) {
@@ -58,7 +95,7 @@
 			return
 		}
 		if (isSameDay(selectedDay, day)) {
-			changeLevel("day", day, dayElement)
+			openLevel("day", day, dayElement)
 		} else {
 			selectedDay = day
 		}
@@ -66,7 +103,7 @@
 
 	function openDayMenu(event: MouseEvent) {
 		const isoDate = (event.target as Element).closest<HTMLElement>("[data-date]")?.dataset.date
-		if (!isoDate || level === "year") {
+		if (!isoDate || level === "year" || compactScreen.current) {
 			return
 		}
 		event.preventDefault()
@@ -80,7 +117,7 @@
 
 		switch (action) {
 			case "open-day":
-				changeLevel("day", day)
+				openLevel("day", day)
 				return
 			// Kobles til skjemaer når booking, notater og blokkering er på plass.
 			case "add-booking":
@@ -97,32 +134,19 @@
 		return viewContainer.querySelectorAll(".year-month")[month.getMonth()]
 	}
 
-	// År: åpne måneden med dagen i dag markert. Måned og uke: marker i dag, eller åpne dagen hvis den allerede er markert.
 	function goToToday() {
 		const today = new Date()
 
-		switch (level) {
-			case "year":
-				changeLevel("month", today, findMonthInYearView(today), today)
-				return
-			case "month":
-			case "week":
-				if (isSameDay(selectedDay, today)) {
-					changeLevel("day", today, viewContainer.querySelector(".selected-day") ?? undefined)
-				} else {
-					date = today
-					selectedDay = today
-				}
-				return
-			case "day":
-				date = today
-				return
+		if (level === "day") {
+			date = today
+			return
 		}
+		openLevel("day", today, level === "year" ? findMonthInYearView(today) : undefined)
 	}
 </script>
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
+	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
 
 	<div class="banner">
 		<UrgentNotificationsBanner isCompact />
@@ -130,15 +154,15 @@
 
 	<div class="calendar-body">
 		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
-		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
+		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu}>
 			{#if level === "year"}
-				<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
+				<YearView {date} onOpenMonth={(month, monthElement) => openLevel("month", month, monthElement)} />
 			{:else if level === "month" && compactScreen.current}
-				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => changeLevel("day", day)} />
+				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => openLevel("day", day)} />
 			{:else if level === "month"}
 				<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else if level === "week" && compactScreen.current}
-				<MobileWeekView {date} onOpenDay={(day) => changeLevel("day", day)} />
+				<MobileWeekView {date} onOpenDay={(day) => openLevel("day", day)} />
 			{:else if level === "week"}
 				<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
@@ -217,7 +241,7 @@
 				"view"
 				"notes";
 			gap: 0.625rem;
-			height: calc(100dvh - var(--pg-bottom-bar-height));
+			height: calc(100dvh - var(--pg-bottom-bar-space));
 			padding: 0.875rem 1rem 0.75rem;
 		}
 

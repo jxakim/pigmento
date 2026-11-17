@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CountBadge from "#lib/components/CountBadge.svelte"
 	import Icon from "#lib/components/Icon.svelte"
-	import { getNavigationItems, isCurrentPage } from "#lib/navigation.svelte.ts"
+	import { getNavigationItems, handleNavigationClick, isCurrentPage } from "#lib/navigation.svelte.ts"
 
 	const navigationItems = $derived(getNavigationItems())
 </script>
@@ -10,7 +10,7 @@
 	<ul class="navigation-list">
 		{#each navigationItems as item (item.href)}
 			<li>
-				<a class="navigation-link" href={item.href} aria-current={isCurrentPage(item.href) ? "page" : undefined}>
+				<a class="navigation-link" href={item.href} onclick={() => handleNavigationClick(item)} aria-current={isCurrentPage(item.href) ? "page" : undefined}>
 					<Icon name={item.icon} />
 					<span class="label">{item.label}</span>
 					{#if item.badgeCount}

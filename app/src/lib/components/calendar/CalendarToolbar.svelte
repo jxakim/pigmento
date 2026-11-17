@@ -15,16 +15,23 @@
 		onPrevious: () => void
 		onToday: () => void
 		onNext: () => void
+		onBack?: () => void
 	}
 
-	let { level, date, appointmentCount, onLevelChange, onPrevious, onToday, onNext }: Props = $props()
+	let { level, date, appointmentCount, onLevelChange, onPrevious, onToday, onNext, onBack }: Props = $props()
 
 	const periodName = $derived(levelLabels[level].toLowerCase())
 	const appointmentCountLabel = $derived(`${appointmentCount} ${appointmentCount === 1 ? "avtale" : "avtaler"}`)
 	const summary = $derived([formatCalendarTitle(level, date).range, appointmentCountLabel].filter(Boolean).join(" · "))
 </script>
 
-<header class="toolbar">
+<header class="toolbar" class:has-back-button={onBack}>
+	{#if onBack}
+		<button type="button" class="icon-button" aria-label="Tilbake" onclick={onBack}>
+			<Icon name="arrow_back" />
+		</button>
+	{/if}
+
 	<div class="title">
 		<CalendarTitle {level} {date} />
 		<p class="summary">{summary}</p>
@@ -105,11 +112,13 @@
 		font-weight: 600;
 	}
 
-	.icon-button:hover,
-	.today-button:hover {
-		border-color: var(--pg-ink);
-		background: var(--pg-ink);
-		color: #ffffff;
+	@media (hover: hover) {
+		.icon-button:hover,
+		.today-button:hover {
+			border-color: var(--pg-ink);
+			background: var(--pg-ink);
+			color: #ffffff;
+		}
 	}
 
 	/* På mobil står tittelen og knappene på en rad, og visningsvalget får en rad for seg selv. */
@@ -135,9 +144,26 @@
 			margin-inline-end: 0;
 		}
 
-		.today-button,
 		.bell {
 			display: none;
+		}
+
+		.has-back-button .today-button {
+			display: none;
+		}
+
+		.has-back-button .title :global(.calendar-title) {
+			font-size: 1.125rem;
+		}
+
+		.today-button {
+			padding: 0 0.75rem;
+			font-size: 0.8125rem;
+			border-radius: 0.625rem;
+		}
+
+		.title {
+			overflow: hidden;
 		}
 
 		.icon-button {

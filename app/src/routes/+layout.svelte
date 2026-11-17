@@ -7,9 +7,24 @@
 	import favicon from "#lib/assets/favicon.svg"
 	import BottomNavigation from "#lib/components/layout/BottomNavigation.svelte"
 	import Sidebar from "#lib/components/layout/Sidebar.svelte"
+	import { onNavigate } from "$app/navigation"
 	import type { LayoutProps } from "./$types"
 
 	let { children }: LayoutProps = $props()
+
+	onNavigate((navigation) => {
+		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		if (!document.startViewTransition || prefersReducedMotion) {
+			return
+		}
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve()
+				await navigation.complete
+			})
+		})
+	})
 </script>
 
 <svelte:head>
@@ -31,7 +46,7 @@
 	.layout {
 		display: flex;
 		flex-wrap: wrap;
-		min-height: 100vh;
+		min-height: 100dvh;
 	}
 
 	.content {
@@ -45,7 +60,7 @@
 		}
 
 		.content {
-			padding-bottom: var(--pg-bottom-bar-height);
+			padding-bottom: var(--pg-bottom-bar-space);
 		}
 	}
 </style>

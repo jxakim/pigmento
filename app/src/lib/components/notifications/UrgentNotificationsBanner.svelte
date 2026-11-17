@@ -76,9 +76,11 @@
 		white-space: nowrap;
 	}
 
-	.show-notifications:hover {
-		background: var(--pg-pink-deep);
-		color: #ffffff;
+	@media (hover: hover) {
+		.show-notifications:hover {
+			background: var(--pg-pink-deep);
+			color: #ffffff;
+		}
 	}
 
 	/* På mobil er hele stripen en lenke til varslene, med navnene på det som haster. */
