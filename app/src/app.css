@@ -1,57 +1,38 @@
-/* Designfarger og skrifter for Pigmento. Endre her for å endre hele utseendet. */
 :root {
-	--pg-font-body: "Inter", system-ui, sans-serif;
-	--pg-font-heading: "Bricolage Grotesque", "Inter", sans-serif;
-
-	--pg-ink: #14171a;
-	--pg-ink-muted: #4f5560;
-	--pg-sidebar: #0c1014;
-	--pg-sidebar-hover: #1a2027;
-	--pg-sidebar-line: #232a32;
-	--pg-sidebar-text: #c9cfd3;
-
-	--pg-pink: #f2a7cf;
-	--pg-pink-tint: #f9ddec;
-	--pg-pink-deep: #9e1b62;
-
-	--pg-page: #fbf4f8;
+	--pg-font-heading: "Bricolage Grotesque", var(--ds-font-family), sans-serif;
+	--pg-content-padding: 2rem;
+	--pg-layout-reserved-height: calc(var(--pg-content-padding) * 2);
 }
 
-*, *::before, *::after {
+/* 57.5rem = sidebar (20rem) + innhold (37.5rem): her flyttes menyen inn i en toppstripe. */
+@media (max-width: 57.5rem) {
+	:root {
+		--pg-topbar-height: 3.5rem;
+		--pg-content-padding: 1rem;
+		--pg-layout-reserved-height: calc(var(--pg-topbar-height) + var(--pg-content-padding) * 2);
+	}
+}
+
+*,
+*::before,
+*::after {
 	box-sizing: border-box;
 }
 
 body {
-	font-family: var(--pg-font-body);
-	background: var(--pg-page);
-	color: var(--pg-ink);
+	margin: 0;
+	font-family: var(--ds-font-family), system-ui, sans-serif;
+	background: var(--ds-color-neutral-background-default);
+	color: var(--ds-color-neutral-text-default);
+}
+
+h1,
+h2,
+p {
 	margin: 0;
 }
 
-h1, h2, p {
-	margin: 0;
-}
-
-h1, h2 {
+h1,
+h2 {
 	font-family: var(--pg-font-heading);
-}
-
-/* Ikoner (Google Material Symbols) */
-.material-symbols-outlined {
-	font-family: "Material Symbols Outlined", sans-serif;
-	font-weight: normal;
-	font-style: normal;
-	font-size: 1.3rem;
-	line-height: 1;
-	letter-spacing: normal;
-	text-transform: none;
-	display: inline-block;
-	white-space: nowrap;
-	word-wrap: normal;
-	direction: ltr;
-	flex: none;
-	user-select: none;
-	-webkit-font-feature-settings: "liga";
-	font-feature-settings: "liga";
-	-webkit-font-smoothing: antialiased;
 }
