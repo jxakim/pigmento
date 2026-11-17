@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CalendarOptions } from "fullcalendar"
+	import { joinClasses } from "./calendarAppearance.ts"
 	import { calendarEvents } from "./calendarAppointments.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
@@ -11,7 +12,9 @@
 
 	const options: CalendarOptions = {
 		initialView: "timeGridDay",
-		events: calendarEvents
+		events: calendarEvents,
+		eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+		dayLaneClass: ({ isToday }) => joinClasses("calendar-day-lane", isToday && "is-today")
 	}
 </script>
 

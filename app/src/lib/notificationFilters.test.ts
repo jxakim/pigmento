@@ -6,6 +6,8 @@ const urgentDeposit: AppNotification = {
 	id: "deposit-kasper",
 	urgency: "urgent",
 	category: "deposit",
+	icon: "payments",
+	subject: "Kasper Aas",
 	title: "Kasper Aas mangler depositum",
 	description: "Tatovering i morgen kl. 11:00",
 	dueLabel: "I morgen",

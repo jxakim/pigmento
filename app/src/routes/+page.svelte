@@ -2,7 +2,8 @@
 	import TodaysAppointments from "#lib/components/home/TodaysAppointments.svelte"
 	import UpcomingDays from "#lib/components/home/UpcomingDays.svelte"
 	import WaitingInquiries from "#lib/components/home/WaitingInquiries.svelte"
-	import Icon from "#lib/components/Icon.svelte"
+	import NewBookingButton from "#lib/components/NewBookingButton.svelte"
+	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
 	import { openInquiryCount, todayLabel, todaysAppointments } from "#lib/sampleData.ts"
 </script>
@@ -10,13 +11,13 @@
 <div class="home">
 	<header class="header">
 		<div class="greeting">
-			<h1 class="ds-heading" data-size="lg">God morgen</h1>
-			<p class="ds-paragraph">{todayLabel} · {todaysAppointments.length} timer i dag · {openInquiryCount} venter på svar</p>
+			<h1>God morgen</h1>
+			<p class="summary">{todayLabel} · {todaysAppointments.length} timer i dag · {openInquiryCount} venter på svar</p>
 		</div>
-		<button type="button" class="ds-button" data-variant="primary" data-color="accent">
-			<Icon name="add" />
-			Ny booking
-		</button>
+		<div class="actions">
+			<NotificationBell />
+			<NewBookingButton />
+		</div>
 	</header>
 
 	<UrgentNotificationsBanner />
@@ -40,7 +41,11 @@
 		flex-direction: column;
 	}
 
-	.home,
+	.home {
+		gap: 2.25rem;
+		padding: 2.5rem 3rem 3.5rem;
+	}
+
 	.column {
 		gap: 2.25rem;
 	}
@@ -57,8 +62,26 @@
 		gap: 1rem;
 	}
 
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: 0.875rem;
+	}
+
 	.greeting {
 		gap: 0.375rem;
+	}
+
+	h1 {
+		font-size: 2.5rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+	}
+
+	.summary {
+		color: var(--pg-ink-muted);
+		font-size: 1rem;
 	}
 
 	.columns {
@@ -76,5 +99,11 @@
 
 	.side-column {
 		flex: 2 1 18.75rem;
+	}
+
+	@media (max-width: 57.5rem) {
+		.home {
+			padding: 1rem;
+		}
 	}
 </style>
