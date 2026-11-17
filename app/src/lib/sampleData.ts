@@ -31,6 +31,21 @@ export interface Inquiry {
 	hasWaitedLong: boolean
 }
 
+export type NotificationUrgency = "urgent" | "soon" | "later"
+
+export type NotificationCategory = "inquiry" | "deposit" | "reminder" | "follow-up"
+
+export interface AppNotification {
+	id: string
+	urgency: NotificationUrgency
+	category: NotificationCategory
+	title: string
+	description: string
+	dueLabel: string
+	actionLabel: string
+	actionHref: string
+}
+
 export const todayLabel = "Torsdag 5. november"
 
 export const todaysAppointments: Appointment[] = [
@@ -90,6 +105,79 @@ export const scheduledAppointments: ScheduledAppointment[] = [
 	{ clientName: "Jens Teig", type: "Konsultasjon", start: "2026-11-26T13:00", end: "2026-11-26T14:00" },
 	{ clientName: "Hedda Lunde", type: "Tatovering", start: "2026-11-27T11:00", end: "2026-11-27T15:00" },
 	{ clientName: "Magnus Ås", type: "Tatovering", start: "2026-11-28T12:00", end: "2026-11-28T16:00" }
+]
+
+export const notifications: AppNotification[] = [
+	{
+		id: "inquiry-martin",
+		urgency: "urgent",
+		category: "inquiry",
+		title: "@martin.sk har ventet i 6 dager",
+		description: "Interessert i en konsultasjon før jul, passer det?",
+		dueLabel: "Siden 30. okt",
+		actionLabel: "Åpne Instagram",
+		actionHref: "https://instagram.com/direct/inbox/"
+	},
+	{
+		id: "deposit-kasper",
+		urgency: "urgent",
+		category: "deposit",
+		title: "Kasper Aas mangler depositum",
+		description: "Tatovering i morgen kl. 11:00 · kr 1 000",
+		dueLabel: "I morgen",
+		actionLabel: "Åpne kalenderen",
+		actionHref: "/calendar"
+	},
+	{
+		id: "deposit-lise",
+		urgency: "soon",
+		category: "deposit",
+		title: "Lise Strand mangler depositum",
+		description: "Tatovering tirsdag 10. november kl. 12:00 · kr 1 500",
+		dueLabel: "Om 5 dager",
+		actionLabel: "Åpne kalenderen",
+		actionHref: "/calendar"
+	},
+	{
+		id: "inquiry-thea",
+		urgency: "soon",
+		category: "inquiry",
+		title: "@thea.rose har ventet i 3 dager",
+		description: "Hva koster en håndflate-stor design på skulderen?",
+		dueLabel: "Siden 2. nov",
+		actionLabel: "Åpne Instagram",
+		actionHref: "https://instagram.com/direct/inbox/"
+	},
+	{
+		id: "reminder-tomorrow",
+		urgency: "soon",
+		category: "reminder",
+		title: "I morgen: 2 timer",
+		description: "11:00 Kasper Aas (tatovering) · 15:00 Ida Moe (konsultasjon)",
+		dueLabel: "I morgen",
+		actionLabel: "Åpne kalenderen",
+		actionHref: "/calendar"
+	},
+	{
+		id: "follow-up-jonas",
+		urgency: "later",
+		category: "follow-up",
+		title: "Send etterstell til Jonas Berg",
+		description: "Økt 2 av 3 i dag. Husk å følge opp om to uker.",
+		dueLabel: "I kveld",
+		actionLabel: "Åpne kalenderen",
+		actionHref: "/calendar"
+	},
+	{
+		id: "reminder-supplies",
+		urgency: "later",
+		category: "reminder",
+		title: "Bestille nåler og farger",
+		description: "Egen påminnelse fra ukenotatet",
+		dueLabel: "Fredag",
+		actionLabel: "Åpne kalenderen",
+		actionHref: "/calendar"
+	}
 ]
 
 export const openInquiryCount = 8
