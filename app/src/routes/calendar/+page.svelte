@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { tick } from "svelte"
+	import { tick, untrack } from "svelte"
+	import { calendarHomeRequests } from "#lib/calendarHome.svelte.ts"
 	import { compactScreen } from "#lib/compactScreen.svelte.ts"
 	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
 	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
@@ -16,7 +17,6 @@
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
-	import { longPress } from "#lib/longPress.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 
 	let level = $state<CalendarLevel>("year")
@@ -61,6 +61,22 @@
 		showView({ level: newLevel, date: selectedDay ?? date, selectedDay })
 	}
 
+	function showYearOfToday() {
+		dayMenu = undefined
+		previousViews = []
+		showView({ level: "year", date: new Date() })
+	}
+
+	let handledHomeRequests = calendarHomeRequests.count
+
+	$effect(() => {
+		const requests = calendarHomeRequests.count
+		if (requests !== handledHomeRequests) {
+			handledHomeRequests = requests
+			untrack(showYearOfToday)
+		}
+	})
+
 	function goBack() {
 		const previousView = previousViews.pop()
 		if (previousView) {
@@ -87,7 +103,7 @@
 
 	function openDayMenu(event: MouseEvent) {
 		const isoDate = (event.target as Element).closest<HTMLElement>("[data-date]")?.dataset.date
-		if (!isoDate || level === "year") {
+		if (!isoDate || level === "year" || compactScreen.current) {
 			return
 		}
 		event.preventDefault()
@@ -151,7 +167,7 @@
 
 	<div class="calendar-body">
 		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
-		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
+		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu}>
 			{#if level === "year"}
 				<YearView {date} onOpenMonth={(month, monthElement) => openLevel("month", month, monthElement)} />
 			{:else if level === "month" && compactScreen.current}

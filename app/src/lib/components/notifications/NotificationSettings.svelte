@@ -115,6 +115,12 @@
 		font-size: 0.875rem;
 	}
 
+	@media (max-width: 57.5rem) {
+		.setting-select {
+			font-size: 1rem;
+		}
+	}
+
 	.setting-switch {
 		width: 1.25rem;
 		height: 1.25rem;

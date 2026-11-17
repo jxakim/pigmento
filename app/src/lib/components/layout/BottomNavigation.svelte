@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
-	import { formatBadgeCount, getNavigationItems, isCurrentPage } from "#lib/navigation.svelte.ts"
+	import { formatBadgeCount, getNavigationItems, handleNavigationClick, isCurrentPage } from "#lib/navigation.svelte.ts"
 
 	const bottomBarItems = $derived(getNavigationItems().filter((item) => item.isInBottomBar))
 </script>
@@ -9,7 +9,7 @@
 	<ul class="navigation-list">
 		{#each bottomBarItems as item (item.href)}
 			<li>
-				<a class="navigation-link" href={item.href} aria-current={isCurrentPage(item.href) ? "page" : undefined}>
+				<a class="navigation-link" href={item.href} onclick={() => handleNavigationClick(item)} aria-current={isCurrentPage(item.href) ? "page" : undefined}>
 					<span class="icon-with-badge">
 						<Icon name={item.icon} />
 						{#if item.badgeCount}

@@ -184,7 +184,7 @@
 
 	.sheet-note .note-field {
 		height: 12.5rem;
-		font-size: 0.9375rem;
+		font-size: 1rem;
 	}
 
 	.done-button {
