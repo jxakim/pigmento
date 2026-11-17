@@ -1,8 +1,9 @@
 <script lang="ts">
 	import NotificationCard from "#lib/components/notifications/NotificationCard.svelte"
 	import PageSection from "#lib/components/PageSection.svelte"
-	import { filterLabels, matchesFilter, type NotificationFilter, notificationFilters, urgencies, urgencyLabels } from "#lib/notificationFilters.ts"
+	import { filterLabels, matchesFilter, type NotificationFilter, notificationFilters } from "#lib/notificationFilters.ts"
 	import { countHandled, getOpenNotifications, getUrgentNotifications, markAsDone, snoozeUntilTomorrow } from "#lib/notifications.svelte.ts"
+	import { urgencies, urgencyLabels } from "#lib/notificationUrgency.ts"
 
 	let selectedFilter = $state<NotificationFilter>("all")
 

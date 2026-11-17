@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
 	import Icon from "#lib/components/Icon.svelte"
+	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 
 	interface Props {
 		isMenuOpen: boolean
@@ -26,11 +27,14 @@
 		<Icon name={isMenuOpen ? "close" : "menu"} />
 	</button>
 	<span class="app-name">Pigmento</span>
-	{#if end}
-		<div class="end">
-			{@render end()}
-		</div>
-	{/if}
+	<div class="end">
+		{#if end}
+			<div class="page-content">
+				{@render end()}
+			</div>
+		{/if}
+		<NotificationBell />
+	</div>
 </header>
 
 <style>
@@ -54,7 +58,7 @@
 	}
 
 	@media (max-width: 30rem) {
-		.topbar:has(.end) .app-name {
+		.topbar:has(.page-content) .app-name {
 			display: none;
 		}
 	}
@@ -67,9 +71,16 @@
 
 	.end {
 		display: flex;
+		align-items: center;
+		gap: 0.25rem;
 		min-width: 0;
 		margin-inline-start: auto;
-		padding-inline-end: 0.5rem;
+	}
+
+	.page-content {
+		display: flex;
+		min-width: 0;
+		padding-inline-end: 0.25rem;
 		font-size: 1.125rem;
 	}
 </style>

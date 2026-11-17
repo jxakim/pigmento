@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
-	import type { AppNotification, NotificationCategory, NotificationUrgency } from "#lib/sampleData.ts"
+	import { urgencyColor } from "#lib/notificationUrgency.ts"
+	import type { AppNotification, NotificationCategory } from "#lib/sampleData.ts"
 
 	interface Props {
 		notification: AppNotification
@@ -9,12 +10,6 @@
 	}
 
 	let { notification, onSnooze, onDone }: Props = $props()
-
-	const urgencyColor: Record<NotificationUrgency, string> = {
-		urgent: "danger",
-		soon: "warning",
-		later: "neutral"
-	}
 
 	const categoryIcon: Record<NotificationCategory, string> = {
 		inquiry: "chat_bubble",

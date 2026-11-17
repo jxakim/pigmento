@@ -1,4 +1,4 @@
-import type { AppNotification, NotificationCategory, NotificationUrgency } from "#lib/sampleData.ts"
+import type { AppNotification, NotificationCategory } from "#lib/sampleData.ts"
 
 export type NotificationFilter = "all" | "urgent" | NotificationCategory
 
@@ -12,14 +12,6 @@ export const filterLabels: Record<NotificationFilter, string> = {
 	reminder: "Påminnelser",
 	"follow-up": "Oppfølging"
 }
-
-export const urgencyLabels: Record<NotificationUrgency, string> = {
-	urgent: "Haster",
-	soon: "Snart",
-	later: "Senere"
-}
-
-export const urgencies: NotificationUrgency[] = ["urgent", "soon", "later"]
 
 export function matchesFilter(notification: AppNotification, filter: NotificationFilter): boolean {
 	switch (filter) {
