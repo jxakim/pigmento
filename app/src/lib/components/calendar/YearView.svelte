@@ -73,13 +73,21 @@
 	.year-month {
 		gap: 0.25rem;
 		min-height: 0;
-		padding: 0;
+		margin: -0.5rem;
+		padding: 0.5rem;
 		border: 0;
+		border-radius: 0.625rem;
 		background: transparent;
 		color: inherit;
 		font: inherit;
 		text-align: left;
 		cursor: pointer;
+	}
+
+	@media (hover: hover) {
+		.year-month:hover {
+			background: var(--pg-pink-wash);
+		}
 	}
 
 	.year-month:focus-visible {
