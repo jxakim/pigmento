@@ -1,7 +1,8 @@
 import type { EventInput } from "fullcalendar"
-import { type AppointmentColor, appointmentTypeColor } from "#lib/appointmentTypes.ts"
-import { type ScheduledAppointment, scheduledAppointments } from "#lib/sampleData.ts"
-import { isSameDay } from "./calendarDates.ts"
+import { type AppointmentColor, appointmentTypeColor, appointmentTypes } from "#lib/appointmentTypes.ts"
+import { type AppointmentType, type ScheduledAppointment, scheduledAppointments } from "#lib/sampleData.ts"
+import { getPeriodRange, isSameDay } from "./calendarDates.ts"
+import type { CalendarLevel } from "./calendarLevels.ts"
 
 const colorsByImportance: AppointmentColor[] = ["neutral", "info", "warning"]
 
@@ -21,6 +22,15 @@ export function toCalendarEvents(appointments: ScheduledAppointment[]): EventInp
 export function findDayColor(appointments: ScheduledAppointment[], day: Date): AppointmentColor | undefined {
 	const colorsOfDay = appointments.filter((appointment) => isSameDay(new Date(appointment.start), day)).map((appointment) => appointmentTypeColor[appointment.type])
 	return colorsByImportance.find((color) => colorsOfDay.includes(color))
+}
+
+export function filterByPeriod(appointments: ScheduledAppointment[], level: CalendarLevel, date: Date): ScheduledAppointment[] {
+	const { start, end } = getPeriodRange(level, date)
+	return appointments.filter((appointment) => new Date(appointment.start) >= start && new Date(appointment.start) < end)
+}
+
+export function countByType(appointments: ScheduledAppointment[]): Record<AppointmentType, number> {
+	return Object.fromEntries(appointmentTypes.map((type) => [type, appointments.filter((appointment) => appointment.type === type).length])) as Record<AppointmentType, number>
 }
 
 export const calendarEvents = toCalendarEvents(scheduledAppointments)

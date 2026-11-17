@@ -26,6 +26,31 @@ export function moveByPeriods(level: CalendarLevel, date: Date, periods: number)
 	}
 }
 
+export interface DateRange {
+	start: Date
+	end: Date
+}
+
+// Slutten er første øyeblikk etter perioden, så en dato er i perioden når start <= dato < slutt.
+export function getPeriodRange(level: CalendarLevel, date: Date): DateRange {
+	const year = date.getFullYear()
+	const month = date.getMonth()
+	const day = date.getDate()
+
+	switch (level) {
+		case "year":
+			return { start: new Date(year, 0, 1), end: new Date(year + 1, 0, 1) }
+		case "month":
+			return { start: new Date(year, month, 1), end: new Date(year, month + 1, 1) }
+		case "week": {
+			const daysSinceMonday = (date.getDay() + 6) % 7
+			return { start: new Date(year, month, day - daysSinceMonday), end: new Date(year, month, day - daysSinceMonday + 7) }
+		}
+		case "day":
+			return { start: new Date(year, month, day), end: new Date(year, month, day + 1) }
+	}
+}
+
 export function formatPeriodLabel(level: CalendarLevel, date: Date): string | undefined {
 	switch (level) {
 		case "year":

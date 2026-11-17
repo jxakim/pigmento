@@ -7,3 +7,5 @@ export const appointmentTypeColor: Record<AppointmentType, AppointmentColor> = {
 	Tatovering: "neutral",
 	"Touch-up": "warning"
 }
+
+export const appointmentTypes = Object.keys(appointmentTypeColor) as AppointmentType[]

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { ScheduledAppointment } from "#lib/sampleData.ts"
-import { findDayColor, toCalendarEvents } from "./calendarAppointments.ts"
+import { countByType, filterByPeriod, findDayColor, toCalendarEvents } from "./calendarAppointments.ts"
 
 const consultation: ScheduledAppointment = { clientName: "Mia Haugen", type: "Konsultasjon", start: "2026-11-05T10:00", end: "2026-11-05T11:00" }
 const tattoo: ScheduledAppointment = { clientName: "Jonas Berg", type: "Tatovering", start: "2026-11-05T12:30", end: "2026-11-05T16:30" }
@@ -31,5 +31,25 @@ describe("findDayColor", () => {
 
 	it("lets tattoos win over consultations on the same day", () => {
 		expect(findDayColor([consultation, tattoo], new Date(2026, 10, 5))).toBe("neutral")
+	})
+})
+
+describe("filterByPeriod", () => {
+	const appointments = [consultation, tattoo, touchUp]
+
+	it("keeps the appointments that start inside the period", () => {
+		expect(filterByPeriod(appointments, "day", new Date(2026, 10, 5))).toEqual([consultation, tattoo])
+		expect(filterByPeriod(appointments, "week", new Date(2026, 10, 8))).toEqual(appointments)
+	})
+
+	it("leaves out appointments in other months", () => {
+		expect(filterByPeriod(appointments, "month", new Date(2026, 9, 31))).toEqual([])
+	})
+})
+
+describe("countByType", () => {
+	it("counts every appointment type, also the ones without appointments", () => {
+		expect(countByType([consultation, tattoo, touchUp, tattoo])).toEqual({ Konsultasjon: 1, Tatovering: 2, "Touch-up": 1 })
+		expect(countByType([])).toEqual({ Konsultasjon: 0, Tatovering: 0, "Touch-up": 0 })
 	})
 })
