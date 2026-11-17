@@ -1,21 +1,17 @@
 <script lang="ts">
-	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 	import SidebarNavigation from "./SidebarNavigation.svelte"
 </script>
 
-<aside class="sidebar" data-color-scheme="dark" data-color="neutral">
-	<div class="header">
-		<div class="logo">
-			<img src="/logo.png" alt="" width="52" height="52" />
-			<span class="app-name">Pigmento</span>
-		</div>
-		<NotificationBell />
+<aside class="sidebar">
+	<div class="logo">
+		<img src="/logo.png" alt="" width="52" height="52" />
+		<span class="app-name">Pigmento</span>
 	</div>
 
 	<SidebarNavigation />
 
 	<div class="user">
-		<span class="user-name">Studio</span>
+		<span class="user-name">Studioet</span>
 		<span class="user-role">Innlogget som eier</span>
 	</div>
 </aside>
@@ -23,32 +19,24 @@
 <style>
 	.sidebar {
 		display: flex;
-		flex: 1 1 20rem;
+		flex: 1 1 14.375rem;
 		flex-direction: column;
-		gap: 0.625rem;
-		padding: 1rem 0.75rem;
-		background: var(--ds-color-neutral-background-default);
-		color: var(--ds-color-neutral-text-default);
+		gap: 2rem;
+		padding: 1.75rem 1rem;
+		background: var(--pg-sidebar);
+		color: #f1f3f2;
 	}
 
-	.header,
 	.logo {
 		display: flex;
 		align-items: center;
-	}
-
-	.header {
-		justify-content: space-between;
-		gap: 0.5rem;
-	}
-
-	.logo {
-		gap: 1rem;
-		padding: 1rem 0.5rem;
+		gap: 0.75rem;
+		padding: 0 0.5rem;
 	}
 
 	.logo img {
-		border-radius: 50%;
+		display: block;
+		border-radius: 0.75rem;
 		object-fit: cover;
 	}
 
@@ -56,25 +44,26 @@
 		font-family: var(--pg-font-heading);
 		font-size: 1.5rem;
 		font-weight: 700;
+		letter-spacing: -0.01em;
 	}
 
 	.user {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.125rem;
 		margin-top: auto;
-		padding: 0.8rem 0.5rem 0;
-		border-top: 0.0625rem solid var(--ds-color-neutral-border-subtle);
+		padding: 0.875rem 0.75rem;
+		border-top: 0.0625rem solid var(--pg-sidebar-line);
 	}
 
 	.user-name {
-		font-size: 0.8em;
+		font-size: 0.875rem;
 		font-weight: 600;
 	}
 
 	.user-role {
-		font-size: 0.7em;
-		color: var(--ds-color-neutral-text-subtle);
+		color: var(--pg-sidebar-muted);
+		font-size: 0.8125rem;
 	}
 
 	/* På mobil er navigasjonen flyttet til menyen nederst (se BottomNavigation.svelte). */

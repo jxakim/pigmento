@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from "#lib/components/Icon.svelte"
 	import { getUrgentNotifications } from "#lib/notifications.svelte.ts"
 
 	const urgentNotifications = $derived(getUrgentNotifications())
@@ -7,11 +8,10 @@
 </script>
 
 {#if urgentNotifications.length > 0}
-	<div class="ds-alert" data-color="accent" role="status">
-		<div class="banner">
-			<p class="ds-paragraph" data-size="sm"><strong>{headline}</strong> {summary}</p>
-			<a class="ds-link" href="/notifications" data-size="sm" data-color="neutral">Se varsler</a>
-		</div>
+	<div class="banner" role="status">
+		<Icon name="notifications" />
+		<p class="text"><strong>{headline}</strong> {summary}</p>
+		<a class="show-notifications" href="/notifications">Se varsler</a>
 	</div>
 {/if}
 
@@ -19,18 +19,40 @@
 	.banner {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.75rem;
+		padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+		border: 0.0625rem solid var(--pg-pink);
+		border-radius: 0.75rem;
+		background: var(--pg-pink-tint);
+		box-shadow: inset 0.25rem 0 0 var(--pg-pink-deep);
 	}
 
-	.banner p {
+	.text {
 		flex: 1;
 		min-width: 0;
 		overflow: hidden;
+		font-size: 0.875rem;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	.banner a {
-		flex-shrink: 0;
+	.show-notifications {
+		display: inline-flex;
+		align-items: center;
+		flex: none;
+		min-height: 2.75rem;
+		padding: 0 1rem;
+		border-radius: var(--pg-button-radius);
+		background: var(--pg-ink);
+		color: #ffffff;
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.show-notifications:hover {
+		background: var(--pg-pink-deep);
+		color: #ffffff;
 	}
 </style>

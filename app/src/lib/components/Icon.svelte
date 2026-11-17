@@ -14,7 +14,7 @@
 		display: inline-block;
 		flex: none;
 		font-family: "Material Symbols Outlined", sans-serif;
-		font-size: 1.3rem;
+		font-size: 1.25rem;
 		font-weight: normal;
 		line-height: 1;
 		white-space: nowrap;

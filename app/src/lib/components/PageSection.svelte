@@ -13,26 +13,45 @@
 
 <section class="page-section" aria-labelledby={id}>
 	<div class="page-section-header">
-		<h2 {id} class="ds-heading" data-size="sm">{title}</h2>
+		<h2 {id}>{title}</h2>
 		{#if link}
-			<a class="ds-link" href={link.href} data-size="sm" data-color="neutral">{link.label}</a>
+			<a class="section-link" href={link.href}>{link.label}</a>
 		{/if}
 	</div>
-	{@render children()}
+	<div class="page-section-content">
+		{@render children()}
+	</div>
 </section>
 
 <style>
-	.page-section {
+	.page-section,
+	.page-section-content {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.page-section {
 		gap: 0.875rem;
+	}
+
+	.page-section-content {
+		gap: 0.75rem;
 	}
 
 	.page-section-header {
 		display: flex;
-		flex-wrap: wrap;
 		justify-content: space-between;
 		align-items: baseline;
 		gap: 0.75rem;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+		font-weight: 700;
+	}
+
+	.section-link {
+		font-size: 0.875rem;
+		font-weight: 600;
 	}
 </style>

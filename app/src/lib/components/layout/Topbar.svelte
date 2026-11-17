@@ -32,7 +32,7 @@
 			gap: 0.5rem;
 			height: var(--pg-topbar-height);
 			padding: 0 1rem;
-			background: var(--ds-color-accent-background-tinted);
+			background: var(--pg-page);
 		}
 	}
 
