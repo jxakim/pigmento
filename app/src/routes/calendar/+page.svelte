@@ -41,46 +41,6 @@
 		)
 	}
 
-	function openDay(day: Date, dayElement: HTMLElement) {
-		changeLevel("day", day, dayElement)
-	}
-
-	function findTodaysMonthInYearView(today: Date): Element | undefined {
-		if (date.getFullYear() !== today.getFullYear()) {
-			return undefined
-		}
-		return viewContainer.querySelectorAll(".year-month")[today.getMonth()]
-	}
-
-	function findSelectedTodayInView(today: Date): Element | null {
-		return isSameDay(selectedDay, today) ? viewContainer.querySelector(".selected-day") : null
-	}
-
-	// År → måneden i dag er i, med dagen markert. Måned/uke → marker i dag, eller åpne dagen hvis den allerede er markert.
-	function goToToday() {
-		const today = new Date()
-
-		switch (level) {
-			case "year":
-				changeLevel("month", today, findTodaysMonthInYearView(today), today)
-				return
-			case "month":
-			case "week": {
-				const selectedToday = findSelectedTodayInView(today)
-				if (selectedToday) {
-					changeLevel("day", today, selectedToday)
-				} else {
-					date = today
-					selectedDay = today
-				}
-				return
-			}
-			case "day":
-				date = today
-				return
-		}
-	}
-
 	function selectLevel(newLevel: CalendarLevel) {
 		if (newLevel !== level) {
 			changeLevel(newLevel, date)
@@ -93,6 +53,44 @@
 			changeLevel(parent, date)
 		}
 	}
+
+	function selectOrOpenDay(day: Date, dayElement?: Element) {
+		if (isSameDay(selectedDay, day)) {
+			changeLevel("day", day, dayElement)
+		} else {
+			selectedDay = day
+		}
+	}
+
+	function findMonthInYearView(month: Date): Element | undefined {
+		if (date.getFullYear() !== month.getFullYear()) {
+			return undefined
+		}
+		return viewContainer.querySelectorAll(".year-month")[month.getMonth()]
+	}
+
+	// År: åpne måneden med dagen i dag markert. Måned og uke: marker i dag, eller åpne dagen hvis den allerede er markert.
+	function goToToday() {
+		const today = new Date()
+
+		switch (level) {
+			case "year":
+				changeLevel("month", today, findMonthInYearView(today), today)
+				return
+			case "month":
+			case "week":
+				if (isSameDay(selectedDay, today)) {
+					changeLevel("day", today, viewContainer.querySelector(".selected-day") ?? undefined)
+				} else {
+					date = today
+					selectedDay = today
+				}
+				return
+			case "day":
+				date = today
+				return
+		}
+	}
 </script>
 
 {#snippet topbarTitle()}
@@ -100,22 +98,18 @@
 {/snippet}
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} />
+	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onToday={goToToday} />
 
 	<div class="calendar-view" bind:this={viewContainer}>
 		{#if level === "year"}
 			<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
 		{:else if level === "month"}
-			<MonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={openDay} />
+			<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
 		{:else if level === "week"}
-			<WeekView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={openDay} />
+			<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
 		{:else}
 			<DayView {date} />
 		{/if}
-	</div>
-
-	<div class="calendar-actions" role="toolbar" aria-label="Handlinger">
-		<button type="button" class="ds-button" data-size="sm" data-variant="secondary" data-color="neutral" onclick={goToToday}>I dag</button>
 	</div>
 </div>
 
@@ -130,64 +124,5 @@
 	.calendar-view {
 		flex: 1;
 		min-height: 0;
-		view-transition-name: calendar;
-	}
-
-	.calendar-actions {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	:global(::view-transition-group(calendar)) {
-		animation: none;
-	}
-
-	:global(::view-transition-image-pair(calendar)) {
-		overflow: hidden;
-	}
-
-	:global(html[data-zoom]::view-transition-old(calendar)),
-	:global(html[data-zoom]::view-transition-new(calendar)) {
-		transform-origin: var(--zoom-origin);
-		animation-duration: 450ms;
-		animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-		animation-fill-mode: both;
-		mix-blend-mode: normal;
-	}
-
-	:global(html[data-zoom]::view-transition-old(calendar)) {
-		animation-name: zoom-old-view;
-	}
-
-	:global(html[data-zoom]::view-transition-new(calendar)) {
-		animation-name: zoom-new-view;
-	}
-
-	@keyframes -global-zoom-old-view {
-		0% {
-			transform: scale(1);
-			opacity: 1;
-		}
-		50% {
-			opacity: 0;
-		}
-		100% {
-			transform: scale(var(--zoom-old-view-scale));
-			opacity: 0;
-		}
-	}
-
-	@keyframes -global-zoom-new-view {
-		0% {
-			transform: scale(var(--zoom-new-view-scale));
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			transform: scale(1);
-			opacity: 1;
-		}
 	}
 </style>

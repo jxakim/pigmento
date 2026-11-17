@@ -1,16 +1,17 @@
 <script lang="ts">
 	import CalendarLevelSwitcher from "./CalendarLevelSwitcher.svelte"
 	import CalendarTitle from "./CalendarTitle.svelte"
-	import { type CalendarLevel, parentLevel } from "./calendarLevels"
+	import { type CalendarLevel, parentLevel } from "./calendarLevels.ts"
 
 	interface Props {
 		level: CalendarLevel
 		date: Date
 		onBack: () => void
 		onLevelChange: (level: CalendarLevel) => void
+		onToday: () => void
 	}
 
-	let { level, date, onBack, onLevelChange }: Props = $props()
+	let { level, date, onBack, onLevelChange, onToday }: Props = $props()
 
 	const hasParentLevel = $derived(parentLevel[level] !== undefined)
 </script>
@@ -25,8 +26,10 @@
 		</h1>
 	</div>
 
-	<div class="toolbar-levels">
-		<CalendarLevelSwitcher {level} {onLevelChange} />
+	<CalendarLevelSwitcher {level} {onLevelChange} />
+
+	<div class="toolbar-end">
+		<button type="button" class="ds-button" data-size="sm" data-variant="secondary" data-color="neutral" onclick={onToday}>I dag</button>
 	</div>
 </div>
 
@@ -39,15 +42,19 @@
 		gap: 1rem;
 	}
 
-	.toolbar-start {
+	.toolbar-start,
+	.toolbar-end {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 		min-width: 0;
-		overflow: hidden;
 	}
 
-	.toolbar-start .ds-button {
+	.toolbar-end {
+		justify-content: flex-end;
+	}
+
+	.toolbar .ds-button {
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
@@ -58,23 +65,16 @@
 		font-size: 1.5rem;
 	}
 
-	/* På mobil ligger tittelen i toppstripen ved hamburgermenyen (se +layout.svelte). */
+	/* På mobil ligger tittelen i toppstripen ved hamburgermenyen (se Topbar.svelte). */
 	@media (max-width: 57.5rem) {
 		.toolbar {
 			display: flex;
+			justify-content: space-between;
 			gap: 0.5rem;
-		}
-
-		.toolbar-start {
-			overflow: visible;
 		}
 
 		.toolbar-title {
 			display: none;
-		}
-
-		.toolbar-levels {
-			margin-inline: auto;
 		}
 	}
 </style>

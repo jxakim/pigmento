@@ -26,7 +26,14 @@
 		plugins: [classicThemePlugin, dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin],
 		locale: norwegianLocale,
 		height: "100%",
-		headerToolbar: false
+		headerToolbar: false,
+		selectable: true,
+		// Et klikk velger én dag, mens å dra musen over flere dager eller timer velger en periode.
+		selectMinDistance: 5,
+		slotMinTime: "07:00",
+		slotMaxTime: "21:00",
+		allDaySlot: false,
+		expandRows: true
 	}
 
 	$effect(() => {
@@ -53,12 +60,22 @@
 
 <style>
 	.full-calendar {
+		--fc-classic-today: var(--ds-color-neutral-background-tinted);
 		height: 100%;
 	}
 
+	.full-calendar :global(.selectable-day) {
+		cursor: pointer;
+		transition: background-color 0.15s ease;
+	}
+
+	.full-calendar :global(.selectable-day:hover),
 	.full-calendar :global(.selected-day) {
-		background: var(--ds-color-accent-surface-tinted);
-		box-shadow: inset 0 0 0 2px var(--ds-color-accent-border-default);
-		border-radius: 0.25rem;
+		background-color: var(--ds-color-neutral-surface-tinted);
+	}
+
+	.full-calendar :global(.selected-day) {
+		box-shadow: inset 0 0 0 0.125rem var(--ds-color-neutral-border-default);
+		border-radius: var(--ds-border-radius-sm);
 	}
 </style>

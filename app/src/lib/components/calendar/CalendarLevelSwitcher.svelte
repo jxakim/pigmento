@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type CalendarLevel, calendarLevels, levelLabels } from "./calendarLevels"
+	import { type CalendarLevel, calendarLevels, levelLabels } from "./calendarLevels.ts"
 
 	interface Props {
 		level: CalendarLevel

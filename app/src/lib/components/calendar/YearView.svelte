@@ -1,19 +1,5 @@
-<script lang="ts" module>
-	const columnsByWindowSize = new Map<string, number>()
-	const defaultColumns = 4
-
-	function getWindowSizeKey(): string {
-		return `${window.innerWidth}x${window.innerHeight}`
-	}
-
-	function getRememberedColumns(): number | undefined {
-		const isRunningInBrowser = typeof window !== "undefined"
-		return isRunningInBrowser ? columnsByWindowSize.get(getWindowSizeKey()) : undefined
-	}
-</script>
-
 <script lang="ts">
-	import type { Calendar, CalendarOptions, DatesSetInfo } from "fullcalendar"
+	import type { CalendarOptions, DatesSetInfo } from "fullcalendar"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
@@ -24,19 +10,14 @@
 	let { date, onOpenMonth }: Props = $props()
 
 	let container: HTMLDivElement
-	let calendar = $state<Calendar>()
 	let firstMonthOfYear = new Date()
-	let latestFitAttempt = 0
-	let shownColumns = getRememberedColumns() ?? defaultColumns
-	let isFindingColumns = $state(false)
-
-	const columnOptions = [1, 2, 3, 4, 6]
 
 	const options: CalendarOptions = {
 		initialView: "multiMonthYear",
+		borderless: true,
 		selectable: false,
 		singleMonthMinWidth: 40,
-		multiMonthMaxColumns: shownColumns,
+		multiMonthMaxColumns: 3,
 		singleMonthClass: "year-month",
 		singleMonthHeaderClass: "year-month-title",
 		fixedWeekCount: false,
@@ -46,10 +27,7 @@
 
 	function handleDatesSet({ view }: DatesSetInfo) {
 		firstMonthOfYear = view.currentStart
-		requestAnimationFrame(() => {
-			makeMonthsAccessible()
-			fitAllMonthsInView()
-		})
+		requestAnimationFrame(makeMonthsAccessible)
 	}
 
 	function getMonthElements(): HTMLElement[] {
@@ -84,91 +62,11 @@
 			openClickedMonth(event)
 		}
 	}
-
-	function isScrollable(element: Element): boolean {
-		return ["auto", "scroll"].includes(getComputedStyle(element).overflowY)
-	}
-
-	function findMonthScroller(): Element | undefined {
-		let element = container.querySelector(".year-month")?.parentElement
-		while (element && element !== container) {
-			if (isScrollable(element)) {
-				return element
-			}
-			element = element.parentElement
-		}
-		return undefined
-	}
-
-	function hasScrollbar(): boolean {
-		const scroller = findMonthScroller()
-		return scroller !== undefined && scroller.scrollHeight > scroller.clientHeight + 1
-	}
-
-	function waitForRender(): Promise<void> {
-		return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
-	}
-
-	async function showColumns(columns: number) {
-		shownColumns = columns
-		calendar?.setOption("multiMonthMaxColumns", columns)
-		await waitForRender()
-	}
-
-	async function fitAllMonthsInView() {
-		const rememberedColumns = getRememberedColumns()
-		if (rememberedColumns === undefined) {
-			await findColumnsThatFit()
-		} else if (rememberedColumns !== shownColumns) {
-			await showColumns(rememberedColumns)
-		}
-	}
-
-	// Prøver seg frem (skjult): flere kolonner til alt får plass, deretter færre så lenge alt fortsatt får plass.
-	async function findColumnsThatFit() {
-		const fitAttempt = ++latestFitAttempt
-		const isOutdated = () => fitAttempt !== latestFitAttempt
-		const windowSizeKey = getWindowSizeKey()
-		let index = columnOptions.indexOf(shownColumns)
-		isFindingColumns = true
-
-		while (hasScrollbar() && index < columnOptions.length - 1) {
-			index++
-			await showColumns(columnOptions[index])
-			if (isOutdated()) {
-				return
-			}
-		}
-
-		while (!hasScrollbar() && index > 0) {
-			await showColumns(columnOptions[index - 1])
-			if (isOutdated()) {
-				return
-			}
-			if (hasScrollbar()) {
-				await showColumns(columnOptions[index])
-				break
-			}
-			index--
-		}
-
-		columnsByWindowSize.set(windowSizeKey, columnOptions[index])
-		isFindingColumns = false
-	}
-
-	$effect(() => {
-		if (!calendar) {
-			return
-		}
-		const resizeObserver = new ResizeObserver(fitAllMonthsInView)
-		resizeObserver.observe(container)
-		return () => resizeObserver.disconnect()
-	})
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions (månedene inni har role="button") -->
-<div class="year-view" class:is-finding-columns={isFindingColumns} bind:this={container} onclick={openClickedMonth} onkeydown={openMonthOnEnterOrSpace}>
-	<FullCalendar {options} {date} bind:calendar />
+<div class="year-view" bind:this={container} onclick={openClickedMonth} onkeydown={openMonthOnEnterOrSpace}>
+	<FullCalendar {options} {date} />
 </div>
 
 <style>
@@ -176,27 +74,51 @@
 		height: 100%;
 	}
 
-	.year-view.is-finding-columns :global(.year-month) {
-		visibility: hidden;
+	/* Hele året vises som et rutenett på 3 x 4 måneder som fyller visningen, uten scrolling. */
+	.year-view :global(:has(> * > .year-month)) {
+		display: grid !important;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-auto-rows: minmax(0, 1fr);
+		gap: 1rem 2rem;
+		height: 100%;
+	}
+
+	.year-view :global(:has(> .year-month)) {
+		width: auto !important;
 	}
 
 	.year-view :global(.year-month) {
-		container-type: inline-size;
-		margin: 0.25rem 0.25rem 0;
-		padding: 0.5rem;
+		container-type: size;
+		height: 100%;
+		margin: 0;
+		padding: 0.75rem;
+		border-radius: var(--ds-border-radius-lg);
 		cursor: pointer;
-		border-radius: 0.5rem;
 		transition: background-color 0.15s ease;
 	}
 
-	/* Teksten skaleres med månedens bredde (cqi), så tosifrede datoer alltid får plass i rutene sine. */
+	/* Tekststørrelsen følger månedens høyde (cqh) og bredde (cqi), og den minste vinner. */
 	.year-view :global(.year-month *) {
 		pointer-events: none;
 		margin: 0;
 		padding: 0;
-		font-size: clamp(0.5rem, 9.5cqi, 1rem);
-		line-height: 1.15;
+		border: none;
+		font-size: clamp(0.5rem, min(8.5cqh, 9.5cqi), 1.125rem);
+		line-height: 1.3;
 		background: none;
+	}
+
+	/* FullCalendar gir månedene fast størrelsesforhold og radhøyde. Disse overstyres så høyden følger teksten. */
+	.year-view :global(.year-month [style*="aspect-ratio"]) {
+		aspect-ratio: auto !important;
+	}
+
+	.year-view :global(.year-month [style*="aspect-ratio"] > :first-child) {
+		position: static !important;
+	}
+
+	.year-view :global(.year-month [style*="flex-basis"]) {
+		flex-basis: auto !important;
 	}
 
 	.year-view :global(.year-day),
@@ -207,46 +129,40 @@
 
 	.year-view :global(.year-month-title),
 	.year-view :global(.year-month-title *) {
-		padding-bottom: 0.125rem;
-		font-size: clamp(0.8rem, 14cqi, 1.2rem);
-		line-height: 1.3;
+		padding-bottom: 0.25em;
+		font-size: clamp(0.6rem, min(10cqh, 12cqi), 1.3rem);
+		font-weight: 600;
+		text-transform: capitalize;
 	}
 
-	@media (max-width: 57.5rem) {
-		.year-view :global(.year-month) {
-			margin: 0.25rem 0.25rem 0;
-			padding: 0.375rem;
-		}
-
-		.year-view :global(.year-month *) {
-			border: none;
-		}
-	}
-
-	@media (max-width: 23rem) {
-		.year-view :global(.year-month) {
-			margin: 0.125rem 0.125rem 0;
-			padding: 0.25rem;
-		}
-
-		.year-view :global(.year-month-title),
-		.year-view :global(.year-month-title *) {
-			padding-bottom: 0;
-		}
-	}
-
-	.year-view :global(.year-today) {
-		background: var(--ds-color-accent-surface-tinted);
-		border-radius: 0.25rem;
-		font-weight: 700;
+	.year-view :global(.year-month [role="columnheader"]),
+	.year-view :global(.year-month [role="columnheader"] *) {
+		color: var(--ds-color-neutral-text-subtle);
 	}
 
 	.year-view :global(.year-month:hover) {
-		background-color: var(--ds-color-accent-surface-tinted);
+		background-color: var(--ds-color-neutral-surface-tinted);
+	}
+
+	.year-view :global(.year-today) {
+		border-radius: var(--ds-border-radius-sm);
+		background-color: var(--ds-color-neutral-base-default);
+		color: var(--ds-color-neutral-base-contrast-default);
+		font-weight: 700;
 	}
 
 	.year-view :global(.year-month:focus-visible) {
-		outline: 0.125rem solid var(--ds-color-accent-border-default);
+		outline: 0.125rem solid var(--ds-color-neutral-border-default);
 		outline-offset: 0.125rem;
+	}
+
+	@media (max-width: 57.5rem) {
+		.year-view :global(:has(> * > .year-month)) {
+			gap: 0.5rem;
+		}
+
+		.year-view :global(.year-month) {
+			padding: 0.25rem;
+		}
 	}
 </style>

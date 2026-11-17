@@ -1,8 +1,15 @@
+import "./zoomTransition.css"
+
 export type ZoomDirection = "in" | "out"
 
 interface Point {
 	x: number
 	y: number
+}
+
+interface Zoom {
+	origin: Point
+	scale: number
 }
 
 const minZoomScale = 1.5
@@ -23,19 +30,21 @@ export async function animateZoom(container: HTMLElement, changeView: () => Prom
 	root.style.setProperty("--zoom-old-view-scale", String(direction === "in" ? scale : 1 / scale))
 	root.style.setProperty("--zoom-new-view-scale", String(direction === "in" ? 1 / scale : scale))
 	root.dataset.zoom = direction
+	container.style.viewTransitionName = "zoom-view"
 
 	await document.startViewTransition(changeView).finished.finally(() => {
 		delete root.dataset.zoom
+		container.style.viewTransitionName = ""
 	})
 }
 
-function zoomFromCenter(container: HTMLElement): { origin: Point; scale: number } {
+function zoomFromCenter(container: HTMLElement): Zoom {
 	const { width, height } = container.getBoundingClientRect()
 	return { origin: { x: width / 2, y: height / 2 }, scale: zoomOutScale }
 }
 
 // Finner punktet vi må skalere rundt for at målet havner midt i containeren etter zoomen.
-function zoomTowardsTarget(container: HTMLElement, target: Element): { origin: Point; scale: number } {
+function zoomTowardsTarget(container: HTMLElement, target: Element): Zoom {
 	const containerBox = container.getBoundingClientRect()
 	const targetBox = target.getBoundingClientRect()
 

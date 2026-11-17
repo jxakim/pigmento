@@ -1,4 +1,4 @@
-import type { CalendarLevel } from "./calendarLevels"
+import type { CalendarLevel } from "./calendarLevels.ts"
 
 export function isSameDay(first: Date | undefined, second: Date): boolean {
 	return first?.toDateString() === second.toDateString()

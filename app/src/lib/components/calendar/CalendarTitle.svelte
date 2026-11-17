@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatPeriodLabel } from "./calendarDates"
-	import type { CalendarLevel } from "./calendarLevels"
+	import { formatPeriodLabel } from "./calendarDates.ts"
+	import type { CalendarLevel } from "./calendarLevels.ts"
 
 	interface Props {
 		level: CalendarLevel
