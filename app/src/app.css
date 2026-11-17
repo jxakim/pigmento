@@ -23,8 +23,12 @@
 body {
 	margin: 0;
 	font-family: var(--ds-font-family), system-ui, sans-serif;
-	background: var(--ds-color-neutral-background-default);
+	background: var(--ds-color-accent-background-tinted);
 	color: var(--ds-color-neutral-text-default);
+}
+
+.ds-card {
+	--dsc-card-border-color: var(--ds-color-accent-surface-hover);
 }
 
 h1,

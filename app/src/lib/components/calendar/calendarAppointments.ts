@@ -4,19 +4,21 @@ import { type AppointmentType, type ScheduledAppointment, scheduledAppointments 
 import { getPeriodRange, isSameDay } from "./calendarDates.ts"
 import type { CalendarLevel } from "./calendarLevels.ts"
 
+const eventColors: Record<AppointmentColor, { color: string; contrastColor: string }> = {
+	info: { color: "var(--ds-color-info-surface-tinted)", contrastColor: "var(--ds-color-info-text-default)" },
+	neutral: { color: "var(--ds-color-neutral-base-default)", contrastColor: "var(--ds-color-neutral-base-contrast-default)" },
+	warning: { color: "var(--ds-color-warning-surface-tinted)", contrastColor: "var(--ds-color-warning-text-default)" }
+}
+
 const colorsByImportance: AppointmentColor[] = ["neutral", "info", "warning"]
 
 export function toCalendarEvents(appointments: ScheduledAppointment[]): EventInput[] {
-	return appointments.map(({ clientName, type, start, end }) => {
-		const typeColor = appointmentTypeColor[type]
-		return {
-			title: clientName,
-			start,
-			end,
-			color: `var(--ds-color-${typeColor}-base-default)`,
-			contrastColor: `var(--ds-color-${typeColor}-base-contrast-default)`
-		}
-	})
+	return appointments.map(({ clientName, type, start, end }) => ({
+		title: clientName,
+		start,
+		end,
+		...eventColors[appointmentTypeColor[type]]
+	}))
 }
 
 export function findDayColor(appointments: ScheduledAppointment[], day: Date): AppointmentColor | undefined {

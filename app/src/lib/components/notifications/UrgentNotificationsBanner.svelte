@@ -7,7 +7,7 @@
 </script>
 
 {#if urgentNotifications.length > 0}
-	<div class="ds-alert" data-color="warning" role="status">
+	<div class="ds-alert" data-color="accent" role="status">
 		<div class="banner">
 			<p class="ds-paragraph" data-size="sm"><strong>{headline}</strong> {summary}</p>
 			<a class="ds-link" href="/notifications" data-size="sm" data-color="neutral">Se varsler</a>

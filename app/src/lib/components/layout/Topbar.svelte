@@ -8,7 +8,7 @@
 	let { end }: Props = $props()
 </script>
 
-<header class="topbar" data-color-scheme="dark" data-color="neutral">
+<header class="topbar">
 	<span class="app-name">Pigmento</span>
 	{#if end}
 		<div class="end">
@@ -32,8 +32,7 @@
 			gap: 0.5rem;
 			height: var(--pg-topbar-height);
 			padding: 0 1rem;
-			background: var(--ds-color-neutral-background-default);
-			color: var(--ds-color-neutral-text-default);
+			background: var(--ds-color-accent-background-tinted);
 		}
 	}
 

@@ -10,10 +10,13 @@
 		{#each navigationItems as item (item.href)}
 			<li>
 				<a class="navigation-link" href={item.href} aria-current={isCurrentPage(item.href) ? "page" : undefined}>
+					{#if isCurrentPage(item.href)}
+						<span class="current-indicator" data-color-scheme="light" data-color="accent"></span>
+					{/if}
 					<Icon name={item.icon} />
 					<span class="label">{item.label}</span>
 					{#if item.badgeCount}
-						<span class="ds-badge" data-color="neutral" data-count={formatBadgeCount(item.badgeCount)}></span>
+						<span class="ds-badge" data-color-scheme="light" data-color="accent" data-count={formatBadgeCount(item.badgeCount)}></span>
 					{/if}
 				</a>
 			</li>
@@ -32,6 +35,7 @@
 	}
 
 	.navigation-link {
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -49,8 +53,12 @@
 		color: var(--ds-color-neutral-text-default);
 	}
 
-	.navigation-link[aria-current="page"] {
-		box-shadow: inset 0.1875rem 0 0 var(--ds-color-neutral-border-strong);
+	.current-indicator {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 0.1875rem;
+		background: var(--ds-color-base-default);
 	}
 
 	.label {

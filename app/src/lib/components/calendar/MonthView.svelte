@@ -17,6 +17,7 @@
 	const options: CalendarOptions = {
 		initialView: "dayGridMonth",
 		events: calendarEvents,
+		eventDisplay: "block",
 		fixedWeekCount: false,
 		dayMaxEvents: true,
 		dateClick: ({ date: day, dayEl }) => onDayClick(day, dayEl)

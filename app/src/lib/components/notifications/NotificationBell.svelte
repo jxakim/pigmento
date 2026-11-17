@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
 	import { getOpenNotifications } from "#lib/notifications.svelte.ts"
-	import { urgencyColor } from "#lib/notificationUrgency.ts"
+	import { urgencyBarColor } from "#lib/notificationUrgency.ts"
 
 	const maxShownNotifications = 4
 	const popoverId = $props.id()
@@ -14,7 +14,7 @@
 	<span class="ds-badge--position" data-placement="top-right">
 		<Icon name="notifications" />
 		{#if openNotifications.length > 0}
-			<span class="ds-badge" data-color="danger" data-count={openNotifications.length}></span>
+			<span class="ds-badge" data-color-scheme="light" data-color="accent" data-count={openNotifications.length}></span>
 		{/if}
 	</span>
 </button>
@@ -29,7 +29,7 @@
 		{#each shownNotifications as notification (notification.id)}
 			<li>
 				<a class="notification-link" href="/notifications">
-					<span class="urgency-bar" data-color={urgencyColor[notification.urgency]}></span>
+					<span class="urgency-bar" style:background={urgencyBarColor[notification.urgency]}></span>
 					<span class="text">
 						<span class="title">{notification.title}</span>
 						<span class="due-label">{notification.dueLabel}</span>
@@ -76,13 +76,12 @@
 	}
 
 	.notification-link:hover {
-		background: var(--ds-color-neutral-surface-tinted);
+		background: var(--ds-color-accent-surface-tinted);
 	}
 
 	.urgency-bar {
 		width: 0.25rem;
 		border-radius: 62.5rem;
-		background: var(--ds-color-base-default);
 	}
 
 	.text {

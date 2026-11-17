@@ -34,7 +34,7 @@
 
 	<div class="filters" role="group" aria-label="Filtrer varsler">
 		{#each notificationFilters as filter (filter)}
-			<label class="ds-chip" data-color="neutral">
+			<label class="ds-chip" data-color="accent">
 				<input type="radio" class="ds-input" name="notification-filter" value={filter} bind:group={selectedFilter} />
 				{filterLabels[filter]}
 				{countOpen(filter)}

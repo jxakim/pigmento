@@ -60,7 +60,7 @@
 
 <style>
 	.full-calendar {
-		--fc-classic-today: var(--ds-color-neutral-background-tinted);
+		--fc-classic-today: var(--ds-color-accent-background-tinted);
 		height: 100%;
 	}
 
@@ -71,11 +71,11 @@
 
 	.full-calendar :global(.selectable-day:hover),
 	.full-calendar :global(.selected-day) {
-		background-color: var(--ds-color-neutral-surface-tinted);
+		background-color: var(--ds-color-accent-surface-tinted);
 	}
 
 	.full-calendar :global(.selected-day) {
-		box-shadow: inset 0 0 0 0.125rem var(--ds-color-neutral-border-default);
+		box-shadow: inset 0 0 0 0.125rem var(--ds-color-accent-border-subtle);
 		border-radius: var(--ds-border-radius-sm);
 	}
 </style>
