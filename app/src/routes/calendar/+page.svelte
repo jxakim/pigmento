@@ -2,7 +2,7 @@
 	import { tick } from "svelte"
 	import CalendarTitle from "#lib/components/calendar/CalendarTitle.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
-	import { isSameDay } from "#lib/components/calendar/calendarDates.ts"
+	import { isSameDay, moveByPeriods } from "#lib/components/calendar/calendarDates.ts"
 	import { type CalendarLevel, isZoomingIn, parentLevel } from "#lib/components/calendar/calendarLevels.ts"
 	import DayView from "#lib/components/calendar/DayView.svelte"
 	import MonthView from "#lib/components/calendar/MonthView.svelte"
@@ -42,9 +42,12 @@
 	}
 
 	function selectLevel(newLevel: CalendarLevel) {
-		if (newLevel !== level) {
-			changeLevel(newLevel, date)
-		}
+		changeLevel(newLevel, selectedDay ?? date, undefined, selectedDay)
+	}
+
+	function moveToPeriod(periods: number) {
+		date = moveByPeriods(level, date, periods)
+		selectedDay = undefined
 	}
 
 	function goToParentLevel() {
@@ -98,7 +101,7 @@
 {/snippet}
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onToday={goToToday} />
+	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
 
 	<div class="calendar-view" bind:this={viewContainer}>
 		{#if level === "year"}

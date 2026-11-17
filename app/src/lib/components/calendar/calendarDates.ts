@@ -4,6 +4,23 @@ export function isSameDay(first: Date | undefined, second: Date): boolean {
 	return first?.toDateString() === second.toDateString()
 }
 
+export function moveByPeriods(level: CalendarLevel, date: Date, periods: number): Date {
+	const year = date.getFullYear()
+	const month = date.getMonth()
+	const day = date.getDate()
+
+	switch (level) {
+		case "year":
+			return new Date(year + periods, month, 1)
+		case "month":
+			return new Date(year, month + periods, 1)
+		case "week":
+			return new Date(year, month, day + 7 * periods)
+		case "day":
+			return new Date(year, month, day + periods)
+	}
+}
+
 export function formatPeriodLabel(level: CalendarLevel, date: Date): string | undefined {
 	switch (level) {
 		case "year":

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { formatPeriodLabel, isSameDay } from "./calendarDates.ts"
+import { formatPeriodLabel, isSameDay, moveByPeriods } from "./calendarDates.ts"
 
 describe("isSameDay", () => {
 	it("ignores the time of day", () => {
@@ -9,6 +9,22 @@ describe("isSameDay", () => {
 	it("is false for different days or no day", () => {
 		expect(isSameDay(new Date(2026, 10, 16), new Date(2026, 10, 17))).toBe(false)
 		expect(isSameDay(undefined, new Date(2026, 10, 16))).toBe(false)
+	})
+})
+
+describe("moveByPeriods", () => {
+	const january31 = new Date(2026, 0, 31)
+
+	it("moves years and months to the first day, so short months are never skipped", () => {
+		expect(moveByPeriods("year", january31, 1)).toEqual(new Date(2027, 0, 1))
+		expect(moveByPeriods("month", january31, 1)).toEqual(new Date(2026, 1, 1))
+		expect(moveByPeriods("month", january31, -1)).toEqual(new Date(2025, 11, 1))
+	})
+
+	it("moves weeks and days across month boundaries", () => {
+		expect(moveByPeriods("week", january31, 1)).toEqual(new Date(2026, 1, 7))
+		expect(moveByPeriods("day", january31, 1)).toEqual(new Date(2026, 1, 1))
+		expect(moveByPeriods("day", january31, -1)).toEqual(new Date(2026, 0, 30))
 	})
 })
 
