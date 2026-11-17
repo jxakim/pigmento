@@ -42,6 +42,7 @@ export interface AppNotification {
 	title: string
 	description: string
 	dueLabel: string
+	date?: string
 	actionLabel: string
 	actionHref: string
 }
@@ -125,6 +126,7 @@ export const notifications: AppNotification[] = [
 		title: "Kasper Aas mangler depositum",
 		description: "Tatovering i morgen kl. 11:00 · kr 1 000",
 		dueLabel: "I morgen",
+		date: "2026-11-06",
 		actionLabel: "Åpne kalenderen",
 		actionHref: "/calendar"
 	},
@@ -135,6 +137,7 @@ export const notifications: AppNotification[] = [
 		title: "Lise Strand mangler depositum",
 		description: "Tatovering tirsdag 10. november kl. 12:00 · kr 1 500",
 		dueLabel: "Om 5 dager",
+		date: "2026-11-10",
 		actionLabel: "Åpne kalenderen",
 		actionHref: "/calendar"
 	},
@@ -155,6 +158,7 @@ export const notifications: AppNotification[] = [
 		title: "I morgen: 2 timer",
 		description: "11:00 Kasper Aas (tatovering) · 15:00 Ida Moe (konsultasjon)",
 		dueLabel: "I morgen",
+		date: "2026-11-06",
 		actionLabel: "Åpne kalenderen",
 		actionHref: "/calendar"
 	},
@@ -165,6 +169,7 @@ export const notifications: AppNotification[] = [
 		title: "Send etterstell til Jonas Berg",
 		description: "Økt 2 av 3 i dag. Husk å følge opp om to uker.",
 		dueLabel: "I kveld",
+		date: "2026-11-05",
 		actionLabel: "Åpne kalenderen",
 		actionHref: "/calendar"
 	},
@@ -175,6 +180,7 @@ export const notifications: AppNotification[] = [
 		title: "Bestille nåler og farger",
 		description: "Egen påminnelse fra ukenotatet",
 		dueLabel: "Fredag",
+		date: "2026-11-06",
 		actionLabel: "Åpne kalenderen",
 		actionHref: "/calendar"
 	}

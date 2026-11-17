@@ -64,6 +64,13 @@
 		height: 100%;
 	}
 
+	.full-calendar :global(.notification-day) {
+		background-image: radial-gradient(circle, var(--ds-color-accent-border-strong) 0.25rem, transparent 0.25rem);
+		background-position: 0.375rem 0.375rem;
+		background-repeat: no-repeat;
+		background-size: 0.5rem 0.5rem;
+	}
+
 	.full-calendar :global(.selectable-day) {
 		cursor: pointer;
 		transition: background-color 0.15s ease;
