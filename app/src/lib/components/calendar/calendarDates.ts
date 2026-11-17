@@ -26,6 +26,31 @@ export function moveByPeriods(level: CalendarLevel, date: Date, periods: number)
 	}
 }
 
+export interface DateRange {
+	start: Date
+	end: Date
+}
+
+// Slutten er første øyeblikk etter perioden, så en dato er i perioden når start <= dato < slutt.
+export function getPeriodRange(level: CalendarLevel, date: Date): DateRange {
+	const year = date.getFullYear()
+	const month = date.getMonth()
+	const day = date.getDate()
+
+	switch (level) {
+		case "year":
+			return { start: new Date(year, 0, 1), end: new Date(year + 1, 0, 1) }
+		case "month":
+			return { start: new Date(year, month, 1), end: new Date(year, month + 1, 1) }
+		case "week": {
+			const daysSinceMonday = (date.getDay() + 6) % 7
+			return { start: new Date(year, month, day - daysSinceMonday), end: new Date(year, month, day - daysSinceMonday + 7) }
+		}
+		case "day":
+			return { start: new Date(year, month, day), end: new Date(year, month, day + 1) }
+	}
+}
+
 export function formatPeriodLabel(level: CalendarLevel, date: Date): string | undefined {
 	switch (level) {
 		case "year":
@@ -37,6 +62,21 @@ export function formatPeriodLabel(level: CalendarLevel, date: Date): string | un
 		case "day":
 			return date.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })
 	}
+}
+
+export function formatPeriodName(level: CalendarLevel, date: Date): string {
+	return (formatPeriodLabel(level, date) ?? String(date.getFullYear())).toLowerCase()
+}
+
+// Samme nøkkel for alle datoer i samme periode, så notatet finnes igjen uansett hvilken dag i uken man står på.
+export function getPeriodKey(level: CalendarLevel, date: Date): string {
+	return `${level}:${formatIsoDate(getPeriodRange(level, date).start)}`
+}
+
+function formatIsoDate(date: Date): string {
+	const month = String(date.getMonth() + 1).padStart(2, "0")
+	const day = String(date.getDate()).padStart(2, "0")
+	return `${date.getFullYear()}-${month}-${day}`
 }
 
 // ISO 8601: uke 1 er uken som inneholder årets første torsdag.

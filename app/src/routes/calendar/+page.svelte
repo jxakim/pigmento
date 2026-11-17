@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { tick } from "svelte"
+	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
+	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
 	import CalendarTitle from "#lib/components/calendar/CalendarTitle.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
+	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
 	import { isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import { type CalendarLevel, isZoomingIn, parentLevel } from "#lib/components/calendar/calendarLevels.ts"
 	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
@@ -11,6 +14,7 @@
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
 	import { longPress } from "#lib/longPress.ts"
+	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { getTopbarContent } from "#lib/topbarContent.ts"
 
 	let level = $state<CalendarLevel>("year")
@@ -18,6 +22,8 @@
 	let selectedDay = $state<Date>()
 	let dayMenu = $state<{ day: Date; position: { x: number; y: number } }>()
 	let viewContainer: HTMLDivElement
+
+	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
 
 	const topbarContent = getTopbarContent()
 
@@ -136,17 +142,27 @@
 <div class="calendar-page">
 	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
 
-	<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
-	<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
-		{#if level === "year"}
-			<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
-		{:else if level === "month"}
-			<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
-		{:else if level === "week"}
-			<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
-		{:else}
-			<DayView {date} />
-		{/if}
+	<div class="calendar-body">
+		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
+		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
+			{#if level === "year"}
+				<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
+			{:else if level === "month"}
+				<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+			{:else if level === "week"}
+				<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+			{:else}
+				<DayView {date} />
+			{/if}
+		</div>
+
+		<div class="calendar-distribution">
+			<CalendarDistribution appointments={periodAppointments} />
+		</div>
+
+		<div class="calendar-notes">
+			<CalendarNotes {level} {date} />
+		</div>
 	</div>
 
 	{#if dayMenu}
@@ -162,11 +178,42 @@
 		height: calc(100dvh - var(--pg-layout-reserved-height));
 	}
 
+	.calendar-body {
+		display: grid;
+		flex: 1;
+		grid-template-columns: minmax(0, 1fr) 17rem;
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-areas:
+			"view distribution"
+			"view notes";
+		gap: 1rem;
+		min-height: 0;
+	}
+
 	/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
 	.calendar-view {
-		flex: 1;
-		min-height: 0;
+		grid-area: view;
 		-webkit-touch-callout: none;
 		user-select: none;
+	}
+
+	.calendar-distribution {
+		grid-area: distribution;
+	}
+
+	.calendar-notes {
+		grid-area: notes;
+	}
+
+	@media (max-width: 57.5rem) {
+		.calendar-body {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(0, 1fr) auto;
+			grid-template-areas:
+				"distribution"
+				"view"
+				"notes";
+			gap: 0.75rem;
+		}
 	}
 </style>
