@@ -5,56 +5,119 @@
 	const aftercareDayOptions = [7, 14, 28]
 </script>
 
-<section class="ds-card settings" data-color="neutral" aria-labelledby="notification-settings-title">
-	<h2 id="notification-settings-title" class="ds-heading" data-size="2xs">Når skal jeg varsle deg?</h2>
+<section class="settings" aria-labelledby="notification-settings-title">
+	<h2 id="notification-settings-title">Når skal jeg varsle deg?</h2>
 
-	<ds-field class="ds-field">
-		<label for="inquiry-wait-days">Forespørsel uten svar</label>
-		<p data-field="description">Varsle etter</p>
-		<select id="inquiry-wait-days" class="ds-input" bind:value={notificationSettings.inquiryWaitDays}>
+	<div class="setting">
+		<label class="setting-text" for="inquiry-wait-days">
+			<span class="setting-label">Forespørsel uten svar</span>
+			<span class="setting-help">Varsle etter</span>
+		</label>
+		<select id="inquiry-wait-days" class="setting-select" bind:value={notificationSettings.inquiryWaitDays}>
 			{#each shortDayOptions as days (days)}
 				<option value={days}>{formatDayCount(days)}</option>
 			{/each}
 		</select>
-	</ds-field>
+	</div>
 
-	<ds-field class="ds-field">
-		<label for="deposit-lead-days">Depositum mangler</label>
-		<p data-field="description">Varsle før timen</p>
-		<select id="deposit-lead-days" class="ds-input" bind:value={notificationSettings.depositLeadDays}>
+	<div class="setting">
+		<label class="setting-text" for="deposit-lead-days">
+			<span class="setting-label">Depositum mangler</span>
+			<span class="setting-help">Varsle før timen</span>
+		</label>
+		<select id="deposit-lead-days" class="setting-select" bind:value={notificationSettings.depositLeadDays}>
 			{#each shortDayOptions as days (days)}
 				<option value={days}>{formatDayCount(days)}</option>
 			{/each}
 		</select>
-	</ds-field>
+	</div>
 
-	<ds-field class="ds-field">
-		<label for="aftercare-days">Oppfølging etter tatovering</label>
-		<p data-field="description">Minn meg om etterstell etter</p>
-		<select id="aftercare-days" class="ds-input" bind:value={notificationSettings.aftercareDays}>
+	<div class="setting">
+		<label class="setting-text" for="aftercare-days">
+			<span class="setting-label">Oppfølging etter tatovering</span>
+			<span class="setting-help">Minn meg om etterstell etter</span>
+		</label>
+		<select id="aftercare-days" class="setting-select" bind:value={notificationSettings.aftercareDays}>
 			{#each aftercareDayOptions as days (days)}
 				<option value={days}>{formatDayCount(days)}</option>
 			{/each}
 		</select>
-	</ds-field>
+	</div>
 
-	<ds-field class="ds-field">
-		<input id="evening-summary" type="checkbox" role="switch" class="ds-input" bind:checked={notificationSettings.sendEveningSummary} />
-		<label for="evening-summary">Kveldsoppsummering</label>
-		<p data-field="description">Morgendagens timer kl. 18:00</p>
-	</ds-field>
+	<div class="setting">
+		<label class="setting-text" for="evening-summary">
+			<span class="setting-label">Kveldsoppsummering</span>
+			<span class="setting-help">Morgendagens timer kl. 18:00</span>
+		</label>
+		<input id="evening-summary" class="setting-switch" type="checkbox" bind:checked={notificationSettings.sendEveningSummary} />
+	</div>
 
-	<ds-field class="ds-field">
-		<input id="push-notifications" type="checkbox" role="switch" class="ds-input" disabled />
-		<label for="push-notifications">Push på mobilen</label>
-		<p data-field="description">Kommer i en senere versjon</p>
-	</ds-field>
+	<div class="setting is-unavailable">
+		<label class="setting-text" for="push-notifications">
+			<span class="setting-label">Push på mobilen</span>
+			<span class="setting-help">Kommer i en senere versjon</span>
+		</label>
+		<input id="push-notifications" class="setting-switch" type="checkbox" disabled />
+	</div>
 </section>
 
 <style>
 	.settings {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
+		gap: 1.125rem;
+		padding: 1.25rem;
+		border: 0.0625rem solid var(--pg-card-border);
+		border-radius: var(--pg-card-radius);
+		background: var(--pg-card);
+	}
+
+	h2 {
+		font-size: 1.125rem;
+		font-weight: 700;
+	}
+
+	.setting {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.is-unavailable {
+		opacity: 0.6;
+	}
+
+	.setting-text {
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+	}
+
+	.setting-label {
+		font-size: 0.875rem;
+		font-weight: 600;
+	}
+
+	.setting-help {
+		color: var(--pg-ink-muted);
+		font-size: 0.75rem;
+	}
+
+	.setting-select {
+		min-height: 2.5rem;
+		padding: 0 0.625rem;
+		border: 0.0625rem solid var(--pg-button-border);
+		border-radius: var(--pg-button-radius);
+		background: var(--pg-card);
+		color: var(--pg-ink);
+		font-family: var(--pg-font-body);
+		font-size: 0.875rem;
+	}
+
+	.setting-switch {
+		width: 1.25rem;
+		height: 1.25rem;
+		accent-color: var(--pg-pink-deep);
 	}
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
 	import { getOpenNotifications } from "#lib/notifications.svelte.ts"
-	import { urgencyBarColor } from "#lib/notificationUrgency.ts"
+	import { urgencyColor } from "#lib/notificationUrgency.ts"
 
 	const maxShownNotifications = 4
 	const popoverId = $props.id()
@@ -46,7 +46,7 @@
 				{#each shownNotifications as notification (notification.id)}
 					<li>
 						<a class="notification-link" href="/notifications">
-							<span class="urgency-bar" style:background={urgencyBarColor[notification.urgency]}></span>
+							<span class="urgency-bar" style:background={urgencyColor[notification.urgency]}></span>
 							<span class="text">
 								<span class="title">{notification.title}</span>
 								<span class="description">{notification.description}</span>

@@ -1,13 +1,14 @@
 <script lang="ts">
 	interface Props {
 		name: string
+		size?: string
 	}
 
-	let { name }: Props = $props()
+	let { name, size }: Props = $props()
 </script>
 
 <!-- Ikonnavnet må også legges til i Google Fonts-lenken i app.html. -->
-<span class="icon" aria-hidden="true">{name}</span>
+<span class="icon" style:font-size={size} aria-hidden="true">{name}</span>
 
 <style>
 	.icon {
