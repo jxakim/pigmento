@@ -148,7 +148,7 @@
 	}
 
 	.year-view :global(.year-month:hover) {
-		background-color: var(--ds-color-neutral-surface-tinted);
+		background-color: var(--ds-color-accent-surface-tinted);
 	}
 
 	.year-view :global(.year-day-info) {
@@ -174,13 +174,13 @@
 
 	.year-view :global(.year-today) {
 		border-radius: var(--ds-border-radius-sm);
-		background-color: var(--ds-color-neutral-base-default);
-		color: var(--ds-color-neutral-base-contrast-default);
+		background-color: var(--ds-color-accent-base-default);
+		color: var(--ds-color-accent-base-contrast-default);
 		font-weight: 700;
 	}
 
 	.year-view :global(.year-month:focus-visible) {
-		outline: 0.125rem solid var(--ds-color-neutral-border-default);
+		outline: 0.125rem solid var(--ds-color-accent-border-default);
 		outline-offset: 0.125rem;
 	}
 

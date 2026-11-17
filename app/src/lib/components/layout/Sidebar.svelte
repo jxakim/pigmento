@@ -1,26 +1,15 @@
 <script lang="ts">
 	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 	import SidebarNavigation from "./SidebarNavigation.svelte"
-
-	interface Props {
-		isOpen: boolean
-		onClose: () => void
-	}
-
-	let { isOpen, onClose }: Props = $props()
 </script>
 
-<button type="button" class="backdrop" class:is-visible={isOpen} tabindex="-1" aria-label="Lukk meny" onclick={onClose}></button>
-
-<aside id="sidebar" class="sidebar" class:is-open={isOpen} data-color-scheme="dark" data-color="neutral">
+<aside class="sidebar" data-color-scheme="dark" data-color="neutral">
 	<div class="header">
 		<div class="logo">
 			<img src="/logo.png" alt="" width="52" height="52" />
 			<span class="app-name">Pigmento</span>
 		</div>
-		<div class="bell">
-			<NotificationBell />
-		</div>
+		<NotificationBell />
 	</div>
 
 	<SidebarNavigation />
@@ -88,59 +77,10 @@
 		color: var(--ds-color-neutral-text-subtle);
 	}
 
-	.backdrop {
-		display: none;
-	}
-
-	/* På mobil glir menyen inn over innholdet, med en mørk bakgrunn bak som lukker den ved klikk. Klokken ligger da i toppstripen. */
+	/* På mobil er navigasjonen flyttet til menyen nederst (se BottomNavigation.svelte). */
 	@media (max-width: 57.5rem) {
-		.bell {
-			display: none;
-		}
-
 		.sidebar {
-			position: fixed;
-			top: var(--pg-topbar-height);
-			bottom: 0;
-			left: 0;
-			z-index: 20;
-			width: min(20rem, 85vw);
-			overflow-y: auto;
-			transform: translateX(-100%);
-			visibility: hidden;
-			transition:
-				transform 0.25s ease,
-				visibility 0.25s;
-		}
-
-		.sidebar.is-open {
-			transform: none;
-			visibility: visible;
-		}
-
-		.backdrop {
-			position: fixed;
-			inset: var(--pg-topbar-height) 0 0 0;
-			z-index: 10;
-			display: block;
-			padding: 0;
-			border: 0;
-			background: rgb(0 0 0 / 0.4);
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.25s ease;
-		}
-
-		.backdrop.is-visible {
-			opacity: 1;
-			pointer-events: auto;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.sidebar,
-		.backdrop {
-			transition: none;
+			display: none;
 		}
 	}
 </style>

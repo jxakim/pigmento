@@ -1,32 +1,8 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
-	import { getOpenNotifications } from "#lib/notifications.svelte.ts"
-	import { openInquiryCount } from "#lib/sampleData.ts"
-	import { page } from "$app/state"
+	import { formatBadgeCount, getNavigationItems, isCurrentPage } from "#lib/navigation.svelte.ts"
 
-	interface NavigationItem {
-		href: string
-		label: string
-		icon: string
-		badgeCount?: number
-	}
-
-	const navigationItems: NavigationItem[] = $derived([
-		{ href: "/", label: "Forside", icon: "home" },
-		{ href: "/calendar", label: "Kalender", icon: "calendar_month" },
-		{ href: "/notifications", label: "Varsler", icon: "notifications", badgeCount: getOpenNotifications().length },
-		{ href: "/clients", label: "Kunder", icon: "group" },
-		{ href: "/appointments", label: "Avtaler", icon: "format_list_bulleted" },
-		{ href: "/requests", label: "Forespørsler", icon: "inbox", badgeCount: openInquiryCount }
-	])
-
-	function isCurrentPage(href: string): boolean {
-		return href === "/" ? page.url.pathname === "/" : page.url.pathname.startsWith(href)
-	}
-
-	function formatBadgeCount(count: number): string {
-		return count > 99 ? "99+" : String(count)
-	}
+	const navigationItems = $derived(getNavigationItems())
 </script>
 
 <nav aria-label="Hovedmeny">
@@ -34,10 +10,13 @@
 		{#each navigationItems as item (item.href)}
 			<li>
 				<a class="navigation-link" href={item.href} aria-current={isCurrentPage(item.href) ? "page" : undefined}>
+					{#if isCurrentPage(item.href)}
+						<span class="current-indicator" data-color-scheme="light" data-color="accent"></span>
+					{/if}
 					<Icon name={item.icon} />
 					<span class="label">{item.label}</span>
 					{#if item.badgeCount}
-						<span class="ds-badge" data-color="neutral" data-count={formatBadgeCount(item.badgeCount)}></span>
+						<span class="ds-badge" data-color-scheme="light" data-color="accent" data-count={formatBadgeCount(item.badgeCount)}></span>
 					{/if}
 				</a>
 			</li>
@@ -56,6 +35,7 @@
 	}
 
 	.navigation-link {
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -73,8 +53,12 @@
 		color: var(--ds-color-neutral-text-default);
 	}
 
-	.navigation-link[aria-current="page"] {
-		box-shadow: inset 0.1875rem 0 0 var(--ds-color-neutral-border-strong);
+	.current-indicator {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 0.1875rem;
+		background: var(--ds-color-base-default);
 	}
 
 	.label {

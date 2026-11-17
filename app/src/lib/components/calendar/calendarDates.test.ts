@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { formatPeriodLabel, formatPeriodName, getPeriodKey, getPeriodRange, isSameDay, moveByPeriods, parseIsoDate } from "./calendarDates.ts"
+import { formatIsoDate, formatPeriodLabel, formatPeriodName, getPeriodKey, getPeriodRange, isSameDay, moveByPeriods, parseIsoDate } from "./calendarDates.ts"
 
 describe("formatPeriodName", () => {
 	const monday = new Date(2026, 10, 16)
@@ -89,5 +89,11 @@ describe("formatPeriodLabel", () => {
 		expect(formatPeriodLabel("week", new Date(2026, 10, 16))).toBe("Uke 47")
 		expect(formatPeriodLabel("week", new Date(2024, 11, 30))).toBe("Uke 1")
 		expect(formatPeriodLabel("week", new Date(2027, 0, 1))).toBe("Uke 53")
+	})
+})
+
+describe("formatIsoDate", () => {
+	it("pads the month and day and uses the local date", () => {
+		expect(formatIsoDate(new Date(2026, 0, 5, 23, 30))).toBe("2026-01-05")
 	})
 })

@@ -2,12 +2,14 @@
 	import { appointmentTypeColor, appointmentTypes } from "#lib/appointmentTypes.ts"
 	import type { ScheduledAppointment } from "#lib/sampleData.ts"
 	import { countByType } from "./calendarAppointments.ts"
+	import type { CalendarLevel } from "./calendarLevels.ts"
 
 	interface Props {
+		level: CalendarLevel
 		appointments: ScheduledAppointment[]
 	}
 
-	let { appointments }: Props = $props()
+	let { level, appointments }: Props = $props()
 
 	const countsByType = $derived(countByType(appointments))
 	const totalLabel = $derived(`${appointments.length} ${appointments.length === 1 ? "avtale" : "avtaler"}`)
@@ -35,6 +37,12 @@
 				<span class="count">{countsByType[type]}</span>
 			</li>
 		{/each}
+		{#if level === "month"}
+			<li class="legend-item">
+				<span class="swatch notification-swatch"></span>
+				<span class="type-name">Dag med varsel</span>
+			</li>
+		{/if}
 	</ul>
 </section>
 
@@ -81,6 +89,10 @@
 	.segment,
 	.swatch {
 		background: var(--ds-color-base-default);
+	}
+
+	.notification-swatch {
+		background: var(--ds-color-accent-border-strong);
 	}
 
 	.legend {
