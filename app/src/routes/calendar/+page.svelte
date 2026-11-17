@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick } from "svelte"
 	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
+	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
 	import CalendarTitle from "#lib/components/calendar/CalendarTitle.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
 	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
@@ -155,9 +156,13 @@
 			{/if}
 		</div>
 
-		<aside class="calendar-side">
+		<div class="calendar-distribution">
 			<CalendarDistribution appointments={periodAppointments} />
-		</aside>
+		</div>
+
+		<div class="calendar-notes">
+			<CalendarNotes {level} {date} />
+		</div>
 	</div>
 
 	{#if dayMenu}
@@ -174,36 +179,41 @@
 	}
 
 	.calendar-body {
-		display: flex;
+		display: grid;
 		flex: 1;
+		grid-template-columns: minmax(0, 1fr) 17rem;
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-areas:
+			"view distribution"
+			"view notes";
 		gap: 1rem;
 		min-height: 0;
 	}
 
 	/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
 	.calendar-view {
-		flex: 1;
-		min-width: 0;
+		grid-area: view;
 		-webkit-touch-callout: none;
 		user-select: none;
 	}
 
-	.calendar-side {
-		flex: 0 0 17rem;
+	.calendar-distribution {
+		grid-area: distribution;
+	}
+
+	.calendar-notes {
+		grid-area: notes;
 	}
 
 	@media (max-width: 57.5rem) {
 		.calendar-body {
-			flex-direction: column;
-		}
-
-		.calendar-view {
-			min-height: 0;
-		}
-
-		.calendar-side {
-			flex: none;
-			order: -1;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(0, 1fr) auto;
+			grid-template-areas:
+				"distribution"
+				"view"
+				"notes";
+			gap: 0.75rem;
 		}
 	}
 </style>

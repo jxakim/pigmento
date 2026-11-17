@@ -1,5 +1,28 @@
 import { describe, expect, it } from "vitest"
-import { formatPeriodLabel, getPeriodRange, isSameDay, moveByPeriods, parseIsoDate } from "./calendarDates.ts"
+import { formatPeriodLabel, formatPeriodName, getPeriodKey, getPeriodRange, isSameDay, moveByPeriods, parseIsoDate } from "./calendarDates.ts"
+
+describe("formatPeriodName", () => {
+	const monday = new Date(2026, 10, 16)
+
+	it("names every level in lower case, so it fits in a sentence", () => {
+		expect(formatPeriodName("year", monday)).toBe("2026")
+		expect(formatPeriodName("month", monday)).toBe("november")
+		expect(formatPeriodName("week", monday)).toBe("uke 47")
+		expect(formatPeriodName("day", monday)).toBe("mandag 16. november")
+	})
+})
+
+describe("getPeriodKey", () => {
+	it("is the same for every date in the period", () => {
+		expect(getPeriodKey("week", new Date(2026, 10, 16))).toBe(getPeriodKey("week", new Date(2026, 10, 22)))
+		expect(getPeriodKey("month", new Date(2026, 10, 1))).toBe(getPeriodKey("month", new Date(2026, 10, 30)))
+	})
+
+	it("differs between periods and between levels", () => {
+		expect(getPeriodKey("week", new Date(2026, 10, 22))).not.toBe(getPeriodKey("week", new Date(2026, 10, 23)))
+		expect(getPeriodKey("year", new Date(2026, 0, 1))).not.toBe(getPeriodKey("month", new Date(2026, 0, 1)))
+	})
+})
 
 describe("getPeriodRange", () => {
 	const wednesday = new Date(2026, 10, 18, 14)

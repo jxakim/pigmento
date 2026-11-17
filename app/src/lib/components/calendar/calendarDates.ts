@@ -64,6 +64,21 @@ export function formatPeriodLabel(level: CalendarLevel, date: Date): string | un
 	}
 }
 
+export function formatPeriodName(level: CalendarLevel, date: Date): string {
+	return (formatPeriodLabel(level, date) ?? String(date.getFullYear())).toLowerCase()
+}
+
+// Samme nøkkel for alle datoer i samme periode, så notatet finnes igjen uansett hvilken dag i uken man står på.
+export function getPeriodKey(level: CalendarLevel, date: Date): string {
+	return `${level}:${formatIsoDate(getPeriodRange(level, date).start)}`
+}
+
+function formatIsoDate(date: Date): string {
+	const month = String(date.getMonth() + 1).padStart(2, "0")
+	const day = String(date.getDate()).padStart(2, "0")
+	return `${date.getFullYear()}-${month}-${day}`
+}
+
 // ISO 8601: uke 1 er uken som inneholder årets første torsdag.
 function getIsoWeekNumber(date: Date): number {
 	const thursdayOfWeek = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
