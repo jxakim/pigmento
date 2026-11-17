@@ -39,6 +39,7 @@ export interface AppNotification {
 	id: string
 	urgency: NotificationUrgency
 	category: NotificationCategory
+	subject: string
 	title: string
 	description: string
 	dueLabel: string
@@ -113,6 +114,7 @@ export const notifications: AppNotification[] = [
 		id: "inquiry-martin",
 		urgency: "urgent",
 		category: "inquiry",
+		subject: "@martin.sk",
 		title: "@martin.sk har ventet i 6 dager",
 		description: "Interessert i en konsultasjon før jul, passer det?",
 		dueLabel: "Siden 30. okt",
@@ -123,6 +125,7 @@ export const notifications: AppNotification[] = [
 		id: "deposit-kasper",
 		urgency: "urgent",
 		category: "deposit",
+		subject: "Kasper Aas",
 		title: "Kasper Aas mangler depositum",
 		description: "Tatovering i morgen kl. 11:00 · kr 1 000",
 		dueLabel: "I morgen",
@@ -134,6 +137,7 @@ export const notifications: AppNotification[] = [
 		id: "deposit-lise",
 		urgency: "soon",
 		category: "deposit",
+		subject: "Lise Strand",
 		title: "Lise Strand mangler depositum",
 		description: "Tatovering tirsdag 10. november kl. 12:00 · kr 1 500",
 		dueLabel: "Om 5 dager",
@@ -145,6 +149,7 @@ export const notifications: AppNotification[] = [
 		id: "inquiry-thea",
 		urgency: "soon",
 		category: "inquiry",
+		subject: "@thea.rose",
 		title: "@thea.rose har ventet i 3 dager",
 		description: "Hva koster en håndflate-stor design på skulderen?",
 		dueLabel: "Siden 2. nov",
@@ -155,6 +160,7 @@ export const notifications: AppNotification[] = [
 		id: "reminder-tomorrow",
 		urgency: "soon",
 		category: "reminder",
+		subject: "I morgen",
 		title: "I morgen: 2 timer",
 		description: "11:00 Kasper Aas (tatovering) · 15:00 Ida Moe (konsultasjon)",
 		dueLabel: "I morgen",
@@ -166,6 +172,7 @@ export const notifications: AppNotification[] = [
 		id: "follow-up-jonas",
 		urgency: "later",
 		category: "follow-up",
+		subject: "Jonas Berg",
 		title: "Send etterstell til Jonas Berg",
 		description: "Økt 2 av 3 i dag. Husk å følge opp om to uker.",
 		dueLabel: "I kveld",
@@ -177,6 +184,7 @@ export const notifications: AppNotification[] = [
 		id: "reminder-supplies",
 		urgency: "later",
 		category: "reminder",
+		subject: "Bestille nåler og farger",
 		title: "Bestille nåler og farger",
 		description: "Egen påminnelse fra ukenotatet",
 		dueLabel: "Fredag",

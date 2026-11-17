@@ -41,7 +41,11 @@
 		flex-direction: column;
 	}
 
-	.home,
+	.home {
+		gap: 2.25rem;
+		padding: 2.5rem 3rem 3.5rem;
+	}
+
 	.column {
 		gap: 2.25rem;
 	}
@@ -95,5 +99,11 @@
 
 	.side-column {
 		flex: 2 1 18.75rem;
+	}
+
+	@media (max-width: 57.5rem) {
+		.home {
+			padding: 1rem;
+		}
 	}
 </style>

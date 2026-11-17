@@ -1,10 +1,16 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
+
+	interface Props {
+		iconOnlyOnMobile?: boolean
+	}
+
+	let { iconOnlyOnMobile = false }: Props = $props()
 </script>
 
-<button type="button" class="new-booking-button">
+<button type="button" class="new-booking-button" class:icon-only-on-mobile={iconOnlyOnMobile} aria-label="Ny booking">
 	<Icon name="add" />
-	Ny booking
+	<span class="label">Ny booking</span>
 </button>
 
 <style>
@@ -26,5 +32,18 @@
 
 	.new-booking-button:hover {
 		background: var(--pg-pink-hover);
+	}
+
+	@media (max-width: 57.5rem) {
+		.icon-only-on-mobile {
+			justify-content: center;
+			width: 2.75rem;
+			padding: 0;
+			border-radius: 0.625rem;
+		}
+
+		.icon-only-on-mobile .label {
+			display: none;
+		}
 	}
 </style>

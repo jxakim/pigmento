@@ -55,7 +55,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.125rem;
-		height: var(--pg-bottom-navigation-height);
+		height: var(--pg-bottom-bar-height);
 		color: var(--pg-sidebar-text);
 		font-size: 0.6875rem;
 		font-weight: 500;

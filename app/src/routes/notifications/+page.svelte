@@ -80,6 +80,10 @@
 		gap: 1.5rem;
 	}
 
+	.notifications-page {
+		padding: 1.75rem 2.25rem;
+	}
+
 	.header {
 		gap: 0.375rem;
 	}

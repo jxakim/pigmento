@@ -4,6 +4,7 @@
 
 	--pg-ink: #14171a;
 	--pg-ink-muted: #4f5560;
+	--pg-ink-subtle: #6b7280;
 	--pg-ink-soft: #2b2f38;
 
 	--pg-page: #fbf4f8;
@@ -37,17 +38,13 @@
 	--pg-card-radius: 0.875rem;
 	--pg-button-radius: 0.5rem;
 
-	--pg-content-padding: 2.5rem 3rem 3.5rem;
-	--pg-layout-reserved-height: 6rem;
+	--pg-bottom-bar-height: 0rem;
 }
 
 /* 57.5rem = sidebar og innhold ved siden av hverandre: under dette flyttes menyen ned i en stripe nederst. */
 @media (max-width: 57.5rem) {
 	:root {
-		--pg-topbar-height: 3.5rem;
-		--pg-bottom-navigation-height: 4rem;
-		--pg-content-padding: 1rem;
-		--pg-layout-reserved-height: calc(var(--pg-topbar-height) + var(--pg-bottom-navigation-height) + 2rem);
+		--pg-bottom-bar-height: 4rem;
 	}
 }
 

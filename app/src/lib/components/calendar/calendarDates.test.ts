@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest"
-import { formatIsoDate, formatPeriodLabel, formatPeriodName, getPeriodKey, getPeriodRange, isSameDay, moveByPeriods, parseIsoDate } from "./calendarDates.ts"
+import {
+	formatCalendarTitle,
+	formatIsoDate,
+	formatPeriodLabel,
+	formatPeriodName,
+	formatTime,
+	getMonthGridDays,
+	getPeriodKey,
+	getPeriodRange,
+	isSameDay,
+	moveByPeriods,
+	parseIsoDate
+} from "./calendarDates.ts"
 
 describe("formatPeriodName", () => {
 	const monday = new Date(2026, 10, 16)
@@ -95,5 +107,50 @@ describe("formatPeriodLabel", () => {
 describe("formatIsoDate", () => {
 	it("pads the month and day and uses the local date", () => {
 		expect(formatIsoDate(new Date(2026, 0, 5, 23, 30))).toBe("2026-01-05")
+	})
+})
+
+describe("formatCalendarTitle", () => {
+	const wednesday = new Date(2026, 10, 18)
+
+	it("writes the year, and the month with the year", () => {
+		expect(formatCalendarTitle("year", wednesday)).toEqual({ heading: "2026" })
+		expect(formatCalendarTitle("month", wednesday)).toEqual({ heading: "November 2026" })
+	})
+
+	it("writes the week number with the days of the week", () => {
+		expect(formatCalendarTitle("week", wednesday)).toEqual({ heading: "Uke 47", range: "16.–22. november" })
+	})
+
+	it("shortens the months when the week spans two months", () => {
+		expect(formatCalendarTitle("week", new Date(2026, 9, 28))).toEqual({ heading: "Uke 44", range: "26. okt.–1. nov." })
+	})
+
+	it("writes the weekday and the date for a day", () => {
+		expect(formatCalendarTitle("day", wednesday)).toEqual({ heading: "Onsdag 18. november" })
+	})
+})
+
+describe("getMonthGridDays", () => {
+	const novemberDays = getMonthGridDays(2026, 10)
+
+	it("always has six weeks of seven days", () => {
+		expect(novemberDays).toHaveLength(42)
+	})
+
+	it("starts on the weekday of the first day, with Monday first", () => {
+		expect(novemberDays.findIndex((day) => day !== undefined)).toBe(6)
+		expect(novemberDays[6]).toEqual(new Date(2026, 10, 1))
+	})
+
+	it("is empty after the last day of the month", () => {
+		expect(novemberDays[6 + 29]).toEqual(new Date(2026, 10, 30))
+		expect(novemberDays[6 + 30]).toBeUndefined()
+	})
+})
+
+describe("formatTime", () => {
+	it("gives the time of a local ISO time", () => {
+		expect(formatTime("2026-11-05T10:30")).toBe("10:30")
 	})
 })
