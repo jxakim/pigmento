@@ -134,27 +134,14 @@
 		return viewContainer.querySelectorAll(".year-month")[month.getMonth()]
 	}
 
-	// År: åpne måneden med dagen i dag markert. Måned og uke: marker i dag, eller åpne dagen hvis den allerede er markert.
 	function goToToday() {
 		const today = new Date()
 
-		switch (level) {
-			case "year":
-				openLevel("month", today, findMonthInYearView(today), today)
-				return
-			case "month":
-			case "week":
-				if (isSameDay(selectedDay, today)) {
-					openLevel("day", today, viewContainer.querySelector(".selected-day") ?? undefined)
-				} else {
-					date = today
-					selectedDay = today
-				}
-				return
-			case "day":
-				date = today
-				return
+		if (level === "day") {
+			date = today
+			return
 		}
+		openLevel("day", today, level === "year" ? findMonthInYearView(today) : undefined)
 	}
 </script>
 
