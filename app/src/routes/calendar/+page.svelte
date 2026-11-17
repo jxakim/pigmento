@@ -2,18 +2,21 @@
 	import { tick } from "svelte"
 	import CalendarTitle from "#lib/components/calendar/CalendarTitle.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
-	import { isSameDay, moveByPeriods } from "#lib/components/calendar/calendarDates.ts"
+	import { isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import { type CalendarLevel, isZoomingIn, parentLevel } from "#lib/components/calendar/calendarLevels.ts"
+	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
 	import DayView from "#lib/components/calendar/DayView.svelte"
 	import MonthView from "#lib/components/calendar/MonthView.svelte"
 	import WeekView from "#lib/components/calendar/WeekView.svelte"
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
+	import { longPress } from "#lib/longPress.ts"
 	import { getTopbarContent } from "#lib/topbarContent.ts"
 
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
 	let selectedDay = $state<Date>()
+	let dayMenu = $state<{ day: Date; position: { x: number; y: number } }>()
 	let viewContainer: HTMLDivElement
 
 	const topbarContent = getTopbarContent()
@@ -58,10 +61,40 @@
 	}
 
 	function selectOrOpenDay(day: Date, dayElement?: Element) {
+		const isDayMenuOpen = dayMenu !== undefined
+		if (isDayMenuOpen) {
+			return
+		}
 		if (isSameDay(selectedDay, day)) {
 			changeLevel("day", day, dayElement)
 		} else {
 			selectedDay = day
+		}
+	}
+
+	function openDayMenu(event: MouseEvent) {
+		const isoDate = (event.target as Element).closest<HTMLElement>("[data-date]")?.dataset.date
+		if (!isoDate || level === "year") {
+			return
+		}
+		event.preventDefault()
+		const day = parseIsoDate(isoDate)
+		selectedDay = day
+		dayMenu = { day, position: { x: event.clientX, y: event.clientY } }
+	}
+
+	function handleDayAction(action: DayAction, day: Date) {
+		dayMenu = undefined
+
+		switch (action) {
+			case "open-day":
+				changeLevel("day", day)
+				return
+			// Kobles til skjemaer når booking, notater og blokkering er på plass.
+			case "add-booking":
+			case "add-note":
+			case "block-day":
+				return
 		}
 	}
 
@@ -103,7 +136,8 @@
 <div class="calendar-page">
 	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
 
-	<div class="calendar-view" bind:this={viewContainer}>
+	<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
+	<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
 		{#if level === "year"}
 			<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
 		{:else if level === "month"}
@@ -114,6 +148,10 @@
 			<DayView {date} />
 		{/if}
 	</div>
+
+	{#if dayMenu}
+		<DayContextMenu day={dayMenu.day} position={dayMenu.position} canOpenDay={level !== "day"} onSelect={handleDayAction} onClose={() => (dayMenu = undefined)} />
+	{/if}
 </div>
 
 <style>
@@ -124,8 +162,11 @@
 		height: calc(100dvh - var(--pg-layout-reserved-height));
 	}
 
+	/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
 	.calendar-view {
 		flex: 1;
 		min-height: 0;
+		-webkit-touch-callout: none;
+		user-select: none;
 	}
 </style>

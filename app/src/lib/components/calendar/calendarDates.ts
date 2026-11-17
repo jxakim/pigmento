@@ -4,6 +4,11 @@ export function isSameDay(first: Date | undefined, second: Date): boolean {
 	return first?.toDateString() === second.toDateString()
 }
 
+export function parseIsoDate(isoDate: string): Date {
+	const [year, month, day] = isoDate.split("-").map(Number)
+	return new Date(year, month - 1, day)
+}
+
 export function moveByPeriods(level: CalendarLevel, date: Date, periods: number): Date {
 	const year = date.getFullYear()
 	const month = date.getMonth()

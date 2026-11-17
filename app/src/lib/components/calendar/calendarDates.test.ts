@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { formatPeriodLabel, isSameDay, moveByPeriods } from "./calendarDates.ts"
+import { formatPeriodLabel, isSameDay, moveByPeriods, parseIsoDate } from "./calendarDates.ts"
 
 describe("isSameDay", () => {
 	it("ignores the time of day", () => {
@@ -9,6 +9,12 @@ describe("isSameDay", () => {
 	it("is false for different days or no day", () => {
 		expect(isSameDay(new Date(2026, 10, 16), new Date(2026, 10, 17))).toBe(false)
 		expect(isSameDay(undefined, new Date(2026, 10, 16))).toBe(false)
+	})
+})
+
+describe("parseIsoDate", () => {
+	it("creates a local date, not a UTC date", () => {
+		expect(parseIsoDate("2026-11-25")).toEqual(new Date(2026, 10, 25))
 	})
 })
 
