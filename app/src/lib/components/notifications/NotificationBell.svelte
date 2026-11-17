@@ -83,10 +83,12 @@
 		cursor: pointer;
 	}
 
-	.bell-button:hover {
-		border-color: var(--pg-ink);
-		background: var(--pg-ink);
-		color: #ffffff;
+	@media (hover: hover) {
+		.bell-button:hover {
+			border-color: var(--pg-ink);
+			background: var(--pg-ink);
+			color: #ffffff;
+		}
 	}
 
 	.count {
@@ -153,9 +155,11 @@
 		text-decoration: none;
 	}
 
-	.notification-link:hover {
-		background: var(--pg-pink-wash);
-		color: var(--pg-ink);
+	@media (hover: hover) {
+		.notification-link:hover {
+			background: var(--pg-pink-wash);
+			color: var(--pg-ink);
+		}
 	}
 
 	.urgency-bar {

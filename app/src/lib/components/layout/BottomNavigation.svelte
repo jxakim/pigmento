@@ -35,6 +35,7 @@
 			bottom: 0;
 			left: 0;
 			z-index: 30;
+			view-transition-name: bottom-navigation;
 			display: block;
 			padding-bottom: env(safe-area-inset-bottom);
 			background: var(--pg-sidebar);

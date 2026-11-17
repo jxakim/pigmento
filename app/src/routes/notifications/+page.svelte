@@ -141,8 +141,10 @@
 		pointer-events: none;
 	}
 
-	.filter:hover {
-		border-color: var(--pg-ink);
+	@media (hover: hover) {
+		.filter:hover {
+			border-color: var(--pg-ink);
+		}
 	}
 
 	.filter:has(input:checked) {

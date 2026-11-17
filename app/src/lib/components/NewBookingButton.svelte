@@ -30,8 +30,10 @@
 		cursor: pointer;
 	}
 
-	.new-booking-button:hover {
-		background: var(--pg-pink-hover);
+	@media (hover: hover) {
+		.new-booking-button:hover {
+			background: var(--pg-pink-hover);
+		}
 	}
 
 	@media (max-width: 57.5rem) {

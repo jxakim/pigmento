@@ -56,9 +56,11 @@
 		pointer-events: none;
 	}
 
-	.level-option:hover {
-		background: var(--pg-page);
-		color: var(--pg-ink);
+	@media (hover: hover) {
+		.level-option:hover {
+			background: var(--pg-page);
+			color: var(--pg-ink);
+		}
 	}
 
 	.level-option:has(input:checked) {

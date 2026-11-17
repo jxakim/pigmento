@@ -39,12 +39,14 @@
 	--pg-button-radius: 0.5rem;
 
 	--pg-bottom-bar-height: 0rem;
+	--pg-bottom-bar-space: 0rem;
 }
 
 /* 57.5rem = sidebar og innhold ved siden av hverandre: under dette flyttes menyen ned i en stripe nederst. */
 @media (max-width: 57.5rem) {
 	:root {
 		--pg-bottom-bar-height: 4rem;
+		--pg-bottom-bar-space: calc(var(--pg-bottom-bar-height) + env(safe-area-inset-bottom));
 	}
 }
 
@@ -52,6 +54,43 @@
 *::before,
 *::after {
 	box-sizing: border-box;
+}
+
+html {
+	overscroll-behavior: none;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
+}
+
+a,
+button,
+label,
+summary {
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
+@media (hover: none) {
+	a,
+	button {
+		transition: opacity 0.1s;
+	}
+
+	a:active,
+	button:not(:disabled):active {
+		opacity: 0.6;
+	}
+}
+
+@media (max-width: 57.5rem) {
+	input,
+	select,
+	textarea {
+		font-size: 1rem;
+	}
 }
 
 body {
@@ -80,6 +119,13 @@ a {
 	color: var(--pg-ink);
 }
 
-a:hover {
-	color: var(--pg-pink-deep);
+@media (hover: hover) {
+	a:hover {
+		color: var(--pg-pink-deep);
+	}
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.15s;
 }
