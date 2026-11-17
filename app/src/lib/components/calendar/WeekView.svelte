@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Calendar, CalendarOptions } from "fullcalendar"
+	import { calendarEvents } from "./calendarAppointments.ts"
 	import { isSameDay } from "./calendarDates.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
@@ -15,6 +16,7 @@
 
 	const options: CalendarOptions = {
 		initialView: "timeGridWeek",
+		events: calendarEvents,
 		dateClick: ({ date: day, dayEl }) => onDayClick(day, dayEl)
 	}
 
