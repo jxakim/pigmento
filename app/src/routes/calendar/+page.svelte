@@ -1,29 +1,31 @@
 <script lang="ts">
 	import { tick } from "svelte"
-	import CalendarTitle from "#lib/components/calendar/CalendarTitle.svelte"
+	import { compactScreen } from "#lib/compactScreen.svelte.ts"
+	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
+	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
-	import { isSameDay } from "#lib/components/calendar/calendarDates.ts"
-	import { type CalendarLevel, isZoomingIn, parentLevel } from "#lib/components/calendar/calendarLevels.ts"
+	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
+	import { isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
+	import { type CalendarLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
+	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
 	import DayView from "#lib/components/calendar/DayView.svelte"
+	import MobileMonthView from "#lib/components/calendar/MobileMonthView.svelte"
+	import MobileWeekView from "#lib/components/calendar/MobileWeekView.svelte"
 	import MonthView from "#lib/components/calendar/MonthView.svelte"
 	import WeekView from "#lib/components/calendar/WeekView.svelte"
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
-	import { getTopbarContent } from "#lib/topbarContent.ts"
+	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
+	import { longPress } from "#lib/longPress.ts"
+	import { scheduledAppointments } from "#lib/sampleData.ts"
 
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
 	let selectedDay = $state<Date>()
+	let dayMenu = $state<{ day: Date; position: { x: number; y: number } }>()
 	let viewContainer: HTMLDivElement
 
-	const topbarContent = getTopbarContent()
-
-	$effect(() => {
-		topbarContent.end = topbarTitle
-		return () => {
-			topbarContent.end = undefined
-		}
-	})
+	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
 
 	function changeLevel(newLevel: CalendarLevel, newDate: Date, zoomTarget?: Element, newSelectedDay?: Date) {
 		const direction = isZoomingIn(level, newLevel) ? "in" : "out"
@@ -41,153 +43,204 @@
 		)
 	}
 
-	function openDay(day: Date, dayElement: HTMLElement) {
-		changeLevel("day", day, dayElement)
+	function selectLevel(newLevel: CalendarLevel) {
+		changeLevel(newLevel, selectedDay ?? date, undefined, selectedDay)
 	}
 
-	function findTodaysMonthInYearView(today: Date): Element | undefined {
-		if (date.getFullYear() !== today.getFullYear()) {
+	function moveToPeriod(periods: number) {
+		date = moveByPeriods(level, date, periods)
+		selectedDay = undefined
+	}
+
+	function selectOrOpenDay(day: Date, dayElement?: Element) {
+		const isDayMenuOpen = dayMenu !== undefined
+		if (isDayMenuOpen) {
+			return
+		}
+		if (isSameDay(selectedDay, day)) {
+			changeLevel("day", day, dayElement)
+		} else {
+			selectedDay = day
+		}
+	}
+
+	function openDayMenu(event: MouseEvent) {
+		const isoDate = (event.target as Element).closest<HTMLElement>("[data-date]")?.dataset.date
+		if (!isoDate || level === "year") {
+			return
+		}
+		event.preventDefault()
+		const day = parseIsoDate(isoDate)
+		selectedDay = day
+		dayMenu = { day, position: { x: event.clientX, y: event.clientY } }
+	}
+
+	function handleDayAction(action: DayAction, day: Date) {
+		dayMenu = undefined
+
+		switch (action) {
+			case "open-day":
+				changeLevel("day", day)
+				return
+			// Kobles til skjemaer når booking, notater og blokkering er på plass.
+			case "add-booking":
+			case "add-note":
+			case "block-day":
+				return
+		}
+	}
+
+	function findMonthInYearView(month: Date): Element | undefined {
+		if (date.getFullYear() !== month.getFullYear()) {
 			return undefined
 		}
-		return viewContainer.querySelectorAll(".year-month")[today.getMonth()]
+		return viewContainer.querySelectorAll(".year-month")[month.getMonth()]
 	}
 
-	function findSelectedTodayInView(today: Date): Element | null {
-		return isSameDay(selectedDay, today) ? viewContainer.querySelector(".selected-day") : null
-	}
-
-	// År → måneden i dag er i, med dagen markert. Måned/uke → marker i dag, eller åpne dagen hvis den allerede er markert.
+	// År: åpne måneden med dagen i dag markert. Måned og uke: marker i dag, eller åpne dagen hvis den allerede er markert.
 	function goToToday() {
 		const today = new Date()
 
 		switch (level) {
 			case "year":
-				changeLevel("month", today, findTodaysMonthInYearView(today), today)
+				changeLevel("month", today, findMonthInYearView(today), today)
 				return
 			case "month":
-			case "week": {
-				const selectedToday = findSelectedTodayInView(today)
-				if (selectedToday) {
-					changeLevel("day", today, selectedToday)
+			case "week":
+				if (isSameDay(selectedDay, today)) {
+					changeLevel("day", today, viewContainer.querySelector(".selected-day") ?? undefined)
 				} else {
 					date = today
 					selectedDay = today
 				}
 				return
-			}
 			case "day":
 				date = today
 				return
 		}
 	}
-
-	function selectLevel(newLevel: CalendarLevel) {
-		if (newLevel !== level) {
-			changeLevel(newLevel, date)
-		}
-	}
-
-	function goToParentLevel() {
-		const parent = parentLevel[level]
-		if (parent) {
-			changeLevel(parent, date)
-		}
-	}
 </script>
 
-{#snippet topbarTitle()}
-	<CalendarTitle {level} {date} />
-{/snippet}
-
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} />
+	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
 
-	<div class="calendar-view" bind:this={viewContainer}>
-		{#if level === "year"}
-			<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
-		{:else if level === "month"}
-			<MonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={openDay} />
-		{:else if level === "week"}
-			<WeekView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={openDay} />
-		{:else}
-			<DayView {date} />
-		{/if}
+	<div class="banner">
+		<UrgentNotificationsBanner isCompact />
 	</div>
 
-	<div class="calendar-actions" role="toolbar" aria-label="Handlinger">
-		<button type="button" class="ds-button" data-size="sm" data-variant="secondary" data-color="neutral" onclick={goToToday}>I dag</button>
+	<div class="calendar-body">
+		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
+		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
+			{#if level === "year"}
+				<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
+			{:else if level === "month" && compactScreen.current}
+				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => changeLevel("day", day)} />
+			{:else if level === "month"}
+				<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+			{:else if level === "week" && compactScreen.current}
+				<MobileWeekView {date} onOpenDay={(day) => changeLevel("day", day)} />
+			{:else if level === "week"}
+				<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+			{:else}
+				<DayView {date} />
+			{/if}
+		</div>
+
+		<div class="calendar-notes">
+			<CalendarNotes {level} {date} />
+		</div>
+
+		<div class="calendar-distribution">
+			<CalendarDistribution appointments={periodAppointments} />
+		</div>
 	</div>
+
+	{#if dayMenu}
+		<DayContextMenu day={dayMenu.day} position={dayMenu.position} canOpenDay={level !== "day"} onSelect={handleDayAction} onClose={() => (dayMenu = undefined)} />
+	{/if}
 </div>
 
 <style>
 	.calendar-page {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
-		height: calc(100dvh - var(--pg-layout-reserved-height));
+		gap: 1.25rem;
+		height: 100dvh;
+		padding: 1.75rem 2.25rem;
+	}
+
+	.banner:empty {
+		display: none;
+	}
+
+	.calendar-body {
+		display: grid;
+		flex: 1;
+		grid-template-columns: minmax(0, 1fr) 18.75rem;
+		grid-template-rows: minmax(0, 1fr) auto;
+		grid-template-areas:
+			"view notes"
+			"view distribution";
+		gap: 1rem 1.5rem;
+		min-height: 0;
 	}
 
 	.calendar-view {
-		flex: 1;
+		grid-area: view;
+		padding: 1.125rem 1.25rem;
+		border: 0.0625rem solid var(--pg-card-border);
+		border-radius: var(--pg-card-radius);
+		background: var(--pg-card);
+		/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
+		-webkit-touch-callout: none;
+		user-select: none;
+	}
+
+	.calendar-notes {
+		grid-area: notes;
 		min-height: 0;
-		view-transition-name: calendar;
 	}
 
-	.calendar-actions {
-		display: flex;
-		gap: 0.5rem;
+	.calendar-distribution {
+		grid-area: distribution;
 	}
 
-	:global(::view-transition-group(calendar)) {
-		animation: none;
-	}
-
-	:global(::view-transition-image-pair(calendar)) {
-		overflow: hidden;
-	}
-
-	:global(html[data-zoom]::view-transition-old(calendar)),
-	:global(html[data-zoom]::view-transition-new(calendar)) {
-		transform-origin: var(--zoom-origin);
-		animation-duration: 450ms;
-		animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-		animation-fill-mode: both;
-		mix-blend-mode: normal;
-	}
-
-	:global(html[data-zoom]::view-transition-old(calendar)) {
-		animation-name: zoom-old-view;
-	}
-
-	:global(html[data-zoom]::view-transition-new(calendar)) {
-		animation-name: zoom-new-view;
-	}
-
-	@keyframes -global-zoom-old-view {
-		0% {
-			transform: scale(1);
-			opacity: 1;
+	/* På mobil står tegnforklaringen over kalenderen, og notatet er en linje under. De ligger i samme rutenett som resten av siden. */
+	@media (max-width: 57.5rem) {
+		.calendar-page {
+			display: grid;
+			grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+			grid-template-areas:
+				"toolbar"
+				"distribution"
+				"banner"
+				"view"
+				"notes";
+			gap: 0.625rem;
+			height: calc(100dvh - var(--pg-bottom-bar-height));
+			padding: 0.875rem 1rem 0.75rem;
 		}
-		50% {
-			opacity: 0;
-		}
-		100% {
-			transform: scale(var(--zoom-old-view-scale));
-			opacity: 0;
-		}
-	}
 
-	@keyframes -global-zoom-new-view {
-		0% {
-			transform: scale(var(--zoom-new-view-scale));
-			opacity: 0;
+		.calendar-body {
+			display: contents;
 		}
-		50% {
-			opacity: 1;
+
+		.calendar-view {
+			grid-area: view;
+			min-height: 0;
+			padding: 0.75rem;
 		}
-		100% {
-			transform: scale(1);
-			opacity: 1;
+
+		.banner {
+			grid-area: banner;
+		}
+
+		.calendar-notes {
+			grid-area: notes;
+		}
+
+		.calendar-distribution {
+			grid-area: distribution;
 		}
 	}
 </style>

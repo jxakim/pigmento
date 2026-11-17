@@ -1,20 +1,8 @@
-<script lang="ts" module>
-	const columnsByWindowSize = new Map<string, number>()
-	const defaultColumns = 4
-
-	function getWindowSizeKey(): string {
-		return `${window.innerWidth}x${window.innerHeight}`
-	}
-
-	function getRememberedColumns(): number | undefined {
-		const isRunningInBrowser = typeof window !== "undefined"
-		return isRunningInBrowser ? columnsByWindowSize.get(getWindowSizeKey()) : undefined
-	}
-</script>
-
 <script lang="ts">
-	import type { Calendar, CalendarOptions, DatesSetInfo } from "fullcalendar"
-	import FullCalendar from "./FullCalendar.svelte"
+	import { appointmentTypeStyle } from "#lib/appointmentTypes.ts"
+	import { scheduledAppointments } from "#lib/sampleData.ts"
+	import { findDominantType } from "./calendarAppointments.ts"
+	import { getMonthGridDays, isSameDay } from "./calendarDates.ts"
 
 	interface Props {
 		date: Date
@@ -23,230 +11,158 @@
 
 	let { date, onOpenMonth }: Props = $props()
 
-	let container: HTMLDivElement
-	let calendar = $state<Calendar>()
-	let firstMonthOfYear = new Date()
-	let latestFitAttempt = 0
-	let shownColumns = getRememberedColumns() ?? defaultColumns
-	let isFindingColumns = $state(false)
+	const today = new Date()
 
-	const columnOptions = [1, 2, 3, 4, 6]
+	const months = $derived(
+		Array.from({ length: 12 }, (_, monthIndex) => ({
+			firstDay: new Date(date.getFullYear(), monthIndex, 1),
+			days: getMonthGridDays(date.getFullYear(), monthIndex).map((day) => ({ day, type: day && findDominantType(scheduledAppointments, day) }))
+		}))
+	)
 
-	const options: CalendarOptions = {
-		initialView: "multiMonthYear",
-		selectable: false,
-		singleMonthMinWidth: 40,
-		multiMonthMaxColumns: shownColumns,
-		singleMonthClass: "year-month",
-		singleMonthHeaderClass: "year-month-title",
-		fixedWeekCount: false,
-		dayCellClass: ({ isToday }) => (isToday ? "year-day year-today" : "year-day"),
-		datesSet: handleDatesSet
+	function formatMonthName(firstDay: Date): string {
+		return firstDay.toLocaleDateString("nb-NO", { month: "long" })
 	}
-
-	function handleDatesSet({ view }: DatesSetInfo) {
-		firstMonthOfYear = view.currentStart
-		requestAnimationFrame(() => {
-			makeMonthsAccessible()
-			fitAllMonthsInView()
-		})
-	}
-
-	function getMonthElements(): HTMLElement[] {
-		return Array.from(container.querySelectorAll<HTMLElement>(".year-month"))
-	}
-
-	function getMonthDate(monthElement: HTMLElement): Date {
-		const monthIndex = getMonthElements().indexOf(monthElement)
-		return new Date(firstMonthOfYear.getFullYear(), firstMonthOfYear.getMonth() + monthIndex, 1)
-	}
-
-	function makeMonthsAccessible() {
-		for (const monthElement of getMonthElements()) {
-			const monthName = getMonthDate(monthElement).toLocaleDateString("nb-NO", { month: "long", year: "numeric" })
-			monthElement.tabIndex = 0
-			monthElement.setAttribute("role", "button")
-			monthElement.setAttribute("aria-label", `Åpne ${monthName}`)
-		}
-	}
-
-	function openClickedMonth(event: Event) {
-		const monthElement = (event.target as Element).closest<HTMLElement>(".year-month")
-		if (!monthElement) {
-			return
-		}
-		event.preventDefault()
-		onOpenMonth(getMonthDate(monthElement), monthElement)
-	}
-
-	function openMonthOnEnterOrSpace(event: KeyboardEvent) {
-		if (event.key === "Enter" || event.key === " ") {
-			openClickedMonth(event)
-		}
-	}
-
-	function isScrollable(element: Element): boolean {
-		return ["auto", "scroll"].includes(getComputedStyle(element).overflowY)
-	}
-
-	function findMonthScroller(): Element | undefined {
-		let element = container.querySelector(".year-month")?.parentElement
-		while (element && element !== container) {
-			if (isScrollable(element)) {
-				return element
-			}
-			element = element.parentElement
-		}
-		return undefined
-	}
-
-	function hasScrollbar(): boolean {
-		const scroller = findMonthScroller()
-		return scroller !== undefined && scroller.scrollHeight > scroller.clientHeight + 1
-	}
-
-	function waitForRender(): Promise<void> {
-		return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
-	}
-
-	async function showColumns(columns: number) {
-		shownColumns = columns
-		calendar?.setOption("multiMonthMaxColumns", columns)
-		await waitForRender()
-	}
-
-	async function fitAllMonthsInView() {
-		const rememberedColumns = getRememberedColumns()
-		if (rememberedColumns === undefined) {
-			await findColumnsThatFit()
-		} else if (rememberedColumns !== shownColumns) {
-			await showColumns(rememberedColumns)
-		}
-	}
-
-	// Prøver seg frem (skjult): flere kolonner til alt får plass, deretter færre så lenge alt fortsatt får plass.
-	async function findColumnsThatFit() {
-		const fitAttempt = ++latestFitAttempt
-		const isOutdated = () => fitAttempt !== latestFitAttempt
-		const windowSizeKey = getWindowSizeKey()
-		let index = columnOptions.indexOf(shownColumns)
-		isFindingColumns = true
-
-		while (hasScrollbar() && index < columnOptions.length - 1) {
-			index++
-			await showColumns(columnOptions[index])
-			if (isOutdated()) {
-				return
-			}
-		}
-
-		while (!hasScrollbar() && index > 0) {
-			await showColumns(columnOptions[index - 1])
-			if (isOutdated()) {
-				return
-			}
-			if (hasScrollbar()) {
-				await showColumns(columnOptions[index])
-				break
-			}
-			index--
-		}
-
-		columnsByWindowSize.set(windowSizeKey, columnOptions[index])
-		isFindingColumns = false
-	}
-
-	$effect(() => {
-		if (!calendar) {
-			return
-		}
-		const resizeObserver = new ResizeObserver(fitAllMonthsInView)
-		resizeObserver.observe(container)
-		return () => resizeObserver.disconnect()
-	})
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions (månedene inni har role="button") -->
-<div class="year-view" class:is-finding-columns={isFindingColumns} bind:this={container} onclick={openClickedMonth} onkeydown={openMonthOnEnterOrSpace}>
-	<FullCalendar {options} {date} bind:calendar />
+<div class="year-view">
+	{#each months as month (month.firstDay.getTime())}
+		<button type="button" class="year-month" aria-label="Åpne {formatMonthName(month.firstDay)} {month.firstDay.getFullYear()}" onclick={(event) => onOpenMonth(month.firstDay, event.currentTarget)}>
+			<span class="month-name">{formatMonthName(month.firstDay)}</span>
+			<span class="weekdays" aria-hidden="true">
+				{#each ["M", "T", "O", "T", "F", "L", "S"] as weekday, index (index)}
+					<span>{weekday}</span>
+				{/each}
+			</span>
+			<span class="days">
+				{#each month.days as { day, type }, index (index)}
+					{#if day}
+						<span
+							class="day"
+							class:is-today={isSameDay(today, day)}
+							style:--day-background={type && appointmentTypeStyle[type].background}
+							style:--day-text={type && appointmentTypeStyle[type].text}
+							style:--day-dot={type && appointmentTypeStyle[type].dot}
+							class:has-appointments={type}>{day.getDate()}</span
+						>
+					{:else}
+						<span></span>
+					{/if}
+				{/each}
+			</span>
+		</button>
+	{/each}
 </div>
 
 <style>
 	.year-view {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-rows: repeat(3, minmax(0, 1fr));
+		gap: 1rem 1.75rem;
 		height: 100%;
 	}
 
-	.year-view.is-finding-columns :global(.year-month) {
-		visibility: hidden;
+	.year-month,
+	.weekdays,
+	.days {
+		display: flex;
+		flex-direction: column;
 	}
 
-	.year-view :global(.year-month) {
-		container-type: inline-size;
-		margin: 0.25rem 0.25rem 0;
+	.year-month {
+		gap: 0.25rem;
+		min-height: 0;
+		margin: -0.5rem;
 		padding: 0.5rem;
+		border: 0;
+		border-radius: 0.625rem;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		text-align: left;
 		cursor: pointer;
-		border-radius: 0.5rem;
-		transition: background-color 0.15s ease;
 	}
 
-	/* Teksten skaleres med månedens bredde (cqi), så tosifrede datoer alltid får plass i rutene sine. */
-	.year-view :global(.year-month *) {
-		pointer-events: none;
-		margin: 0;
-		padding: 0;
-		font-size: clamp(0.5rem, 9.5cqi, 1rem);
-		line-height: 1.15;
-		background: none;
+	@media (hover: hover) {
+		.year-month:hover {
+			background: var(--pg-pink-wash);
+		}
 	}
 
-	.year-view :global(.year-day),
-	.year-view :global(.year-day *) {
-		justify-content: center;
+	.year-month:focus-visible {
+		outline: 0.125rem solid var(--pg-ink);
+		outline-offset: 0.25rem;
+	}
+
+	.month-name {
+		font-size: 0.875rem;
+		font-weight: 700;
+		text-transform: capitalize;
+	}
+
+	.weekdays,
+	.days {
+		display: grid;
+		grid-template-columns: repeat(7, minmax(0, 1fr));
+	}
+
+	.weekdays {
+		color: var(--pg-ink-subtle);
+		font-size: 0.625rem;
+		font-weight: 600;
 		text-align: center;
 	}
 
-	.year-view :global(.year-month-title),
-	.year-view :global(.year-month-title *) {
-		padding-bottom: 0.125rem;
-		font-size: clamp(0.8rem, 14cqi, 1.2rem);
-		line-height: 1.3;
+	.days {
+		flex: 1;
+		grid-template-rows: repeat(6, minmax(0, 1fr));
+		width: 100%;
+		min-height: 0;
 	}
 
-	@media (max-width: 57.5rem) {
-		.year-view :global(.year-month) {
-			margin: 0.25rem 0.25rem 0;
-			padding: 0.375rem;
-		}
-
-		.year-view :global(.year-month *) {
-			border: none;
-		}
+	.day {
+		display: grid;
+		place-items: center;
+		align-self: center;
+		justify-self: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 50%;
+		background: var(--day-background, transparent);
+		color: var(--day-text, var(--pg-ink-muted));
+		font-size: 0.6875rem;
 	}
 
-	@media (max-width: 23rem) {
-		.year-view :global(.year-month) {
-			margin: 0.125rem 0.125rem 0;
-			padding: 0.25rem;
-		}
-
-		.year-view :global(.year-month-title),
-		.year-view :global(.year-month-title *) {
-			padding-bottom: 0;
-		}
-	}
-
-	.year-view :global(.year-today) {
-		background: var(--ds-color-accent-surface-tinted);
-		border-radius: 0.25rem;
+	.has-appointments {
 		font-weight: 700;
 	}
 
-	.year-view :global(.year-month:hover) {
-		background-color: var(--ds-color-accent-surface-tinted);
+	.is-today {
+		box-shadow: 0 0 0 0.125rem var(--pg-pink);
 	}
 
-	.year-view :global(.year-month:focus-visible) {
-		outline: 0.125rem solid var(--ds-color-accent-border-default);
-		outline-offset: 0.125rem;
+	/* På mobil er hver dag en liten prikk, fargelagt etter hva som skjer den dagen. */
+	@media (max-width: 57.5rem) {
+		.year-view {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-rows: repeat(4, minmax(0, 1fr));
+			gap: 0.625rem 0.875rem;
+		}
+
+		.month-name {
+			font-size: 0.75rem;
+		}
+
+		.weekdays {
+			display: none;
+		}
+
+		.day {
+			width: 0.5625rem;
+			height: 0.5625rem;
+			background: var(--day-dot, var(--pg-row-line));
+			font-size: 0;
+		}
 	}
 </style>

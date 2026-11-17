@@ -1,77 +1,15 @@
 <script lang="ts">
-	// Designsystemet: web-komponenter, komponent-CSS og tema (rosa, generert fra design-tokens/)
 	import "@digdir/designsystemet-web"
 	import "@digdir/designsystemet-css"
 	import "../../design-tokens-build/pigmento.css"
 	import "../app.css"
-	import "./layout.css"
 
 	import favicon from "#lib/assets/favicon.svg"
-	import { setTopbarContent, type TopbarContent } from "#lib/topbarContent.ts"
-	import { afterNavigate } from "$app/navigation"
-	import { page } from "$app/state"
-	import { inquiryCount } from "../lib/utils/sample-data"
+	import BottomNavigation from "#lib/components/layout/BottomNavigation.svelte"
+	import Sidebar from "#lib/components/layout/Sidebar.svelte"
 	import type { LayoutProps } from "./$types"
 
 	let { children }: LayoutProps = $props()
-
-	const topbarContent = $state<TopbarContent>({})
-	setTopbarContent(topbarContent)
-
-	let isMenuOpen = $state(false)
-
-	afterNavigate(closeMenu)
-
-	function closeMenu() {
-		isMenuOpen = false
-	}
-
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen
-	}
-
-	function closeMenuOnEscape(event: KeyboardEvent) {
-		if (event.key === "Escape") {
-			closeMenu()
-		}
-	}
-
-	function isActive(href: string): boolean {
-		return href === "/" ? page.url.pathname === "/" : page.url.pathname.startsWith(href)
-	}
-
-	const nav = [
-		{
-			href: "/",
-			label: "Forside",
-			icon: "home",
-			count: 0
-		},
-		{
-			href: "/calendar",
-			label: "Kalender",
-			icon: "calendar_month",
-			count: 0
-		},
-		{
-			href: "/clients",
-			label: "Kunder",
-			icon: "group",
-			count: 0
-		},
-		{
-			href: "/appointments",
-			label: "Avtaler",
-			icon: "format_list_bulleted",
-			count: 0
-		},
-		{
-			href: "/requests",
-			label:"Forespørsler",
-			icon: "inbox",
-			count: inquiryCount
-		}
-	] as const
 </script>
 
 <svelte:head>
@@ -79,74 +17,35 @@
 	<title>Pigmento</title>
 </svelte:head>
 
-<svelte:window onkeydown={closeMenuOnEscape} />
+<div class="layout">
+	<Sidebar />
 
-<div class="layout" class:menu-open={isMenuOpen}>
-	<header class="topbar">
-		<button
-			type="button"
-			class="menu-toggle"
-			aria-expanded={isMenuOpen}
-			aria-controls="sidebar"
-			aria-label={isMenuOpen ? "Lukk meny" : "Åpne meny"}
-			onclick={toggleMenu}
-		>
-			<span class="material-symbols-outlined" aria-hidden="true">{isMenuOpen ? "close" : "menu"}</span>
-		</button>
-		<span class="topbar-title">Pigmento</span>
-		{#if topbarContent.end}
-			<div class="topbar-end">
-				{@render topbarContent.end()}
-			</div>
-		{/if}
-	</header>
-
-	<button
-		type="button"
-		class="menu-backdrop"
-		tabindex="-1"
-		aria-label="Lukk meny"
-		onclick={closeMenu}
-	></button>
-
-	<aside id="sidebar" class="sidebar">
-		<div class="sidebar-logo">
-			<img
-				src="/logo.png"
-				alt=""
-				width="52"
-				height="52"
-			/>
-			<span>Pigmento</span>
-		</div>
-
-		<nav aria-label="Hovedmeny">
-			<ul class="sidebar-nav-list">
-				{#each nav as item (item.href)}
-					<li>
-						<a
-							class="sidebar-nav-link {isActive(item.href) ? "active" : null}"
-							aria-current={isActive(item.href) ? "page" : null}
-							href={item.href}
-						>
-							<span class="material-symbols-outlined" aria-hidden="true">{item.icon}</span>
-							<span class="sidebar-nav-label">{item.label}</span>
-							{#if item.count > 0}
-								<span class="ds-badge" data-color="accent" data-count={item.count > 99 ? "99+" : item.count}></span>
-							{/if}
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</nav>
-
-		<div class="sidebar-user">
-			<span class="sidebar-user-name">Studio</span>
-			<span class="sidebar-user-role">Innlogget som eier</span>
-		</div>
-	</aside>
-
-	<main id="main-content" class="layout-content">
+	<main class="content">
 		{@render children()}
 	</main>
+
+	<BottomNavigation />
 </div>
+
+<style>
+	.layout {
+		display: flex;
+		flex-wrap: wrap;
+		min-height: 100vh;
+	}
+
+	.content {
+		flex: 999 1 37.5rem;
+		min-width: 0;
+	}
+
+	@media (max-width: 57.5rem) {
+		.layout {
+			display: block;
+		}
+
+		.content {
+			padding-bottom: var(--pg-bottom-bar-height);
+		}
+	}
+</style>

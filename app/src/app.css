@@ -1,57 +1,85 @@
-/* Designfarger og skrifter for Pigmento. Endre her for å endre hele utseendet. */
 :root {
-	--pg-font-body: "Inter", system-ui, sans-serif;
 	--pg-font-heading: "Bricolage Grotesque", "Inter", sans-serif;
+	--pg-font-body: "Inter", system-ui, sans-serif;
 
 	--pg-ink: #14171a;
 	--pg-ink-muted: #4f5560;
+	--pg-ink-subtle: #6b7280;
+	--pg-ink-soft: #2b2f38;
+
+	--pg-page: #fbf4f8;
+	--pg-card: #ffffff;
+	--pg-card-border: #ebd8e3;
+	--pg-row-line: #f1e3eb;
+	--pg-button-border: #d9c3d1;
+
+	--pg-pink: #f2a7cf;
+	--pg-pink-hover: #ea8dbf;
+	--pg-pink-tint: #f9ddec;
+	--pg-pink-wash: #fdf1f7;
+	--pg-pink-deep: #9e1b62;
+
 	--pg-sidebar: #0c1014;
 	--pg-sidebar-hover: #1a2027;
 	--pg-sidebar-line: #232a32;
 	--pg-sidebar-text: #c9cfd3;
+	--pg-sidebar-muted: #a9b1b7;
 
-	--pg-pink: #f2a7cf;
-	--pg-pink-tint: #f9ddec;
-	--pg-pink-deep: #9e1b62;
+	--pg-consultation-background: #e1ecf8;
+	--pg-consultation-text: #1b4672;
+	--pg-tattoo-background: #14171a;
+	--pg-tattoo-text: #ffffff;
+	--pg-touch-up-background: #f6e6c4;
+	--pg-touch-up-text: #654500;
 
-	--pg-page: #fbf4f8;
+	--pg-consultation-dot: #8db2e0;
+	--pg-touch-up-dot: #e8c777;
+
+	--pg-card-radius: 0.875rem;
+	--pg-button-radius: 0.5rem;
+
+	--pg-bottom-bar-height: 0rem;
 }
 
-*, *::before, *::after {
+/* 57.5rem = sidebar og innhold ved siden av hverandre: under dette flyttes menyen ned i en stripe nederst. */
+@media (max-width: 57.5rem) {
+	:root {
+		--pg-bottom-bar-height: 4rem;
+	}
+}
+
+*,
+*::before,
+*::after {
 	box-sizing: border-box;
 }
 
 body {
+	margin: 0;
 	font-family: var(--pg-font-body);
+	font-size: 1rem;
+	line-height: normal;
 	background: var(--pg-page);
 	color: var(--pg-ink);
+}
+
+h1,
+h2,
+h3,
+p {
 	margin: 0;
 }
 
-h1, h2, p {
-	margin: 0;
-}
-
-h1, h2 {
+h1,
+h2,
+h3 {
 	font-family: var(--pg-font-heading);
 }
 
-/* Ikoner (Google Material Symbols) */
-.material-symbols-outlined {
-	font-family: "Material Symbols Outlined", sans-serif;
-	font-weight: normal;
-	font-style: normal;
-	font-size: 1.3rem;
-	line-height: 1;
-	letter-spacing: normal;
-	text-transform: none;
-	display: inline-block;
-	white-space: nowrap;
-	word-wrap: normal;
-	direction: ltr;
-	flex: none;
-	user-select: none;
-	-webkit-font-feature-settings: "liga";
-	font-feature-settings: "liga";
-	-webkit-font-smoothing: antialiased;
+a {
+	color: var(--pg-ink);
+}
+
+a:hover {
+	color: var(--pg-pink-deep);
 }

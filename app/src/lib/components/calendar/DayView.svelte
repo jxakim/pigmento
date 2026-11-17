@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { CalendarOptions } from "fullcalendar"
+	import { joinClasses } from "./calendarAppearance.ts"
+	import { calendarEvents } from "./calendarAppointments.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
@@ -10,20 +12,10 @@
 
 	const options: CalendarOptions = {
 		initialView: "timeGridDay",
-		selectable: true,
-		expandRows: true,
-		slotMinTime: "07:00",
-		slotMaxTime: "21:00",
-		allDaySlot: false
+		events: calendarEvents,
+		eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+		dayLaneClass: ({ isToday }) => joinClasses("calendar-day-lane", isToday && "is-today")
 	}
 </script>
 
-<div class="day-view">
-	<FullCalendar {options} {date} />
-</div>
-
-<style>
-	.day-view {
-		height: 100%;
-	}
-</style>
+<FullCalendar {options} {date} />

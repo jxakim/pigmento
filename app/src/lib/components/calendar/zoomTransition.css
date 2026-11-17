@@ -1,0 +1,52 @@
+::view-transition-group(zoom-view) {
+	animation: none;
+}
+
+::view-transition-image-pair(zoom-view) {
+	overflow: hidden;
+}
+
+html[data-zoom]::view-transition-old(zoom-view),
+html[data-zoom]::view-transition-new(zoom-view) {
+	transform-origin: var(--zoom-origin);
+	animation-duration: 450ms;
+	animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+	animation-fill-mode: both;
+	mix-blend-mode: normal;
+}
+
+html[data-zoom]::view-transition-old(zoom-view) {
+	animation-name: zoom-old-view;
+}
+
+html[data-zoom]::view-transition-new(zoom-view) {
+	animation-name: zoom-new-view;
+}
+
+@keyframes zoom-old-view {
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	100% {
+		transform: scale(var(--zoom-old-view-scale));
+		opacity: 0;
+	}
+}
+
+@keyframes zoom-new-view {
+	0% {
+		transform: scale(var(--zoom-new-view-scale));
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}

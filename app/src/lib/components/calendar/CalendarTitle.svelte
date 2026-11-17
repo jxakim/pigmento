@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatPeriodLabel } from "./calendarDates"
-	import type { CalendarLevel } from "./calendarLevels"
+	import { formatCalendarTitle } from "./calendarDates.ts"
+	import type { CalendarLevel } from "./calendarLevels.ts"
 
 	interface Props {
 		level: CalendarLevel
@@ -9,33 +9,34 @@
 
 	let { level, date }: Props = $props()
 
-	const periodLabel = $derived(formatPeriodLabel(level, date))
+	const title = $derived(formatCalendarTitle(level, date))
 </script>
 
-<span class="calendar-title">
-	{date.getFullYear()}
-	{#if periodLabel}
-		<span class="calendar-period">{periodLabel}</span>
+<h1 class="calendar-title">
+	{title.heading}
+	{#if title.range}
+		<span class="range">· {title.range}</span>
 	{/if}
-</span>
+</h1>
 
 <style>
 	.calendar-title {
-		font-family: var(--pg-font-heading);
+		font-size: 2rem;
 		font-weight: 700;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
 		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
-	.calendar-period {
-		display: inline-block;
-		margin-inline-start: 0.25rem;
-		font-weight: 500;
-		opacity: 0.7;
-	}
+	/* På mobil står perioden på linjen under tittelen. */
+	@media (max-width: 57.5rem) {
+		.calendar-title {
+			font-size: 1.375rem;
+			line-height: 1.15;
+		}
 
-	.calendar-period::first-letter {
-		text-transform: uppercase;
+		.range {
+			display: none;
+		}
 	}
 </style>

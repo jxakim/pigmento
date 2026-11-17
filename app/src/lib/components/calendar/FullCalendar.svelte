@@ -3,14 +3,15 @@
 	import dayGridPlugin from "fullcalendar/daygrid"
 	import interactionPlugin from "fullcalendar/interaction"
 	import norwegianLocale from "fullcalendar/locales/nb"
-	import multiMonthPlugin from "fullcalendar/multimonth"
 	import classicThemePlugin from "fullcalendar/themes/classic"
 	import timeGridPlugin from "fullcalendar/timegrid"
 	import { untrack } from "svelte"
+	import { calendarAppearance } from "./calendarAppearance.ts"
 
 	import "fullcalendar/skeleton.css"
 	import "fullcalendar/themes/classic/theme.css"
 	import "fullcalendar/themes/classic/palette.css"
+	import "./calendarTheme.css"
 
 	interface Props {
 		options: CalendarOptions
@@ -23,10 +24,21 @@
 	let element: HTMLDivElement
 
 	const sharedOptions: CalendarOptions = {
-		plugins: [classicThemePlugin, dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin],
+		plugins: [classicThemePlugin, dayGridPlugin, timeGridPlugin, interactionPlugin],
 		locale: norwegianLocale,
 		height: "100%",
-		headerToolbar: false
+		borderless: true,
+		headerToolbar: false,
+		selectable: true,
+		// Et klikk velger én dag, mens å dra musen over flere dager eller timer velger en periode.
+		selectMinDistance: 5,
+		slotMinTime: "09:00",
+		slotMaxTime: "19:00",
+		slotDuration: "01:00",
+		slotHeaderFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+		allDaySlot: false,
+		expandRows: true,
+		...calendarAppearance
 	}
 
 	$effect(() => {
@@ -54,11 +66,5 @@
 <style>
 	.full-calendar {
 		height: 100%;
-	}
-
-	.full-calendar :global(.selected-day) {
-		background: var(--ds-color-accent-surface-tinted);
-		box-shadow: inset 0 0 0 2px var(--ds-color-accent-border-default);
-		border-radius: 0.25rem;
 	}
 </style>
