@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Calendar, CalendarOptions } from "fullcalendar"
+	import { joinClasses } from "./calendarAppearance.ts"
 	import { calendarEvents } from "./calendarAppointments.ts"
 	import { isSameDay } from "./calendarDates.ts"
 	import FullCalendar from "./FullCalendar.svelte"
@@ -17,14 +18,16 @@
 	const options: CalendarOptions = {
 		initialView: "timeGridWeek",
 		events: calendarEvents,
+		eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+		displayEventEnd: false,
 		dateClick: ({ date: day, dayEl }) => onDayClick(day, dayEl)
 	}
 
-	function highlightSelectedDay(selected: Date | undefined) {
-		calendar?.setOption("dayLaneClass", ({ date: day }) => (isSameDay(selected, day) ? "selectable-day selected-day" : "selectable-day"))
+	function updateDayLanes(selected: Date | undefined) {
+		calendar?.setOption("dayLaneClass", ({ date: day, isToday }) => joinClasses("calendar-day-lane", "selectable-day", isToday && "is-today", isSameDay(selected, day) && "selected-day"))
 	}
 
-	$effect(() => highlightSelectedDay(selectedDay))
+	$effect(() => updateDayLanes(selectedDay))
 </script>
 
 <FullCalendar {options} {date} bind:calendar />

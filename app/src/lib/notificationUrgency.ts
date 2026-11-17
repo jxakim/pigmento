@@ -8,8 +8,8 @@ export const urgencyLabels: Record<NotificationUrgency, string> = {
 	later: "Senere"
 }
 
-export const urgencyBarColor: Record<NotificationUrgency, string> = {
-	urgent: "var(--ds-color-accent-border-strong)",
-	soon: "var(--ds-color-accent-base-default)",
-	later: "var(--ds-color-neutral-border-subtle)"
+export const urgencyColor: Record<NotificationUrgency, string> = {
+	urgent: "var(--pg-pink-deep)",
+	soon: "var(--pg-pink)",
+	later: "var(--pg-button-border)"
 }

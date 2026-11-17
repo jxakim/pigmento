@@ -8,21 +8,17 @@
 	let { inquiry }: Props = $props()
 </script>
 
-<article class="ds-card" data-color="neutral">
-	<div class="inquiry">
-		<div class="header">
-			<span class="instagram-handle">{inquiry.instagramHandle}</span>
-			<span class="received-ago">{inquiry.receivedAgo}</span>
-		</div>
-		<p class="ds-paragraph" data-size="sm">{inquiry.message}</p>
-		<div class="footer">
-			{#if inquiry.hasWaitedLong}
-				<span class="waited-long">Har ventet lenge</span>
-			{/if}
-			<a class="ds-button" data-size="sm" data-variant="tertiary" data-color="neutral" href="https://instagram.com/direct/inbox/" target="_blank" rel="noopener noreferrer">
-				Åpne på Instagram
-			</a>
-		</div>
+<article class="inquiry">
+	<div class="header">
+		<span class="instagram-handle">{inquiry.instagramHandle}</span>
+		<span class="received-ago">{inquiry.receivedAgo}</span>
+	</div>
+	<p class="message">{inquiry.message}</p>
+	<div class="footer">
+		{#if inquiry.hasWaitedLong}
+			<span class="waited-long">Har ventet lenge</span>
+		{/if}
+		<a class="open-instagram" href="https://instagram.com/direct/inbox/" target="_blank" rel="noopener noreferrer">Åpne på Instagram</a>
 	</div>
 </article>
 
@@ -31,6 +27,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
+		padding: 1.125rem 1.25rem;
+		border: 0.0625rem solid var(--pg-card-border);
+		border-radius: var(--pg-card-radius);
+		background: var(--pg-card);
 	}
 
 	.header,
@@ -51,22 +51,47 @@
 		gap: 0.5rem;
 	}
 
-	.instagram-handle,
-	.waited-long {
+	.instagram-handle {
+		font-size: 1rem;
 		font-weight: 600;
 	}
 
-	.received-ago,
-	.waited-long {
+	.received-ago {
+		color: var(--pg-ink-muted);
 		font-size: 0.8125rem;
 	}
 
-	.received-ago {
-		color: var(--ds-color-neutral-text-subtle);
+	.message {
+		color: var(--pg-ink-soft);
+		font-size: 0.875rem;
+		line-height: 1.5;
 	}
 
 	.waited-long {
 		margin-inline-end: auto;
-		color: var(--ds-color-neutral-text-default);
+		color: var(--pg-pink-deep);
+		font-size: 0.8125rem;
+		font-weight: 600;
+	}
+
+	.open-instagram {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.875rem;
+		padding: 0 0.875rem;
+		border: 0.0625rem solid var(--pg-button-border);
+		border-radius: var(--pg-button-radius);
+		background: var(--pg-card);
+		color: var(--pg-ink);
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.open-instagram:hover {
+		border-color: var(--pg-ink);
+		background: var(--pg-ink);
+		color: #ffffff;
 	}
 </style>

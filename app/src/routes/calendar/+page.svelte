@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { tick } from "svelte"
+	import { compactScreen } from "#lib/compactScreen.svelte.ts"
 	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
 	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
-	import CalendarTitle from "#lib/components/calendar/CalendarTitle.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
 	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
 	import { isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
-	import { type CalendarLevel, isZoomingIn, parentLevel } from "#lib/components/calendar/calendarLevels.ts"
+	import { type CalendarLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
 	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
 	import DayView from "#lib/components/calendar/DayView.svelte"
+	import MobileMonthView from "#lib/components/calendar/MobileMonthView.svelte"
+	import MobileWeekView from "#lib/components/calendar/MobileWeekView.svelte"
 	import MonthView from "#lib/components/calendar/MonthView.svelte"
 	import WeekView from "#lib/components/calendar/WeekView.svelte"
 	import YearView from "#lib/components/calendar/YearView.svelte"
@@ -16,7 +18,6 @@
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
 	import { longPress } from "#lib/longPress.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
-	import { getTopbarContent } from "#lib/topbarContent.ts"
 
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
@@ -25,15 +26,6 @@
 	let viewContainer: HTMLDivElement
 
 	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
-
-	const topbarContent = getTopbarContent()
-
-	$effect(() => {
-		topbarContent.end = topbarTitle
-		return () => {
-			topbarContent.end = undefined
-		}
-	})
 
 	function changeLevel(newLevel: CalendarLevel, newDate: Date, zoomTarget?: Element, newSelectedDay?: Date) {
 		const direction = isZoomingIn(level, newLevel) ? "in" : "out"
@@ -58,13 +50,6 @@
 	function moveToPeriod(periods: number) {
 		date = moveByPeriods(level, date, periods)
 		selectedDay = undefined
-	}
-
-	function goToParentLevel() {
-		const parent = parentLevel[level]
-		if (parent) {
-			changeLevel(parent, date)
-		}
 	}
 
 	function selectOrOpenDay(day: Date, dayElement?: Element) {
@@ -136,22 +121,24 @@
 	}
 </script>
 
-{#snippet topbarTitle()}
-	<CalendarTitle {level} {date} />
-{/snippet}
-
 <div class="calendar-page">
-	<UrgentNotificationsBanner />
+	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
 
-	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
+	<div class="banner">
+		<UrgentNotificationsBanner isCompact />
+	</div>
 
 	<div class="calendar-body">
 		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
 		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach longPress(openDayMenu)}>
 			{#if level === "year"}
 				<YearView {date} onOpenMonth={(month, monthElement) => changeLevel("month", month, monthElement)} />
+			{:else if level === "month" && compactScreen.current}
+				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => changeLevel("day", day)} />
 			{:else if level === "month"}
 				<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+			{:else if level === "week" && compactScreen.current}
+				<MobileWeekView {date} onOpenDay={(day) => changeLevel("day", day)} />
 			{:else if level === "week"}
 				<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
@@ -159,12 +146,12 @@
 			{/if}
 		</div>
 
-		<div class="calendar-distribution">
-			<CalendarDistribution {level} appointments={periodAppointments} />
-		</div>
-
 		<div class="calendar-notes">
 			<CalendarNotes {level} {date} />
+		</div>
+
+		<div class="calendar-distribution">
+			<CalendarDistribution appointments={periodAppointments} />
 		</div>
 	</div>
 
@@ -177,46 +164,83 @@
 	.calendar-page {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
-		height: calc(100dvh - var(--pg-layout-reserved-height));
+		gap: 1.25rem;
+		height: 100dvh;
+		padding: 1.75rem 2.25rem;
+	}
+
+	.banner:empty {
+		display: none;
 	}
 
 	.calendar-body {
 		display: grid;
 		flex: 1;
-		grid-template-columns: minmax(0, 1fr) 17rem;
-		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-columns: minmax(0, 1fr) 18.75rem;
+		grid-template-rows: minmax(0, 1fr) auto;
 		grid-template-areas:
-			"view distribution"
-			"view notes";
-		gap: 1rem;
+			"view notes"
+			"view distribution";
+		gap: 1rem 1.5rem;
 		min-height: 0;
 	}
 
-	/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
 	.calendar-view {
 		grid-area: view;
+		padding: 1.125rem 1.25rem;
+		border: 0.0625rem solid var(--pg-card-border);
+		border-radius: var(--pg-card-radius);
+		background: var(--pg-card);
+		/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
 		-webkit-touch-callout: none;
 		user-select: none;
+	}
+
+	.calendar-notes {
+		grid-area: notes;
+		min-height: 0;
 	}
 
 	.calendar-distribution {
 		grid-area: distribution;
 	}
 
-	.calendar-notes {
-		grid-area: notes;
-	}
-
+	/* På mobil står tegnforklaringen over kalenderen, og notatet er en linje under. De ligger i samme rutenett som resten av siden. */
 	@media (max-width: 57.5rem) {
-		.calendar-body {
-			grid-template-columns: minmax(0, 1fr);
-			grid-template-rows: auto minmax(0, 1fr) auto;
+		.calendar-page {
+			display: grid;
+			grid-template-rows: auto auto auto minmax(0, 1fr) auto;
 			grid-template-areas:
+				"toolbar"
 				"distribution"
+				"banner"
 				"view"
 				"notes";
-			gap: 0.75rem;
+			gap: 0.625rem;
+			height: calc(100dvh - var(--pg-bottom-bar-height));
+			padding: 0.875rem 1rem 0.75rem;
+		}
+
+		.calendar-body {
+			display: contents;
+		}
+
+		.calendar-view {
+			grid-area: view;
+			min-height: 0;
+			padding: 0.75rem;
+		}
+
+		.banner {
+			grid-area: banner;
+		}
+
+		.calendar-notes {
+			grid-area: notes;
+		}
+
+		.calendar-distribution {
+			grid-area: distribution;
 		}
 	}
 </style>

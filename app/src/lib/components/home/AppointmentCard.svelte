@@ -9,18 +9,16 @@
 	let { appointment }: Props = $props()
 </script>
 
-<article class="ds-card" data-color="neutral">
-	<div class="appointment">
-		<div class="time">
-			<span class="start-time">{appointment.startTime}</span>
-			<span class="end-time">til {appointment.endTime}</span>
-		</div>
-		<div class="details">
-			<span class="client-name">{appointment.clientName}</span>
-			<span class="description">{appointment.description}</span>
-		</div>
-		<AppointmentTypeTag type={appointment.type} />
+<article class="appointment">
+	<div class="time">
+		<span class="start-time">{appointment.startTime}</span>
+		<span class="end-time">til {appointment.endTime}</span>
 	</div>
+	<div class="details">
+		<span class="client-name">{appointment.clientName}</span>
+		<span class="description">{appointment.description}</span>
+	</div>
+	<AppointmentTypeTag type={appointment.type} />
 </article>
 
 <style>
@@ -29,6 +27,10 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.75rem 1.25rem;
+		padding: 1rem 1.25rem;
+		border: 0.0625rem solid var(--pg-card-border);
+		border-radius: var(--pg-card-radius);
+		background: var(--pg-card);
 	}
 
 	.time,
@@ -41,8 +43,8 @@
 		flex: 0 0 4.75rem;
 		align-items: center;
 		padding: 0.5rem 0;
-		border-radius: var(--ds-border-radius-md);
-		background: var(--ds-color-accent-surface-tinted);
+		border-radius: 0.625rem;
+		background: var(--pg-pink-tint);
 	}
 
 	.start-time {
@@ -53,7 +55,7 @@
 
 	.end-time,
 	.description {
-		color: var(--ds-color-neutral-text-subtle);
+		color: var(--pg-ink-muted);
 	}
 
 	.end-time {
@@ -62,6 +64,7 @@
 
 	.details {
 		flex: 1 1 12.5rem;
+		min-width: 0;
 		gap: 0.125rem;
 	}
 

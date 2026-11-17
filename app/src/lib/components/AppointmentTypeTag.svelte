@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appointmentTypeColor } from "#lib/appointmentTypes.ts"
+	import { appointmentTypeStyle } from "#lib/appointmentTypes.ts"
 	import type { AppointmentType } from "#lib/sampleData.ts"
 
 	interface Props {
@@ -9,4 +9,15 @@
 	let { type }: Props = $props()
 </script>
 
-<span class="ds-tag" data-size="sm" data-color={appointmentTypeColor[type]}>{type}</span>
+<span class="type-tag" style:background={appointmentTypeStyle[type].background} style:color={appointmentTypeStyle[type].text}>{type}</span>
+
+<style>
+	.type-tag {
+		display: inline-block;
+		padding: 0.25rem 0.625rem;
+		border-radius: 62.5rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+</style>

@@ -3,14 +3,15 @@
 	import dayGridPlugin from "fullcalendar/daygrid"
 	import interactionPlugin from "fullcalendar/interaction"
 	import norwegianLocale from "fullcalendar/locales/nb"
-	import multiMonthPlugin from "fullcalendar/multimonth"
 	import classicThemePlugin from "fullcalendar/themes/classic"
 	import timeGridPlugin from "fullcalendar/timegrid"
 	import { untrack } from "svelte"
+	import { calendarAppearance } from "./calendarAppearance.ts"
 
 	import "fullcalendar/skeleton.css"
 	import "fullcalendar/themes/classic/theme.css"
 	import "fullcalendar/themes/classic/palette.css"
+	import "./calendarTheme.css"
 
 	interface Props {
 		options: CalendarOptions
@@ -23,17 +24,21 @@
 	let element: HTMLDivElement
 
 	const sharedOptions: CalendarOptions = {
-		plugins: [classicThemePlugin, dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin],
+		plugins: [classicThemePlugin, dayGridPlugin, timeGridPlugin, interactionPlugin],
 		locale: norwegianLocale,
 		height: "100%",
+		borderless: true,
 		headerToolbar: false,
 		selectable: true,
 		// Et klikk velger én dag, mens å dra musen over flere dager eller timer velger en periode.
 		selectMinDistance: 5,
-		slotMinTime: "07:00",
-		slotMaxTime: "21:00",
+		slotMinTime: "09:00",
+		slotMaxTime: "19:00",
+		slotDuration: "01:00",
+		slotHeaderFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
 		allDaySlot: false,
-		expandRows: true
+		expandRows: true,
+		...calendarAppearance
 	}
 
 	$effect(() => {
@@ -60,29 +65,6 @@
 
 <style>
 	.full-calendar {
-		--fc-classic-today: var(--ds-color-accent-background-tinted);
 		height: 100%;
-	}
-
-	.full-calendar :global(.notification-day) {
-		background-image: radial-gradient(circle, var(--ds-color-accent-border-strong) 0.25rem, transparent 0.25rem);
-		background-position: 0.375rem 0.375rem;
-		background-repeat: no-repeat;
-		background-size: 0.5rem 0.5rem;
-	}
-
-	.full-calendar :global(.selectable-day) {
-		cursor: pointer;
-		transition: background-color 0.15s ease;
-	}
-
-	.full-calendar :global(.selectable-day:hover),
-	.full-calendar :global(.selected-day) {
-		background-color: var(--ds-color-accent-surface-tinted);
-	}
-
-	.full-calendar :global(.selected-day) {
-		box-shadow: inset 0 0 0 0.125rem var(--ds-color-accent-border-subtle);
-		border-radius: var(--ds-border-radius-sm);
 	}
 </style>

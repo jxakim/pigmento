@@ -1,29 +1,29 @@
 import type { EventInput } from "fullcalendar"
-import { type AppointmentColor, appointmentTypeColor, appointmentTypes } from "#lib/appointmentTypes.ts"
+import { appointmentTypeStyle, appointmentTypes } from "#lib/appointmentTypes.ts"
 import { type AppointmentType, type ScheduledAppointment, scheduledAppointments } from "#lib/sampleData.ts"
 import { getPeriodRange, isSameDay } from "./calendarDates.ts"
 import type { CalendarLevel } from "./calendarLevels.ts"
 
-const eventColors: Record<AppointmentColor, { color: string; contrastColor: string }> = {
-	info: { color: "var(--ds-color-info-surface-tinted)", contrastColor: "var(--ds-color-info-text-default)" },
-	neutral: { color: "var(--ds-color-neutral-base-default)", contrastColor: "var(--ds-color-neutral-base-contrast-default)" },
-	warning: { color: "var(--ds-color-warning-surface-tinted)", contrastColor: "var(--ds-color-warning-text-default)" }
-}
-
-const colorsByImportance: AppointmentColor[] = ["neutral", "info", "warning"]
+const typesByImportance: AppointmentType[] = ["Tatovering", "Konsultasjon", "Touch-up"]
 
 export function toCalendarEvents(appointments: ScheduledAppointment[]): EventInput[] {
 	return appointments.map(({ clientName, type, start, end }) => ({
 		title: clientName,
 		start,
 		end,
-		...eventColors[appointmentTypeColor[type]]
+		color: appointmentTypeStyle[type].background,
+		contrastColor: appointmentTypeStyle[type].text,
+		extendedProps: { type }
 	}))
 }
 
-export function findDayColor(appointments: ScheduledAppointment[], day: Date): AppointmentColor | undefined {
-	const colorsOfDay = appointments.filter((appointment) => isSameDay(new Date(appointment.start), day)).map((appointment) => appointmentTypeColor[appointment.type])
-	return colorsByImportance.find((color) => colorsOfDay.includes(color))
+export function findDominantType(appointments: ScheduledAppointment[], day: Date): AppointmentType | undefined {
+	const typesOfDay = appointments.filter((appointment) => isSameDay(new Date(appointment.start), day)).map((appointment) => appointment.type)
+	return typesByImportance.find((type) => typesOfDay.includes(type))
+}
+
+export function findAppointmentsOnDay(appointments: ScheduledAppointment[], day: Date): ScheduledAppointment[] {
+	return appointments.filter((appointment) => isSameDay(new Date(appointment.start), day)).sort((first, second) => first.start.localeCompare(second.start))
 }
 
 export function filterByPeriod(appointments: ScheduledAppointment[], level: CalendarLevel, date: Date): ScheduledAppointment[] {
