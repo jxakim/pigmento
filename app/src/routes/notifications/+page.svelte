@@ -1,5 +1,6 @@
 <script lang="ts">
 	import NotificationCard from "#lib/components/notifications/NotificationCard.svelte"
+	import NotificationSettings from "#lib/components/notifications/NotificationSettings.svelte"
 	import PageSection from "#lib/components/PageSection.svelte"
 	import { filterLabels, matchesFilter, type NotificationFilter, notificationFilters } from "#lib/notificationFilters.ts"
 	import { countHandled, getOpenNotifications, getUrgentNotifications, markAsDone, snoozeUntilTomorrow } from "#lib/notifications.svelte.ts"
@@ -42,21 +43,29 @@
 		{/each}
 	</div>
 
-	{#each urgencyGroups as group (group.urgency)}
-		<PageSection id="notifications-{group.urgency}" title={urgencyLabels[group.urgency]}>
-			{#each group.notifications as notification (notification.id)}
-				<NotificationCard {notification} onSnooze={() => snoozeUntilTomorrow(notification.id)} onDone={() => markAsDone(notification.id)} />
+	<div class="columns">
+		<div class="notifications">
+			{#each urgencyGroups as group (group.urgency)}
+				<PageSection id="notifications-{group.urgency}" title={urgencyLabels[group.urgency]}>
+					{#each group.notifications as notification (notification.id)}
+						<NotificationCard {notification} onSnooze={() => snoozeUntilTomorrow(notification.id)} onDone={() => markAsDone(notification.id)} />
+					{/each}
+				</PageSection>
+			{:else}
+				<div class="ds-card" data-color="neutral">
+					<p class="ds-paragraph">{openNotifications.length === 0 ? "Alt er ryddet. Du har ingenting å følge opp akkurat nå." : "Ingen varsler i dette filteret."}</p>
+				</div>
 			{/each}
-		</PageSection>
-	{:else}
-		<div class="ds-card" data-color="neutral">
-			<p class="ds-paragraph">{openNotifications.length === 0 ? "Alt er ryddet. Du har ingenting å følge opp akkurat nå." : "Ingen varsler i dette filteret."}</p>
-		</div>
-	{/each}
 
-	{#if handledSummary}
-		<p class="ds-paragraph" data-size="sm">{handledSummary}</p>
-	{/if}
+			{#if handledSummary}
+				<p class="ds-paragraph" data-size="sm">{handledSummary}</p>
+			{/if}
+		</div>
+
+		<aside class="settings-column">
+			<NotificationSettings />
+		</aside>
+	</div>
 </div>
 
 <style>
@@ -66,18 +75,35 @@
 		flex-direction: column;
 	}
 
-	.notifications-page {
+	.notifications-page,
+	.notifications {
 		gap: 1.5rem;
-		max-width: 56rem;
 	}
 
 	.header {
 		gap: 0.375rem;
 	}
 
-	.filters {
+	.filters,
+	.columns {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
+	}
+
+	.columns {
+		align-items: flex-start;
+		gap: 2rem;
+	}
+
+	.notifications {
+		display: flex;
+		flex: 3 1 28rem;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.settings-column {
+		flex: 1 1 18rem;
 	}
 </style>
