@@ -1,32 +1,8 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
-	import { getOpenNotifications } from "#lib/notifications.svelte.ts"
-	import { openInquiryCount } from "#lib/sampleData.ts"
-	import { page } from "$app/state"
+	import { formatBadgeCount, getNavigationItems, isCurrentPage } from "#lib/navigation.svelte.ts"
 
-	interface NavigationItem {
-		href: string
-		label: string
-		icon: string
-		badgeCount?: number
-	}
-
-	const navigationItems: NavigationItem[] = $derived([
-		{ href: "/", label: "Forside", icon: "home" },
-		{ href: "/calendar", label: "Kalender", icon: "calendar_month" },
-		{ href: "/notifications", label: "Varsler", icon: "notifications", badgeCount: getOpenNotifications().length },
-		{ href: "/clients", label: "Kunder", icon: "group" },
-		{ href: "/appointments", label: "Avtaler", icon: "format_list_bulleted" },
-		{ href: "/requests", label: "Forespørsler", icon: "inbox", badgeCount: openInquiryCount }
-	])
-
-	function isCurrentPage(href: string): boolean {
-		return href === "/" ? page.url.pathname === "/" : page.url.pathname.startsWith(href)
-	}
-
-	function formatBadgeCount(count: number): string {
-		return count > 99 ? "99+" : String(count)
-	}
+	const navigationItems = $derived(getNavigationItems())
 </script>
 
 <nav aria-label="Hovedmeny">

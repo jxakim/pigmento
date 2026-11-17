@@ -4,12 +4,13 @@
 	--pg-layout-reserved-height: calc(var(--pg-content-padding) * 2);
 }
 
-/* 57.5rem = sidebar (20rem) + innhold (37.5rem): her flyttes menyen inn i en toppstripe. */
+/* 57.5rem = sidebar (20rem) + innhold (37.5rem): her flyttes menyen ned i en stripe nederst. */
 @media (max-width: 57.5rem) {
 	:root {
 		--pg-topbar-height: 3.5rem;
+		--pg-bottom-navigation-height: 4rem;
 		--pg-content-padding: 1rem;
-		--pg-layout-reserved-height: calc(var(--pg-topbar-height) + var(--pg-content-padding) * 2);
+		--pg-layout-reserved-height: calc(var(--pg-topbar-height) + var(--pg-bottom-navigation-height) + var(--pg-content-padding) * 2);
 	}
 }
 

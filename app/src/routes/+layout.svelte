@@ -5,34 +5,16 @@
 	import "../app.css"
 
 	import favicon from "#lib/assets/favicon.svg"
+	import BottomNavigation from "#lib/components/layout/BottomNavigation.svelte"
 	import Sidebar from "#lib/components/layout/Sidebar.svelte"
 	import Topbar from "#lib/components/layout/Topbar.svelte"
 	import { setTopbarContent, type TopbarContent } from "#lib/topbarContent.ts"
-	import { afterNavigate } from "$app/navigation"
 	import type { LayoutProps } from "./$types"
 
 	let { children }: LayoutProps = $props()
 
 	const topbarContent = $state<TopbarContent>({})
 	setTopbarContent(topbarContent)
-
-	let isMenuOpen = $state(false)
-
-	afterNavigate(closeMenu)
-
-	function closeMenu() {
-		isMenuOpen = false
-	}
-
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen
-	}
-
-	function closeMenuOnEscape(event: KeyboardEvent) {
-		if (event.key === "Escape") {
-			closeMenu()
-		}
-	}
 </script>
 
 <svelte:head>
@@ -40,15 +22,15 @@
 	<title>Pigmento</title>
 </svelte:head>
 
-<svelte:window onkeydown={closeMenuOnEscape} />
-
 <div class="layout">
-	<Topbar {isMenuOpen} onToggleMenu={toggleMenu} end={topbarContent.end} />
-	<Sidebar isOpen={isMenuOpen} onClose={closeMenu} />
+	<Topbar end={topbarContent.end} />
+	<Sidebar />
 
 	<main class="content">
 		{@render children()}
 	</main>
+
+	<BottomNavigation />
 </div>
 
 <style>
@@ -67,6 +49,10 @@
 	@media (max-width: 57.5rem) {
 		.layout {
 			display: block;
+		}
+
+		.content {
+			padding-bottom: calc(var(--pg-content-padding) + var(--pg-bottom-navigation-height));
 		}
 	}
 </style>
