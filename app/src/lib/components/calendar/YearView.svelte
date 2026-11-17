@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { CalendarOptions, DatesSetInfo } from "fullcalendar"
+	import { scheduledAppointments } from "#lib/sampleData.ts"
+	import { findDayColor } from "./calendarAppointments.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
@@ -21,8 +23,13 @@
 		singleMonthClass: "year-month",
 		singleMonthHeaderClass: "year-month-title",
 		fixedWeekCount: false,
-		dayCellClass: ({ isToday }) => (isToday ? "year-day year-today" : "year-day"),
+		dayCellClass: ({ date: day, isToday }) => getDayClasses(day, isToday),
 		datesSet: handleDatesSet
+	}
+
+	function getDayClasses(day: Date, isToday: boolean): string {
+		const dayColor = findDayColor(scheduledAppointments, day)
+		return ["year-day", isToday && "year-today", dayColor && `year-day-${dayColor}`].filter(Boolean).join(" ")
 	}
 
 	function handleDatesSet({ view }: DatesSetInfo) {
@@ -142,6 +149,27 @@
 
 	.year-view :global(.year-month:hover) {
 		background-color: var(--ds-color-neutral-surface-tinted);
+	}
+
+	.year-view :global(.year-day-info) {
+		border-radius: var(--ds-border-radius-sm);
+		background-color: var(--ds-color-info-surface-tinted);
+		color: var(--ds-color-info-text-default);
+		font-weight: 700;
+	}
+
+	.year-view :global(.year-day-neutral) {
+		border-radius: var(--ds-border-radius-sm);
+		background-color: var(--ds-color-neutral-surface-active);
+		color: var(--ds-color-neutral-text-default);
+		font-weight: 700;
+	}
+
+	.year-view :global(.year-day-warning) {
+		border-radius: var(--ds-border-radius-sm);
+		background-color: var(--ds-color-warning-surface-tinted);
+		color: var(--ds-color-warning-text-default);
+		font-weight: 700;
 	}
 
 	.year-view :global(.year-today) {
