@@ -160,7 +160,7 @@
 		</div>
 
 		<div class="calendar-distribution">
-			<CalendarDistribution appointments={periodAppointments} />
+			<CalendarDistribution {level} appointments={periodAppointments} />
 		</div>
 
 		<div class="calendar-notes">

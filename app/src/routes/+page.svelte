@@ -13,7 +13,7 @@
 			<h1 class="ds-heading" data-size="lg">God morgen</h1>
 			<p class="ds-paragraph">{todayLabel} · {todaysAppointments.length} timer i dag · {openInquiryCount} venter på svar</p>
 		</div>
-		<button type="button" class="ds-button" data-variant="primary" data-color="neutral">
+		<button type="button" class="ds-button" data-variant="primary" data-color="accent">
 			<Icon name="add" />
 			Ny booking
 		</button>

@@ -13,6 +13,10 @@ export function getUrgentNotifications(): AppNotification[] {
 	return getOpenNotifications().filter((notification) => notification.urgency === "urgent")
 }
 
+export function getDaysWithOpenNotifications(): Set<string> {
+	return new Set(getOpenNotifications().flatMap((notification) => (notification.date ? [notification.date] : [])))
+}
+
 export function countHandled(status: HandledStatus): number {
 	return [...handledStatusById.values()].filter((handledStatus) => handledStatus === status).length
 }

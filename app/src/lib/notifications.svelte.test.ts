@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { countHandled, getOpenNotifications, getUrgentNotifications, markAsDone, snoozeUntilTomorrow } from "./notifications.svelte.ts"
+import { countHandled, getDaysWithOpenNotifications, getOpenNotifications, getUrgentNotifications, markAsDone, snoozeUntilTomorrow } from "./notifications.svelte.ts"
 import { notifications } from "./sampleData.ts"
 
 describe("handling notifications", () => {
@@ -25,5 +25,13 @@ describe("handling notifications", () => {
 
 	it("only counts open notifications as urgent", () => {
 		expect(getUrgentNotifications()).toEqual([])
+	})
+
+	it("marks the days that still have open notifications", () => {
+		expect(getDaysWithOpenNotifications()).toEqual(new Set(["2026-11-05", "2026-11-06", "2026-11-10"]))
+
+		markAsDone("deposit-lise")
+
+		expect(getDaysWithOpenNotifications()).toEqual(new Set(["2026-11-05", "2026-11-06"]))
 	})
 })

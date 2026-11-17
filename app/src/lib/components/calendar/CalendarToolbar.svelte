@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
-	import CalendarLevelSelect from "./CalendarLevelSelect.svelte"
+	import CalendarLevelSwitcher from "./CalendarLevelSwitcher.svelte"
 	import CalendarTitle from "./CalendarTitle.svelte"
 	import { type CalendarLevel, levelLabels, parentLevel } from "./calendarLevels.ts"
 
@@ -30,34 +30,29 @@
 		</h1>
 	</div>
 
-	<div class="toolbar-end">
-		<button type="button" class="ds-button" data-size="sm" data-variant="tertiary" data-color="neutral" data-icon="true" aria-label="Forrige {periodName}" onclick={onPrevious}>
-			<Icon name="chevron_left" />
-		</button>
-		<button type="button" class="ds-button" data-size="sm" data-variant="tertiary" data-color="neutral" data-icon="true" aria-label="Neste {periodName}" onclick={onNext}>
-			<Icon name="chevron_right" />
-		</button>
-		<CalendarLevelSelect {level} {onLevelChange} />
-		<button type="button" class="ds-button" data-size="sm" data-variant="secondary" data-color="neutral" onclick={onToday}>I dag</button>
+	<button type="button" class="ds-button" data-size="sm" data-variant="tertiary" data-color="neutral" data-icon="true" aria-label="Forrige {periodName}" onclick={onPrevious}>
+		<Icon name="chevron_left" />
+	</button>
+	<button type="button" class="ds-button" data-size="sm" data-variant="tertiary" data-color="neutral" data-icon="true" aria-label="Neste {periodName}" onclick={onNext}>
+		<Icon name="chevron_right" />
+	</button>
+	<div class="level-switcher">
+		<CalendarLevelSwitcher {level} {onLevelChange} />
 	</div>
+	<button type="button" class="ds-button" data-size="sm" data-variant="secondary" data-color="neutral" onclick={onToday}>I dag</button>
 </div>
 
 <style>
 	.toolbar,
-	.toolbar-start,
-	.toolbar-end {
+	.toolbar-start {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 	}
 
-	.toolbar {
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
 	.toolbar-start {
 		min-width: 0;
+		margin-inline-end: auto;
 	}
 
 	.toolbar .ds-button {
@@ -71,14 +66,24 @@
 		font-size: 1.5rem;
 	}
 
-	/* På mobil ligger tittelen i toppstripen ved hamburgermenyen (se Topbar.svelte). */
+	/* På mobil ligger tittelen i toppstripen (se Topbar.svelte), og visningsvalget får en egen rad. */
 	@media (max-width: 57.5rem) {
+		.toolbar {
+			flex-wrap: wrap;
+		}
+
 		.toolbar-title {
 			display: none;
 		}
 
-		.toolbar-end {
-			margin-inline-start: auto;
+		.level-switcher {
+			flex: 1 0 100%;
+			order: 1;
+		}
+
+		.level-switcher :global(.ds-toggle-group) {
+			width: 100%;
+			max-width: none;
 		}
 	}
 </style>

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Calendar, CalendarOptions } from "fullcalendar"
+	import { getDaysWithOpenNotifications } from "#lib/notifications.svelte.ts"
 	import { calendarEvents } from "./calendarAppointments.ts"
-	import { isSameDay } from "./calendarDates.ts"
+	import { formatIsoDate, isSameDay } from "./calendarDates.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
@@ -17,16 +18,19 @@
 	const options: CalendarOptions = {
 		initialView: "dayGridMonth",
 		events: calendarEvents,
+		eventDisplay: "block",
 		fixedWeekCount: false,
 		dayMaxEvents: true,
 		dateClick: ({ date: day, dayEl }) => onDayClick(day, dayEl)
 	}
 
-	function highlightSelectedDay(selected: Date | undefined) {
-		calendar?.setOption("dayCellClass", ({ date: day }) => (isSameDay(selected, day) ? "selectable-day selected-day" : "selectable-day"))
+	function updateDayCells(selected: Date | undefined, daysWithNotifications: Set<string>) {
+		calendar?.setOption("dayCellClass", ({ date: day }) =>
+			["selectable-day", isSameDay(selected, day) && "selected-day", daysWithNotifications.has(formatIsoDate(day)) && "notification-day"].filter(Boolean).join(" ")
+		)
 	}
 
-	$effect(() => highlightSelectedDay(selectedDay))
+	$effect(() => updateDayCells(selectedDay, getDaysWithOpenNotifications()))
 </script>
 
 <FullCalendar {options} {date} bind:calendar />

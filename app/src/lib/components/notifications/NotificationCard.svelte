@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from "#lib/components/Icon.svelte"
-	import { urgencyColor } from "#lib/notificationUrgency.ts"
+	import { urgencyBarColor } from "#lib/notificationUrgency.ts"
 	import type { AppNotification, NotificationCategory } from "#lib/sampleData.ts"
 
 	interface Props {
@@ -23,7 +23,7 @@
 
 <article class="ds-card" data-color="neutral">
 	<div class="notification">
-		<span class="urgency-bar" data-color={urgencyColor[notification.urgency]}></span>
+		<span class="urgency-bar" style:background={urgencyBarColor[notification.urgency]}></span>
 		<span class="category-icon">
 			<Icon name={categoryIcon[notification.category]} />
 		</span>
@@ -58,7 +58,6 @@
 		align-self: stretch;
 		width: 0.25rem;
 		border-radius: 62.5rem;
-		background: var(--ds-color-base-default);
 	}
 
 	.category-icon {
@@ -68,7 +67,7 @@
 		width: 2.5rem;
 		height: 2.5rem;
 		border-radius: var(--ds-border-radius-md);
-		background: var(--ds-color-neutral-surface-tinted);
+		background: var(--ds-color-accent-surface-tinted);
 	}
 
 	.text {

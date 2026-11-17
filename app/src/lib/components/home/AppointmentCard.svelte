@@ -42,7 +42,7 @@
 		align-items: center;
 		padding: 0.5rem 0;
 		border-radius: var(--ds-border-radius-md);
-		background: var(--ds-color-neutral-surface-tinted);
+		background: var(--ds-color-accent-surface-tinted);
 	}
 
 	.start-time {
