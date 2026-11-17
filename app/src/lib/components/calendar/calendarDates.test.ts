@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { dateMarkerToLocalDate, formatPeriodLabel, isSameDay } from "./calendarDates.ts"
+import { formatPeriodLabel, isSameDay } from "./calendarDates.ts"
 
 describe("isSameDay", () => {
 	it("ignores the time of day", () => {
@@ -9,12 +9,6 @@ describe("isSameDay", () => {
 	it("is false for different days or no day", () => {
 		expect(isSameDay(new Date(2026, 10, 16), new Date(2026, 10, 17))).toBe(false)
 		expect(isSameDay(undefined, new Date(2026, 10, 16))).toBe(false)
-	})
-})
-
-describe("dateMarkerToLocalDate", () => {
-	it("reads the date from the UTC fields", () => {
-		expect(dateMarkerToLocalDate(new Date(Date.UTC(2026, 10, 16, 23)))).toEqual(new Date(2026, 10, 16))
 	})
 })
 

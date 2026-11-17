@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Calendar, CalendarOptions } from "fullcalendar"
-	import { dateMarkerToLocalDate, isSameDay } from "./calendarDates.ts"
+	import { isSameDay } from "./calendarDates.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
@@ -19,7 +19,7 @@
 	}
 
 	function highlightSelectedDay(selected: Date | undefined) {
-		calendar?.setOption("dayLaneClass", ({ date: dayMarker }) => (isSameDay(selected, dateMarkerToLocalDate(dayMarker)) ? "selectable-day selected-day" : "selectable-day"))
+		calendar?.setOption("dayLaneClass", ({ date: day }) => (isSameDay(selected, day) ? "selectable-day selected-day" : "selectable-day"))
 	}
 
 	$effect(() => highlightSelectedDay(selectedDay))

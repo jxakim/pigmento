@@ -4,11 +4,6 @@ export function isSameDay(first: Date | undefined, second: Date): boolean {
 	return first?.toDateString() === second.toDateString()
 }
 
-// FullCalendar sine "DateMarker"-datoer lagrer lokal tid i UTC-feltene.
-export function dateMarkerToLocalDate(marker: Date): Date {
-	return new Date(marker.getUTCFullYear(), marker.getUTCMonth(), marker.getUTCDate())
-}
-
 export function formatPeriodLabel(level: CalendarLevel, date: Date): string | undefined {
 	switch (level) {
 		case "year":
