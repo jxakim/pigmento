@@ -3,6 +3,7 @@
 	import UpcomingDays from "#lib/components/home/UpcomingDays.svelte"
 	import WaitingInquiries from "#lib/components/home/WaitingInquiries.svelte"
 	import Icon from "#lib/components/Icon.svelte"
+	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
 	import { openInquiryCount, todayLabel, todaysAppointments } from "#lib/sampleData.ts"
 </script>
 
@@ -17,6 +18,8 @@
 			Ny booking
 		</button>
 	</header>
+
+	<UrgentNotificationsBanner />
 
 	<div class="columns">
 		<div class="column main-column">

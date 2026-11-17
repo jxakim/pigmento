@@ -1,4 +1,5 @@
 <script lang="ts">
+	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 	import SidebarNavigation from "./SidebarNavigation.svelte"
 
 	interface Props {
@@ -12,9 +13,14 @@
 <button type="button" class="backdrop" class:is-visible={isOpen} tabindex="-1" aria-label="Lukk meny" onclick={onClose}></button>
 
 <aside id="sidebar" class="sidebar" class:is-open={isOpen} data-color-scheme="dark" data-color="neutral">
-	<div class="logo">
-		<img src="/logo.png" alt="" width="52" height="52" />
-		<span class="app-name">Pigmento</span>
+	<div class="header">
+		<div class="logo">
+			<img src="/logo.png" alt="" width="52" height="52" />
+			<span class="app-name">Pigmento</span>
+		</div>
+		<div class="bell">
+			<NotificationBell />
+		</div>
 	</div>
 
 	<SidebarNavigation />
@@ -36,9 +42,18 @@
 		color: var(--ds-color-neutral-text-default);
 	}
 
+	.header,
 	.logo {
 		display: flex;
 		align-items: center;
+	}
+
+	.header {
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.logo {
 		gap: 1rem;
 		padding: 1rem 0.5rem;
 	}
@@ -77,8 +92,12 @@
 		display: none;
 	}
 
-	/* På mobil glir menyen inn over innholdet, med en mørk bakgrunn bak som lukker den ved klikk. */
+	/* På mobil glir menyen inn over innholdet, med en mørk bakgrunn bak som lukker den ved klikk. Klokken ligger da i toppstripen. */
 	@media (max-width: 57.5rem) {
+		.bell {
+			display: none;
+		}
+
 		.sidebar {
 			position: fixed;
 			top: var(--pg-topbar-height);

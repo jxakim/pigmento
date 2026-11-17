@@ -13,6 +13,7 @@
 	import WeekView from "#lib/components/calendar/WeekView.svelte"
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
+	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
 	import { longPress } from "#lib/longPress.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { getTopbarContent } from "#lib/topbarContent.ts"
@@ -140,6 +141,8 @@
 {/snippet}
 
 <div class="calendar-page">
+	<UrgentNotificationsBanner />
+
 	<CalendarToolbar {level} {date} onBack={goToParentLevel} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} />
 
 	<div class="calendar-body">
