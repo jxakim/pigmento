@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest"
+import { appointmentTypeDetails } from "#lib/appointmentTypes.ts"
 import type { ScheduledAppointment } from "#lib/sampleData.ts"
 import { countByType, filterByPeriod, findAppointmentsOnDay, findDominantType, toCalendarEvents } from "./calendarAppointments.ts"
 
-const consultation: ScheduledAppointment = { clientName: "Mia Haugen", type: "Konsultasjon", start: "2026-11-05T10:00", end: "2026-11-05T11:00" }
-const tattoo: ScheduledAppointment = { clientName: "Jonas Berg", type: "Tatovering", start: "2026-11-05T12:30", end: "2026-11-05T16:30" }
-const touchUp: ScheduledAppointment = { clientName: "Sara Lund", type: "Touch-up", start: "2026-11-06T17:00", end: "2026-11-06T17:30" }
+const consultation: ScheduledAppointment = { clientName: "Mia Haugen", type: "consultation", start: "2026-11-05T10:00", end: "2026-11-05T11:00" }
+const tattoo: ScheduledAppointment = { clientName: "Jonas Berg", type: "tattoo", start: "2026-11-05T12:30", end: "2026-11-05T16:30" }
+const privateAppointment: ScheduledAppointment = { clientName: "Tannlege", type: "notAvailable", start: "2026-11-06T17:00", end: "2026-11-06T17:30" }
 
 describe("toCalendarEvents", () => {
 	it("shows the client name and colors the event like the appointment type", () => {
@@ -13,11 +14,16 @@ describe("toCalendarEvents", () => {
 				title: "Jonas Berg",
 				start: tattoo.start,
 				end: tattoo.end,
-				color: "var(--pg-tattoo-background)",
-				contrastColor: "var(--pg-tattoo-text)",
-				extendedProps: { type: "Tatovering" }
+				color: appointmentTypeDetails.tattoo.background,
+				contrastColor: appointmentTypeDetails.tattoo.text,
+				extendedProps: { type: "tattoo" }
 			}
 		])
+	})
+
+	it("uses the type label as title when the appointment has no client", () => {
+		const [event] = toCalendarEvents([{ type: "notAvailable", start: "2026-11-06T09:00", end: "2026-11-06T10:00" }])
+		expect(event.title).toBe(appointmentTypeDetails.notAvailable.label)
 	})
 })
 
@@ -27,16 +33,16 @@ describe("findDominantType", () => {
 	})
 
 	it("uses the type of the only appointment of the day", () => {
-		expect(findDominantType([touchUp], new Date(2026, 10, 6))).toBe("Touch-up")
+		expect(findDominantType([privateAppointment], new Date(2026, 10, 6))).toBe("notAvailable")
 	})
 
 	it("lets tattoos win over consultations on the same day", () => {
-		expect(findDominantType([consultation, tattoo], new Date(2026, 10, 5))).toBe("Tatovering")
+		expect(findDominantType([consultation, tattoo], new Date(2026, 10, 5))).toBe("tattoo")
 	})
 })
 
 describe("filterByPeriod", () => {
-	const appointments = [consultation, tattoo, touchUp]
+	const appointments = [consultation, tattoo, privateAppointment]
 
 	it("keeps the appointments that start inside the period", () => {
 		expect(filterByPeriod(appointments, "day", new Date(2026, 10, 5))).toEqual([consultation, tattoo])
@@ -50,14 +56,14 @@ describe("filterByPeriod", () => {
 
 describe("countByType", () => {
 	it("counts every appointment type, also the ones without appointments", () => {
-		expect(countByType([consultation, tattoo, touchUp, tattoo])).toEqual({ Konsultasjon: 1, Tatovering: 2, "Touch-up": 1 })
-		expect(countByType([])).toEqual({ Konsultasjon: 0, Tatovering: 0, "Touch-up": 0 })
+		expect(countByType([consultation, tattoo, privateAppointment, tattoo])).toEqual({ consultation: 1, tattoo: 2, notAvailable: 1 })
+		expect(countByType([])).toEqual({ consultation: 0, tattoo: 0, notAvailable: 0 })
 	})
 })
 
 describe("findAppointmentsOnDay", () => {
 	it("gives the appointments of the day in the order they start", () => {
-		expect(findAppointmentsOnDay([tattoo, touchUp, consultation], new Date(2026, 10, 5))).toEqual([consultation, tattoo])
+		expect(findAppointmentsOnDay([tattoo, privateAppointment, consultation], new Date(2026, 10, 5))).toEqual([consultation, tattoo])
 	})
 
 	it("is empty on days without appointments", () => {

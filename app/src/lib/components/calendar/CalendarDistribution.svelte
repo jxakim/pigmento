@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appointmentTypeStyle, appointmentTypes } from "#lib/appointmentTypes.ts"
+	import { appointmentTypeDetails, appointmentTypes } from "#lib/appointmentTypes.ts"
 	import type { ScheduledAppointment } from "#lib/sampleData.ts"
 	import { countByType } from "./calendarAppointments.ts"
 
@@ -22,7 +22,7 @@
 	<div class="bar" aria-hidden="true">
 		{#each appointmentTypes as type (type)}
 			{#if countsByType[type] > 0}
-				<span class="segment" style:background={appointmentTypeStyle[type].dot} style:flex-grow={countsByType[type]}></span>
+				<span class="segment" style:background={appointmentTypeDetails[type].dot} style:flex-grow={countsByType[type]}></span>
 			{/if}
 		{/each}
 	</div>
@@ -30,8 +30,8 @@
 	<ul class="legend">
 		{#each appointmentTypes as type (type)}
 			<li class="legend-item">
-				<span class="dot" style:background={appointmentTypeStyle[type].dot}></span>
-				<span class="type-name">{type}</span>
+				<span class="dot" style:background={appointmentTypeDetails[type].dot}></span>
+				<span class="type-name">{appointmentTypeDetails[type].label}</span>
 				<span class="count">{countsByType[type]}</span>
 			</li>
 		{/each}

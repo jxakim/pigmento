@@ -1,11 +1,31 @@
-// Eneste sted timetyper defineres. Rekkefølgen her er visningsrekkefølgen; priority avgjør hvilken type som farger en dag med flere timer (lavest vinner).
+// Eneste sted timetyper defineres. Nøkkelen er en fast ID som lagres på timene; label er teksten brukeren ser og kan endres fritt.
+// Rekkefølgen her er visningsrekkefølgen; priority avgjør hvilken type som farger en dag med flere timer (lavest vinner).
 const appointmentTypeDefinitions = {
-	Konsultasjon: { priority: 2, background: "#e1ecf8", text: "#1b4672", dot: "#8db2e0" },
-	Tatovering: { priority: 1, background: "#14171a", text: "#ffffff", dot: "#14171a" },
-	"Touch-up": { priority: 3, background: "#f6e6c4", text: "#654500", dot: "#e8c777" }
-} satisfies Record<string, AppointmentTypeDefinition>
+	consultation: {
+		label: "Konsultasjon",
+		priority: 2,
+		background: "#e1ecf8",
+		text: "#1b4672",
+		dot: "#8db2e0"
+	},
+	tattoo: {
+		label: "Tatovering",
+		priority: 1,
+		background: "#002142",
+		text: "#ffffff",
+		dot: "#002142"
+	},
+	notAvailable: {
+		label: "Ikke tilgjengelig",
+		priority: 3,
+		background: "#c2c2c2",
+		text: "#333333",
+		dot: "#c2c2c2"
+	}
+} satisfies Record<string, AppointmentTypeDetails>
 
-interface AppointmentTypeDefinition {
+interface AppointmentTypeDetails {
+	label: string
 	priority: number
 	background: string
 	text: string
@@ -16,6 +36,11 @@ export type AppointmentType = keyof typeof appointmentTypeDefinitions
 
 export const appointmentTypes = Object.keys(appointmentTypeDefinitions) as AppointmentType[]
 
-export const appointmentTypeStyle: Record<AppointmentType, AppointmentTypeDefinition> = appointmentTypeDefinitions
+export const appointmentTypeDetails: Record<AppointmentType, AppointmentTypeDetails> = appointmentTypeDefinitions
 
-export const appointmentTypesByPriority = [...appointmentTypes].sort((first, second) => appointmentTypeStyle[first].priority - appointmentTypeStyle[second].priority)
+export const appointmentTypesByPriority = [...appointmentTypes].sort((first, second) => appointmentTypeDetails[first].priority - appointmentTypeDetails[second].priority)
+
+// Timer uten kundenavn (f.eks. «Ikke tilgjengelig») vises med navnet på typen.
+export function appointmentTitle({ clientName, type }: { clientName?: string; type: AppointmentType }): string {
+	return clientName ?? appointmentTypeDetails[type].label
+}

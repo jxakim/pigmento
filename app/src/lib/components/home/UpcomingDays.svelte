@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { appointmentTitle } from "#lib/appointmentTypes.ts"
 	import AppointmentTypeTag from "#lib/components/AppointmentTypeTag.svelte"
 	import PageSection from "#lib/components/PageSection.svelte"
 	import { upcomingDays } from "#lib/sampleData.ts"
@@ -13,7 +14,7 @@
 					{#each day.appointments as appointment (appointment.startTime)}
 						<li class="appointment">
 							<span class="start-time">{appointment.startTime}</span>
-							<span class="client-name">{appointment.clientName}</span>
+							<span class="client-name">{appointmentTitle(appointment)}</span>
 							<AppointmentTypeTag type={appointment.type} />
 						</li>
 					{/each}
