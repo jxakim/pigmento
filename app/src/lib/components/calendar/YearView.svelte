@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appointmentTypeStyle } from "#lib/appointmentTypes.ts"
+	import { appointmentTypeDetails } from "#lib/appointmentTypes.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { findDominantType } from "./calendarAppointments.ts"
 	import { getMonthGridDays, isSameDay } from "./calendarDates.ts"
@@ -40,9 +40,9 @@
 						<span
 							class="day"
 							class:is-today={isSameDay(today, day)}
-							style:--day-background={type && appointmentTypeStyle[type].background}
-							style:--day-text={type && appointmentTypeStyle[type].text}
-							style:--day-dot={type && appointmentTypeStyle[type].dot}
+							style:--day-background={type && appointmentTypeDetails[type].background}
+							style:--day-text={type && appointmentTypeDetails[type].text}
+							style:--day-dot={type && appointmentTypeDetails[type].dot}
 							class:has-appointments={type}>{day.getDate()}</span
 						>
 					{:else}

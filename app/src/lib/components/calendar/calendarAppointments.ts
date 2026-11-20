@@ -1,25 +1,23 @@
 import type { EventInput } from "fullcalendar"
-import { appointmentTypeStyle, appointmentTypes } from "#lib/appointmentTypes.ts"
-import { type AppointmentType, type ScheduledAppointment, scheduledAppointments } from "#lib/sampleData.ts"
+import { type AppointmentType, appointmentTitle, appointmentTypeDetails, appointmentTypes, appointmentTypesByPriority } from "#lib/appointmentTypes.ts"
+import { type ScheduledAppointment, scheduledAppointments } from "#lib/sampleData.ts"
 import { getPeriodRange, isSameDay } from "./calendarDates.ts"
 import type { CalendarLevel } from "./calendarLevels.ts"
 
-const typesByImportance: AppointmentType[] = ["Tatovering", "Konsultasjon", "Touch-up"]
-
 export function toCalendarEvents(appointments: ScheduledAppointment[]): EventInput[] {
 	return appointments.map(({ clientName, type, start, end }) => ({
-		title: clientName,
+		title: appointmentTitle({ clientName, type }),
 		start,
 		end,
-		color: appointmentTypeStyle[type].background,
-		contrastColor: appointmentTypeStyle[type].text,
+		color: appointmentTypeDetails[type].background,
+		contrastColor: appointmentTypeDetails[type].text,
 		extendedProps: { type }
 	}))
 }
 
 export function findDominantType(appointments: ScheduledAppointment[], day: Date): AppointmentType | undefined {
 	const typesOfDay = appointments.filter((appointment) => isSameDay(new Date(appointment.start), day)).map((appointment) => appointment.type)
-	return typesByImportance.find((type) => typesOfDay.includes(type))
+	return appointmentTypesByPriority.find((type) => typesOfDay.includes(type))
 }
 
 export function findAppointmentsOnDay(appointments: ScheduledAppointment[], day: Date): ScheduledAppointment[] {

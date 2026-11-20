@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appointmentTypeStyle } from "#lib/appointmentTypes.ts"
+	import { appointmentTitle, appointmentTypeDetails } from "#lib/appointmentTypes.ts"
 	import AppointmentTypeTag from "#lib/components/AppointmentTypeTag.svelte"
 	import { getDaysWithOpenNotifications } from "#lib/notifications.svelte.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
@@ -36,7 +36,7 @@
 
 	function getDots(day: Date): string[] {
 		const hasNotification = daysWithNotifications.has(formatIsoDate(day))
-		const typeDots = findAppointmentsOnDay(scheduledAppointments, day).map((appointment) => appointmentTypeStyle[appointment.type].dot)
+		const typeDots = findAppointmentsOnDay(scheduledAppointments, day).map((appointment) => appointmentTypeDetails[appointment.type].dot)
 		return [...(hasNotification ? ["var(--pg-pink-deep)"] : []), ...typeDots].slice(0, maxDotsPerDay)
 	}
 </script>
@@ -82,7 +82,7 @@
 		{#each shownDayAppointments as appointment (appointment.start)}
 			<div class="agenda-row">
 				<span class="agenda-time">{formatTime(appointment.start)}</span>
-				<span class="agenda-client">{appointment.clientName}</span>
+				<span class="agenda-client">{appointmentTitle(appointment)}</span>
 				<AppointmentTypeTag type={appointment.type} />
 			</div>
 		{:else}

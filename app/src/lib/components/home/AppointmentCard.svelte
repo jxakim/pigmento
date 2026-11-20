@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { appointmentTitle } from "#lib/appointmentTypes.ts"
 	import AppointmentTypeTag from "#lib/components/AppointmentTypeTag.svelte"
 	import type { Appointment } from "#lib/sampleData.ts"
 
@@ -15,8 +16,10 @@
 		<span class="end-time">til {appointment.endTime}</span>
 	</div>
 	<div class="details">
-		<span class="client-name">{appointment.clientName}</span>
-		<span class="description">{appointment.description}</span>
+		<span class="client-name">{appointmentTitle(appointment)}</span>
+		{#if appointment.description}
+			<span class="description">{appointment.description}</span>
+		{/if}
 	</div>
 	<AppointmentTypeTag type={appointment.type} />
 </article>

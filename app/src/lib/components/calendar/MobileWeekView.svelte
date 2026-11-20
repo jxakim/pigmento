@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appointmentTypeStyle } from "#lib/appointmentTypes.ts"
+	import { appointmentTypeDetails } from "#lib/appointmentTypes.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { findAppointmentsOnDay } from "./calendarAppointments.ts"
 	import { formatTime, getPeriodRange, isSameDay } from "./calendarDates.ts"
@@ -38,9 +38,9 @@
 			</span>
 			<span class="appointments">
 				{#each appointments as appointment (appointment.start)}
-					<span class="appointment" style:background={appointmentTypeStyle[appointment.type].background} style:color={appointmentTypeStyle[appointment.type].text}>
+					<span class="appointment" style:background={appointmentTypeDetails[appointment.type].background} style:color={appointmentTypeDetails[appointment.type].text}>
 						{formatTime(appointment.start)}
-						{appointment.clientName.split(" ")[0]}
+						{appointment.clientName?.split(" ")[0] ?? appointmentTypeDetails[appointment.type].label}
 					</span>
 				{:else}
 					<span class="no-appointments">Ingen avtaler</span>
