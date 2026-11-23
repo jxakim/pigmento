@@ -110,8 +110,8 @@
 		align-items: center;
 		gap: 0.75rem;
 		width: 100%;
-		min-height: 3.5rem;
-		padding: 0.5rem 0.875rem;
+		min-height: 2.75rem;
+		padding: 0.25rem 0.875rem;
 		border: 0.0625rem solid var(--pg-card-border);
 		border-radius: var(--pg-card-radius);
 		background: var(--pg-card);
@@ -124,12 +124,13 @@
 	.notes-bar-text {
 		display: flex;
 		flex: 1;
-		flex-direction: column;
-		gap: 0.0625rem;
+		align-items: baseline;
+		gap: 0.5rem;
 		min-width: 0;
 	}
 
 	.notes-bar-title {
+		flex: none;
 		color: var(--pg-ink-muted);
 		font-size: 0.75rem;
 		font-weight: 600;

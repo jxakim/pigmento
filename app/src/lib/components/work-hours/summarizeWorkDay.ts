@@ -25,3 +25,15 @@ export function summarizeWorkDay(day: WorkDay): WorkDaySummary {
 	}
 	return { duration: "Fri", hours: "" }
 }
+
+export function formatWorkDayLine(day: WorkDay): string {
+	const workedHours = getWorkedHours(day)
+
+	if (workedHours) {
+		return `Jobbet ${formatHours(workedHours)}`
+	}
+	if (day.logged) {
+		return "Jobbet ikke"
+	}
+	return day.planned ? `Planlagt ${formatHours(day.planned)}` : "Fridag"
+}

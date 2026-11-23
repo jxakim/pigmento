@@ -17,8 +17,11 @@
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
+	import { formatWorkDayLine } from "#lib/components/work-hours/summarizeWorkDay.ts"
 	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
+	import { swipe } from "#lib/swipe.ts"
+	import { getWorkDay } from "#lib/workHours.svelte.ts"
 
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
@@ -35,6 +38,7 @@
 
 	let previousViews = $state<CalendarView[]>([])
 
+	const workHoursSummary = $derived(showWorkHours && level === "day" ? { text: formatWorkDayLine(getWorkDay(formatIsoDate(date))), href: `/hours?dato=${formatIsoDate(date)}` } : undefined)
 	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
 
 	function showView(view: CalendarView, zoomTarget?: Element) {
@@ -148,7 +152,7 @@
 </script>
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
+	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} {workHoursSummary} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
 
 	<div class="banner">
 		<UrgentNotificationsBanner isCompact />
@@ -156,11 +160,11 @@
 
 	<div class="calendar-body">
 		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
-		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu}>
+		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach compactScreen.current ? swipe({ onSwipeLeft: () => moveToPeriod(1), onSwipeRight: () => moveToPeriod(-1) }) : undefined}>
 			{#if level === "year"}
 				<YearView {date} onOpenMonth={(month, monthElement) => openLevel("month", month, monthElement)} />
 			{:else if level === "month" && compactScreen.current}
-				<MobileMonthView {date} {showWorkHours} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => openLevel("day", day)} />
+				<MobileMonthView {date} {showWorkHours} onOpenDay={(day, dayElement) => openLevel("day", day, dayElement)} />
 			{:else if level === "month"}
 				<MonthView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else if level === "week" && compactScreen.current}
@@ -169,7 +173,7 @@
 				<WeekView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
 				<div class="day">
-					{#if showWorkHours}
+					{#if showWorkHours && !compactScreen.current}
 						<WorkHoursLine isoDate={formatIsoDate(date)} />
 					{/if}
 					<div class="day-view">
@@ -183,7 +187,7 @@
 			<CalendarNotes {level} {date} />
 		</div>
 
-		<div class="calendar-distribution">
+		<div class="calendar-distribution" class:is-hidden-on-mobile={level === "week" || level === "day"}>
 			<CalendarDistribution appointments={periodAppointments} />
 		</div>
 	</div>
@@ -250,17 +254,9 @@
 		grid-area: distribution;
 	}
 
-	/* På mobil står tegnforklaringen over kalenderen, og notatet er en linje under. De ligger i samme rutenett som resten av siden. */
+	/* På mobil står tegnforklaringen over kalenderen, og notatet er en linje under. Kalenderen får resten av høyden. */
 	@media (max-width: 57.5rem) {
 		.calendar-page {
-			display: grid;
-			grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-			grid-template-areas:
-				"toolbar"
-				"distribution"
-				"banner"
-				"view"
-				"notes";
 			gap: 0.625rem;
 			height: calc(100dvh - var(--pg-bottom-bar-space));
 			padding: 0.875rem 1rem 0.75rem;
@@ -270,22 +266,36 @@
 			display: contents;
 		}
 
-		.calendar-view {
-			grid-area: view;
-			min-height: 0;
-			padding: 0.75rem;
+		.calendar-distribution {
+			order: 1;
 		}
 
 		.banner {
-			grid-area: banner;
+			order: 2;
+		}
+
+		.calendar-view {
+			flex: 1;
+			order: 3;
+			min-height: 0;
+			padding: 0.75rem;
+			touch-action: pan-y;
 		}
 
 		.calendar-notes {
-			grid-area: notes;
+			order: 4;
 		}
 
-		.calendar-distribution {
-			grid-area: distribution;
+		.calendar-distribution.is-hidden-on-mobile {
+			display: none;
+		}
+	}
+
+	/* Er skjermen lav, går plassen til kalenderen: tegnforklaringen og varselstripen er ikke med. */
+	@media (max-width: 57.5rem) and (max-height: 47rem) {
+		.calendar-distribution,
+		.banner {
+			display: none;
 		}
 	}
 </style>

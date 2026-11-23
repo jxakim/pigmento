@@ -13,6 +13,7 @@
 		date: Date
 		appointmentCount: number
 		isWorkHoursVisible: boolean
+		workHoursSummary?: { text: string; href: string }
 		onLevelChange: (level: CalendarLevel) => void
 		onPrevious: () => void
 		onToday: () => void
@@ -21,7 +22,7 @@
 		onBack?: () => void
 	}
 
-	let { level, date, appointmentCount, isWorkHoursVisible, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
+	let { level, date, appointmentCount, isWorkHoursVisible, workHoursSummary, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
 
 	const periodName = $derived(levelLabels[level].toLowerCase())
 	const appointmentCountLabel = $derived(`${appointmentCount} ${appointmentCount === 1 ? "avtale" : "avtaler"}`)
@@ -37,17 +38,20 @@
 
 	<div class="title">
 		<CalendarTitle {level} {date} />
-		<p class="summary">{summary}</p>
+		<p class="summary">
+			{#if workHoursSummary}
+				<a class="work-hours-summary" href={workHoursSummary.href}>{workHoursSummary.text}</a>
+			{:else}
+				{summary}
+			{/if}
+		</p>
 	</div>
 
 	<div class="period-navigation">
 		<button type="button" class="icon-button" aria-label="Forrige {periodName}" onclick={onPrevious}>
 			<Icon name="chevron_left" />
 		</button>
-		<button type="button" class="today-button" onclick={onToday}>
-			<span class="today-icon"><Icon name="today" /></span>
-			<span class="today-label">I dag</span>
-		</button>
+		<button type="button" class="today-button" onclick={onToday}>I dag</button>
 		<button type="button" class="icon-button" aria-label="Neste {periodName}" onclick={onNext}>
 			<Icon name="chevron_right" />
 		</button>
@@ -57,6 +61,9 @@
 		<div class="level-switcher-control">
 			<CalendarLevelSwitcher {level} {onLevelChange} />
 		</div>
+		<button type="button" class="icon-button mobile-today-button" aria-label="I dag" onclick={onToday}>
+			<Icon name="today" />
+		</button>
 		<div class="mobile-work-hours-toggle">
 			<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
 		</div>
@@ -91,7 +98,7 @@
 	}
 
 	.mobile-work-hours-toggle,
-	.today-icon {
+	.icon-button.mobile-today-button {
 		display: none;
 	}
 
@@ -160,6 +167,11 @@
 			font-size: 0.8125rem;
 		}
 
+		.work-hours-summary {
+			color: var(--pg-pink-deep);
+			font-weight: 600;
+		}
+
 		.period-navigation {
 			gap: 0.5rem;
 			margin-inline-end: 0;
@@ -170,30 +182,12 @@
 			display: none;
 		}
 
-		.has-back-button .today-button {
-			display: none;
-		}
-
 		.has-back-button .title :global(.calendar-title) {
 			font-size: 1.125rem;
 		}
 
 		.today-button {
-			width: 2.75rem;
-			padding: 0;
-			border-radius: 0.625rem;
-		}
-
-		.today-icon {
-			display: block;
-		}
-
-		.today-label {
-			position: absolute;
-			width: 0.0625rem;
-			height: 0.0625rem;
-			overflow: hidden;
-			clip-path: inset(50%);
+			display: none;
 		}
 
 		.title {
@@ -218,6 +212,10 @@
 
 		.mobile-work-hours-toggle {
 			display: block;
+		}
+
+		.icon-button.mobile-today-button {
+			display: grid;
 		}
 	}
 </style>
