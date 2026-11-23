@@ -41,9 +41,17 @@
 
 .full-calendar .calendar-day-top {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: flex-start;
 	padding: 0.375rem 0.5rem 0.25rem;
+}
+
+.full-calendar .calendar-day-top-inner {
+	display: flex;
+	flex: 1;
+	flex-wrap: wrap;
+	align-items: center;
+	min-width: 0;
 }
 
 .full-calendar .calendar-day-number {
@@ -70,7 +78,8 @@
 .full-calendar .notification-day .calendar-day-top::after {
 	width: 0.5rem;
 	height: 0.5rem;
-	margin-inline-start: auto;
+	margin-top: 0.5rem;
+	margin-inline-start: 0.375rem;
 	border-radius: 50%;
 	background: var(--pg-pink-deep);
 	content: "";
@@ -144,7 +153,7 @@
 }
 
 .full-calendar .calendar-block {
-	margin: 0 0.1875rem;
+	margin: 0 0.5rem;
 	padding: 0.25rem 0.375rem;
 	border: 0;
 	border-radius: 0.5rem;
@@ -173,4 +182,79 @@
 	top: -0.25rem;
 	padding-inline: 0 0.5rem;
 	text-align: right;
+}
+
+/* Arbeidstid: planlagt bak, og det som ble jobbet oppå */
+.full-calendar .calendar-work-hours {
+	box-sizing: border-box;
+	border-radius: 0.5rem;
+	opacity: 1;
+}
+
+.full-calendar .calendar-work-hours.is-planned {
+	border: 0.09375rem dashed var(--pg-planned-border);
+	background-image: repeating-linear-gradient(135deg, var(--pg-planned-stripe) 0, var(--pg-planned-stripe) 0.1875rem, transparent 0.1875rem, transparent 0.375rem);
+	background-color: transparent;
+}
+
+.full-calendar .calendar-work-hours.is-worked {
+	inset-inline: 0.3125rem;
+	border: 0.09375rem solid var(--pg-pink);
+	background: rgb(249 221 236 / 0.85);
+	color: var(--pg-pink-deep);
+	font-size: 0.625rem;
+	font-weight: 700;
+}
+
+.full-calendar .calendar-work-hours.is-worked * {
+	padding: 0.1875rem 0.375rem;
+	color: var(--pg-pink-deep);
+}
+
+/* Måned: timer og en liten stolpe i cellen */
+.full-calendar .calendar-work-duration {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3125rem;
+	margin-inline-start: auto;
+	color: var(--pg-ink-muted);
+	font-size: 0.6875rem;
+	font-weight: 600;
+}
+
+.full-calendar .calendar-work-duration.is-planned {
+	color: var(--pg-ink-subtle);
+	font-weight: 500;
+}
+
+.full-calendar .calendar-work-deviation {
+	width: 0.4375rem;
+	height: 0.4375rem;
+	border-radius: 50%;
+	background: var(--pg-pink-deep);
+}
+
+.full-calendar .calendar-work-bar {
+	position: relative;
+	flex-basis: 100%;
+	height: 0.375rem;
+	margin-top: 0.25rem;
+	border-radius: 0.1875rem;
+	background: var(--pg-row-line);
+}
+
+.full-calendar .calendar-work-bar-planned,
+.full-calendar .calendar-work-bar-worked {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	border-radius: 0.1875rem;
+}
+
+.full-calendar .calendar-work-bar-planned {
+	background-image: repeating-linear-gradient(135deg, var(--pg-planned-border) 0, var(--pg-planned-border) 0.125rem, var(--pg-row-line) 0.125rem, var(--pg-row-line) 0.25rem);
+}
+
+.full-calendar .calendar-work-bar-worked {
+	background: var(--pg-pink);
 }

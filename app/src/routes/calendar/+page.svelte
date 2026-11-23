@@ -22,6 +22,7 @@
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
 	let selectedDay = $state<Date>()
+	let showWorkHours = $state(true)
 	let dayMenu = $state<{ day: Date; position: { x: number; y: number } }>()
 	let viewContainer: HTMLDivElement
 
@@ -146,7 +147,7 @@
 </script>
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
+	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
 
 	<div class="banner">
 		<UrgentNotificationsBanner isCompact />
@@ -160,13 +161,13 @@
 			{:else if level === "month" && compactScreen.current}
 				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => openLevel("day", day)} />
 			{:else if level === "month"}
-				<MonthView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+				<MonthView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else if level === "week" && compactScreen.current}
 				<MobileWeekView {date} onOpenDay={(day) => openLevel("day", day)} />
 			{:else if level === "week"}
-				<WeekView {date} {selectedDay} onDayClick={selectOrOpenDay} />
+				<WeekView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
-				<DayView {date} />
+				<DayView {date} {showWorkHours} />
 			{/if}
 		</div>
 

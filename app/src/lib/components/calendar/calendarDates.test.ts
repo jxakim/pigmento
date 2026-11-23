@@ -8,6 +8,7 @@ import {
 	formatTime,
 	getDaysInRange,
 	getMonthGridDays,
+	getMonthViewRange,
 	getPeriodKey,
 	getPeriodRange,
 	isSameDay,
@@ -171,5 +172,11 @@ describe("formatShortDate", () => {
 	it("writes the day and the abbreviated month, like the week title does", () => {
 		expect(formatShortDate(new Date(2026, 10, 2))).toBe("2. nov.")
 		expect(formatShortDate(new Date(2026, 9, 26))).toBe("26. okt.")
+	})
+})
+
+describe("getMonthViewRange", () => {
+	it("starts on the Monday of the first week and ends after the Sunday of the last week", () => {
+		expect(getMonthViewRange(new Date(2026, 10, 18))).toEqual({ start: new Date(2026, 10, 2 - 7), end: new Date(2026, 11, 1 + 6) })
 	})
 })

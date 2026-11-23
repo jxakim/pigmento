@@ -11,14 +11,16 @@
 		level: CalendarLevel
 		date: Date
 		appointmentCount: number
+		isWorkHoursVisible: boolean
 		onLevelChange: (level: CalendarLevel) => void
 		onPrevious: () => void
 		onToday: () => void
 		onNext: () => void
+		onToggleWorkHours: () => void
 		onBack?: () => void
 	}
 
-	let { level, date, appointmentCount, onLevelChange, onPrevious, onToday, onNext, onBack }: Props = $props()
+	let { level, date, appointmentCount, isWorkHoursVisible, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
 
 	const periodName = $derived(levelLabels[level].toLowerCase())
 	const appointmentCountLabel = $derived(`${appointmentCount} ${appointmentCount === 1 ? "avtale" : "avtaler"}`)
@@ -52,6 +54,10 @@
 	</div>
 
 	<div class="actions">
+		<button type="button" class="work-hours-toggle" aria-pressed={isWorkHoursVisible} onclick={onToggleWorkHours}>
+			<Icon name="schedule" />
+			<span class="work-hours-toggle-label">Arbeidstid</span>
+		</button>
 		<div class="bell">
 			<NotificationBell />
 		</div>
@@ -68,6 +74,7 @@
 	}
 
 	.toolbar {
+		flex-wrap: wrap;
 		gap: 0.75rem;
 	}
 
@@ -88,6 +95,47 @@
 		gap: 0.75rem;
 	}
 
+	.work-hours-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 2.75rem;
+		padding: 0 0.875rem;
+		border: 0.0625rem solid var(--pg-button-border);
+		border-radius: 62.5rem;
+		background: var(--pg-card);
+		color: var(--pg-ink);
+		font-family: var(--pg-font-body);
+		font-size: 0.875rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.work-hours-toggle[aria-pressed="true"] {
+		border-color: var(--pg-pink);
+		background: var(--pg-pink);
+	}
+
+	@media (max-width: 90rem) {
+		.work-hours-toggle {
+			padding: 0 0.75rem;
+		}
+
+		.work-hours-toggle-label {
+			position: absolute;
+			width: 0.0625rem;
+			height: 0.0625rem;
+			overflow: hidden;
+			clip-path: inset(50%);
+		}
+	}
+
+	@media (hover: hover) {
+		.work-hours-toggle:hover {
+			border-color: var(--pg-ink);
+		}
+	}
+
 	.icon-button,
 	.today-button {
 		display: grid;
@@ -98,6 +146,7 @@
 		background: var(--pg-card);
 		color: var(--pg-ink);
 		font-family: var(--pg-font-body);
+		white-space: nowrap;
 		cursor: pointer;
 	}
 
@@ -144,7 +193,8 @@
 			margin-inline-end: 0;
 		}
 
-		.bell {
+		.bell,
+		.work-hours-toggle {
 			display: none;
 		}
 
