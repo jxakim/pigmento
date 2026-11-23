@@ -1,6 +1,15 @@
 // Eksempeldata for prototypen. Byttes ut med ekte data senere.
+// Alle timer står i scheduledAppointments; «I dag» og «Kommende dager» hentes derfra.
 
 import type { AppointmentType } from "#lib/appointmentTypes.ts"
+
+export interface ScheduledAppointment {
+	clientName?: string
+	description?: string
+	type: AppointmentType
+	start: string
+	end: string
+}
 
 export interface Appointment {
 	startTime: string
@@ -15,13 +24,6 @@ export type UpcomingAppointment = Pick<Appointment, "startTime" | "clientName" |
 export interface UpcomingDay {
 	label: string
 	appointments: UpcomingAppointment[]
-}
-
-export interface ScheduledAppointment {
-	clientName?: string
-	type: AppointmentType
-	start: string
-	end: string
 }
 
 export interface Inquiry {
@@ -49,57 +51,26 @@ export interface AppNotification {
 	actionHref: string
 }
 
-export const todayLabel = "Torsdag 5. november"
-
-export const todaysAppointments: Appointment[] = [
-	{ startTime: "10:00", endTime: "11:00", clientName: "Mia Haugen", description: "Underarm, fine line med blomster", type: "consultation" },
-	{ startTime: "12:30", endTime: "16:30", clientName: "Jonas Berg", description: "Økt 2 av 3, overarm, blackwork", type: "tattoo" },
-	{ startTime: "17:00", endTime: "18:00", clientName: "Tannlege", description: "Årlig kontroll", type: "notAvailable" }
-]
-
-export const upcomingDays: UpcomingDay[] = [
-	{
-		label: "Fredag 6. nov",
-		appointments: [
-			{ startTime: "11:00", clientName: "Kasper Aas", type: "tattoo" },
-			{ startTime: "15:00", clientName: "Ida Moe", type: "consultation" }
-		]
-	},
-	{
-		label: "Lørdag 7. nov",
-		appointments: [{ startTime: "12:00", clientName: "Tobias Ness", type: "tattoo" }]
-	},
-	{
-		label: "Mandag 9. nov",
-		appointments: [
-			{ startTime: "10:30", clientName: "Nora Vik", type: "consultation" },
-			{ startTime: "13:00", clientName: "Legetime", type: "notAvailable" }
-		]
-	}
-]
-
-export const waitingInquiries: Inquiry[] = [
-	{ instagramHandle: "@martin.sk", receivedAgo: "6 dager siden", message: "Interessert i en konsultasjon før jul, passer det?", hasWaitedLong: true },
-	{ instagramHandle: "@thea.rose", receivedAgo: "3 dager siden", message: "Hva koster en håndflate-stor design på skulderen?", hasWaitedLong: false },
-	{ instagramHandle: "@andreas_o", receivedAgo: "I går", message: "Kan du dekke over en gammel tatovering på leggen? Sender bilde.", hasWaitedLong: false }
-]
+const today = "2026-11-05"
+const upcomingDayCount = 3
 
 export const scheduledAppointments: ScheduledAppointment[] = [
 	{ clientName: "Emma Lie", type: "consultation", start: "2026-11-02T11:00", end: "2026-11-02T12:00" },
 	{ clientName: "Oskar Dal", type: "tattoo", start: "2026-11-03T12:00", end: "2026-11-03T16:00" },
-	{ clientName: "Møte med regnskapsfører", type: "notAvailable", start: "2026-11-04T14:00", end: "2026-11-04T15:00" },
-	{ clientName: "Mia Haugen", type: "consultation", start: "2026-11-05T10:00", end: "2026-11-05T11:00" },
-	{ clientName: "Jonas Berg", type: "tattoo", start: "2026-11-05T12:30", end: "2026-11-05T16:30" },
-	{ clientName: "Tannlege", type: "notAvailable", start: "2026-11-05T17:00", end: "2026-11-05T18:00" },
+	{ type: "notAvailable", start: "2026-11-04T14:00", end: "2026-11-04T15:00" },
+	{ clientName: "Mia Haugen", description: "Underarm, fine line med blomster", type: "consultation", start: "2026-11-05T10:00", end: "2026-11-05T11:00" },
+	{ clientName: "Jonas Berg", description: "Økt 2 av 3, overarm, blackwork", type: "tattoo", start: "2026-11-05T12:30", end: "2026-11-05T16:30" },
+	{ type: "notAvailable", start: "2026-11-05T17:00", end: "2026-11-05T18:00" },
 	{ clientName: "Kasper Aas", type: "tattoo", start: "2026-11-06T11:00", end: "2026-11-06T15:00" },
 	{ clientName: "Ida Moe", type: "consultation", start: "2026-11-06T15:00", end: "2026-11-06T16:00" },
 	{ clientName: "Tobias Ness", type: "tattoo", start: "2026-11-07T12:00", end: "2026-11-07T16:00" },
 	{ clientName: "Nora Vik", type: "consultation", start: "2026-11-09T10:30", end: "2026-11-09T11:30" },
-	{ clientName: "Legetime", type: "notAvailable", start: "2026-11-09T13:00", end: "2026-11-09T13:30" },
+	{ type: "notAvailable", start: "2026-11-09T13:00", end: "2026-11-09T14:00" },
 	{ clientName: "Lise Strand", type: "tattoo", start: "2026-11-10T12:00", end: "2026-11-10T16:00" },
 	{ clientName: "Aksel Roe", type: "tattoo", start: "2026-11-12T11:00", end: "2026-11-12T15:00" },
 	{ clientName: "Maja Fuglesang", type: "consultation", start: "2026-11-13T13:00", end: "2026-11-13T14:00" },
 	{ clientName: "Elias Bakke", type: "tattoo", start: "2026-11-14T12:00", end: "2026-11-14T17:00" },
+	{ type: "notAvailable", start: "2026-11-16T09:00", end: "2026-11-16T17:00" },
 	{ clientName: "Ine Solberg", type: "tattoo", start: "2026-11-17T12:00", end: "2026-11-17T16:00" },
 	{ clientName: "Leif Moen", type: "consultation", start: "2026-11-18T10:00", end: "2026-11-18T11:00" },
 	{ type: "notAvailable", start: "2026-11-19T14:00", end: "2026-11-19T15:00" },
@@ -109,6 +80,51 @@ export const scheduledAppointments: ScheduledAppointment[] = [
 	{ clientName: "Hedda Lunde", type: "tattoo", start: "2026-11-27T11:00", end: "2026-11-27T15:00" },
 	{ clientName: "Magnus Ås", type: "tattoo", start: "2026-11-28T12:00", end: "2026-11-28T16:00" }
 ]
+
+function dayOf(isoDateTime: string): string {
+	return isoDateTime.slice(0, 10)
+}
+
+function timeOf(isoDateTime: string): string {
+	return isoDateTime.slice(11, 16)
+}
+
+function formatDayLabel(isoDate: string, month: "long" | "short"): string {
+	const label = new Intl.DateTimeFormat("nb-NO", { weekday: "long", day: "numeric", month }).format(new Date(`${isoDate}T12:00`))
+	return (label.charAt(0).toUpperCase() + label.slice(1)).replace(/\.$/, "")
+}
+
+function appointmentsOn(isoDate: string): ScheduledAppointment[] {
+	return scheduledAppointments.filter((appointment) => dayOf(appointment.start) === isoDate).sort((first, second) => first.start.localeCompare(second.start))
+}
+
+export const todayLabel = formatDayLabel(today, "long")
+
+export const todaysAppointments: Appointment[] = appointmentsOn(today).map(({ clientName, description, type, start, end }) => ({
+	startTime: timeOf(start),
+	endTime: timeOf(end),
+	clientName,
+	description,
+	type
+}))
+
+const upcomingDates = [...new Set(scheduledAppointments.map((appointment) => dayOf(appointment.start)))]
+	.filter((isoDate) => isoDate > today)
+	.sort()
+	.slice(0, upcomingDayCount)
+
+export const upcomingDays: UpcomingDay[] = upcomingDates.map((isoDate) => ({
+	label: formatDayLabel(isoDate, "short"),
+	appointments: appointmentsOn(isoDate).map(({ clientName, type, start }) => ({ startTime: timeOf(start), clientName, type }))
+}))
+
+export const waitingInquiries: Inquiry[] = [
+	{ instagramHandle: "@martin.sk", receivedAgo: "6 dager siden", message: "Interessert i en konsultasjon før jul, passer det?", hasWaitedLong: true },
+	{ instagramHandle: "@thea.rose", receivedAgo: "3 dager siden", message: "Hva koster en håndflate-stor design på skulderen?", hasWaitedLong: false },
+	{ instagramHandle: "@andreas_o", receivedAgo: "I går", message: "Kan du dekke over en gammel tatovering på leggen? Sender bilde.", hasWaitedLong: false }
+]
+
+export const openInquiryCount = 8
 
 export const notifications: AppNotification[] = [
 	{
@@ -201,5 +217,3 @@ export const notifications: AppNotification[] = [
 		actionHref: "/calendar"
 	}
 ]
-
-export const openInquiryCount = 8

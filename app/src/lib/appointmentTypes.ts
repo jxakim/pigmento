@@ -40,7 +40,17 @@ export const appointmentTypeDetails: Record<AppointmentType, AppointmentTypeDeta
 
 export const appointmentTypesByPriority = [...appointmentTypes].sort((first, second) => appointmentTypeDetails[first].priority - appointmentTypeDetails[second].priority)
 
-// Timer uten kundenavn (f.eks. «Ikke tilgjengelig») vises med navnet på typen.
-export function appointmentTitle({ clientName, type }: { clientName?: string; type: AppointmentType }): string {
-	return clientName ?? appointmentTypeDetails[type].label
+interface TitledAppointment {
+	clientName?: string
+	type: AppointmentType
+}
+
+// Timer uten kunde (f.eks. «Ikke tilgjengelig») er bare kalenderfyll og vises med navnet på typen.
+export function appointmentTitle({ clientName, type }: TitledAppointment): string {
+	return clientName?.trim() || appointmentTypeDetails[type].label
+}
+
+// Til trange kalenderceller: bare fornavnet til kunden, typenavnet vises helt.
+export function shortAppointmentTitle({ clientName, type }: TitledAppointment): string {
+	return clientName?.trim().split(" ")[0] || appointmentTypeDetails[type].label
 }
