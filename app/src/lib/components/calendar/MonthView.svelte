@@ -21,7 +21,7 @@
 		events: calendarEvents,
 		eventDisplay: "block",
 		eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
-		eventContent: ({ timeText, event }) => `${timeText} ${event.title.split(" ")[0]}`,
+		eventContent: ({ timeText, event }) => `${timeText} ${event.extendedProps.shortTitle}`,
 		fixedWeekCount: false,
 		dayMaxEvents: 2,
 		dateClick: ({ date: day, dayEl }) => onDayClick(day, dayEl)

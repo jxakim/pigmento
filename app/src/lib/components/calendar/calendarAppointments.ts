@@ -1,17 +1,17 @@
 import type { EventInput } from "fullcalendar"
-import { type AppointmentType, appointmentTitle, appointmentTypeDetails, appointmentTypes, appointmentTypesByPriority } from "#lib/appointmentTypes.ts"
+import { type AppointmentType, appointmentTitle, appointmentTypeDetails, appointmentTypes, appointmentTypesByPriority, shortAppointmentTitle } from "#lib/appointmentTypes.ts"
 import { type ScheduledAppointment, scheduledAppointments } from "#lib/sampleData.ts"
 import { getPeriodRange, isSameDay } from "./calendarDates.ts"
 import type { CalendarLevel } from "./calendarLevels.ts"
 
 export function toCalendarEvents(appointments: ScheduledAppointment[]): EventInput[] {
-	return appointments.map(({ clientName, type, start, end }) => ({
-		title: appointmentTitle({ clientName, type }),
-		start,
-		end,
-		color: appointmentTypeDetails[type].background,
-		contrastColor: appointmentTypeDetails[type].text,
-		extendedProps: { type }
+	return appointments.map((appointment) => ({
+		title: appointmentTitle(appointment),
+		start: appointment.start,
+		end: appointment.end,
+		color: appointmentTypeDetails[appointment.type].background,
+		contrastColor: appointmentTypeDetails[appointment.type].text,
+		extendedProps: { type: appointment.type, shortTitle: shortAppointmentTitle(appointment) }
 	}))
 }
 

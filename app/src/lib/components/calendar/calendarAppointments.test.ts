@@ -5,7 +5,7 @@ import { countByType, filterByPeriod, findAppointmentsOnDay, findDominantType, t
 
 const consultation: ScheduledAppointment = { clientName: "Mia Haugen", type: "consultation", start: "2026-11-05T10:00", end: "2026-11-05T11:00" }
 const tattoo: ScheduledAppointment = { clientName: "Jonas Berg", type: "tattoo", start: "2026-11-05T12:30", end: "2026-11-05T16:30" }
-const privateAppointment: ScheduledAppointment = { clientName: "Tannlege", type: "notAvailable", start: "2026-11-06T17:00", end: "2026-11-06T17:30" }
+const privateAppointment: ScheduledAppointment = { type: "notAvailable", start: "2026-11-06T17:00", end: "2026-11-06T17:30" }
 
 describe("toCalendarEvents", () => {
 	it("shows the client name and colors the event like the appointment type", () => {
@@ -16,14 +16,15 @@ describe("toCalendarEvents", () => {
 				end: tattoo.end,
 				color: appointmentTypeDetails.tattoo.background,
 				contrastColor: appointmentTypeDetails.tattoo.text,
-				extendedProps: { type: "tattoo" }
+				extendedProps: { type: "tattoo", shortTitle: "Jonas" }
 			}
 		])
 	})
 
-	it("uses the type label as title when the appointment has no client", () => {
-		const [event] = toCalendarEvents([{ type: "notAvailable", start: "2026-11-06T09:00", end: "2026-11-06T10:00" }])
+	it("shows the whole type label for appointments without a client, also in the short title", () => {
+		const [event] = toCalendarEvents([privateAppointment])
 		expect(event.title).toBe(appointmentTypeDetails.notAvailable.label)
+		expect(event.extendedProps?.shortTitle).toBe(appointmentTypeDetails.notAvailable.label)
 	})
 })
 
