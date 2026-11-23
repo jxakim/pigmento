@@ -16,6 +16,7 @@
 	import WeekView from "#lib/components/calendar/WeekView.svelte"
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
+	import NewBookingButton from "#lib/components/NewBookingButton.svelte"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
 	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
@@ -191,6 +192,10 @@
 			<CalendarDistribution appointments={periodAppointments} />
 		</div>
 	</div>
+
+	{#if compactScreen.current}
+		<NewBookingButton isFloatingOnMobile />
+	{/if}
 
 	{#if dayMenu}
 		<DayContextMenu day={dayMenu.day} position={dayMenu.position} canOpenDay={level !== "day"} onSelect={handleDayAction} onClose={() => (dayMenu = undefined)} />

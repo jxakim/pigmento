@@ -122,28 +122,25 @@
 		}
 	}
 
-	/* På mobil er toppen to rader: pilene med «I dag» og perioden i liten tekst, og så visningsvalget. Resten rører man ikke på mobil. */
+	/* På mobil er toppen to rader: perioden i midten med «I dag» til høyre, og så visningsvalget. Man blar med sveip, så pilene er ikke med. */
 	@media (max-width: 57.5rem) {
 		.toolbar {
+			display: grid;
+			grid-template-columns: 4rem minmax(0, 1fr) 4rem;
 			gap: 0.5rem;
 		}
 
 		.back-button {
-			order: 1;
-		}
-
-		.period-navigation {
-			order: 2;
-			gap: 0.5rem;
-			margin-inline-end: 0;
+			grid-column: 1;
+			grid-row: 1;
+			justify-self: start;
 		}
 
 		.title {
-			order: 3;
-			flex: 1;
-			min-width: 0;
+			grid-column: 2;
+			grid-row: 1;
 			margin-inline-end: 0;
-			text-align: right;
+			text-align: center;
 		}
 
 		.title :global(.calendar-title) {
@@ -163,14 +160,29 @@
 			line-height: 1.15;
 		}
 
-		.icon-button,
+		.period-navigation {
+			display: contents;
+		}
+
+		.period-navigation .icon-button {
+			display: none;
+		}
+
 		.today-button {
+			grid-column: 3;
+			grid-row: 1;
+			justify-self: end;
+			padding: 0 0.875rem;
+			border-radius: 0.625rem;
+		}
+
+		.back-button {
 			border-radius: 0.625rem;
 		}
 
 		.level-switcher {
-			order: 4;
-			flex: 1 0 100%;
+			grid-column: 1 / -1;
+			grid-row: 2;
 		}
 
 		.actions {

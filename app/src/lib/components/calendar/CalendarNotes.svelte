@@ -111,7 +111,7 @@
 		gap: 0.75rem;
 		width: 100%;
 		min-height: 4.5rem;
-		padding: 0.625rem 0.875rem;
+		padding: 0.625rem 4.75rem 0.625rem 0.875rem;
 		border: 0.0625rem solid var(--pg-card-border);
 		border-radius: var(--pg-card-radius);
 		background: var(--pg-card);
