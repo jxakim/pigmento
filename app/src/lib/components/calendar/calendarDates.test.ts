@@ -4,7 +4,9 @@ import {
 	formatIsoDate,
 	formatPeriodLabel,
 	formatPeriodName,
+	formatShortDate,
 	formatTime,
+	getDaysInRange,
 	getMonthGridDays,
 	getPeriodKey,
 	getPeriodRange,
@@ -152,5 +154,22 @@ describe("getMonthGridDays", () => {
 describe("formatTime", () => {
 	it("gives the time of a local ISO time", () => {
 		expect(formatTime("2026-11-05T10:30")).toBe("10:30")
+	})
+})
+
+describe("getDaysInRange", () => {
+	it("lists every day of the range from the start up to, but not including, the end", () => {
+		expect(getDaysInRange({ start: new Date(2026, 10, 16), end: new Date(2026, 10, 19) })).toEqual([new Date(2026, 10, 16), new Date(2026, 10, 17), new Date(2026, 10, 18)])
+	})
+
+	it("counts a day as one day also when the clocks change", () => {
+		expect(getDaysInRange(getPeriodRange("week", new Date(2026, 9, 26)))).toHaveLength(7)
+	})
+})
+
+describe("formatShortDate", () => {
+	it("writes the day and the abbreviated month, like the week title does", () => {
+		expect(formatShortDate(new Date(2026, 10, 2))).toBe("2. nov.")
+		expect(formatShortDate(new Date(2026, 9, 26))).toBe("26. okt.")
 	})
 })

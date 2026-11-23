@@ -105,3 +105,5 @@ export function getTotals(days: WorkDay[]): { plannedMinutes: number; workedMinu
 		workedMinutes: days.reduce((total, day) => total + getDurationInMinutes(getWorkedHours(day)), 0)
 	}
 }
+
+export const defaultWorkHours: WorkHours = { start: "08:00", end: "16:00" }

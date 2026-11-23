@@ -1,5 +1,7 @@
 import type { CalendarLevel } from "./calendarLevels.ts"
 
+const millisecondsPerDay = 24 * 60 * 60 * 1000
+
 export function isSameDay(first: Date | undefined, second: Date): boolean {
 	return first?.toDateString() === second.toDateString()
 }
@@ -49,6 +51,15 @@ export function getPeriodRange(level: CalendarLevel, date: Date): DateRange {
 		case "day":
 			return { start: new Date(year, month, day), end: new Date(year, month, day + 1) }
 	}
+}
+
+export function getDaysInRange({ start, end }: DateRange): Date[] {
+	const dayCount = Math.round((end.getTime() - start.getTime()) / millisecondsPerDay)
+	return Array.from({ length: dayCount }, (_, offset) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + offset))
+}
+
+export function formatShortDate(date: Date): string {
+	return `${date.getDate()}. ${abbreviateMonth(date)}`
 }
 
 export function formatPeriodLabel(level: CalendarLevel, date: Date): string | undefined {

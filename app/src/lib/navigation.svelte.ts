@@ -15,6 +15,7 @@ export function getNavigationItems(): NavigationItem[] {
 	return [
 		{ href: "/", label: "Forside", icon: "home", isInBottomBar: true },
 		{ href: "/calendar", label: "Kalender", icon: "calendar_month", isInBottomBar: true },
+		{ href: "/hours", label: "Arbeidstimer", icon: "schedule", isInBottomBar: false },
 		{ href: "/notifications", label: "Varsler", icon: "notifications", badgeCount: getOpenNotifications().length, isInBottomBar: true },
 		{ href: "/clients", label: "Kunder", icon: "group", isInBottomBar: true },
 		{ href: "/appointments", label: "Avtaler", icon: "format_list_bulleted", isInBottomBar: false },
