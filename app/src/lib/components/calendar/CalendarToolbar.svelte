@@ -4,16 +4,14 @@
 	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 	import CalendarLevelSwitcher from "./CalendarLevelSwitcher.svelte"
 	import CalendarTitle from "./CalendarTitle.svelte"
-	import { formatCalendarTitle } from "./calendarDates.ts"
+	import { formatCompactPeriod } from "./calendarDates.ts"
 	import { type CalendarLevel, levelLabels } from "./calendarLevels.ts"
 	import WorkHoursToggle from "./WorkHoursToggle.svelte"
 
 	interface Props {
 		level: CalendarLevel
 		date: Date
-		appointmentCount: number
 		isWorkHoursVisible: boolean
-		workHoursSummary?: { text: string; href: string }
 		onLevelChange: (level: CalendarLevel) => void
 		onPrevious: () => void
 		onToday: () => void
@@ -22,29 +20,21 @@
 		onBack?: () => void
 	}
 
-	let { level, date, appointmentCount, isWorkHoursVisible, workHoursSummary, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
+	let { level, date, isWorkHoursVisible, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
 
 	const periodName = $derived(levelLabels[level].toLowerCase())
-	const appointmentCountLabel = $derived(`${appointmentCount} ${appointmentCount === 1 ? "avtale" : "avtaler"}`)
-	const summary = $derived([formatCalendarTitle(level, date).range, appointmentCountLabel].filter(Boolean).join(" · "))
 </script>
 
-<header class="toolbar" class:has-back-button={onBack}>
+<header class="toolbar">
 	{#if onBack}
-		<button type="button" class="icon-button" aria-label="Tilbake" onclick={onBack}>
+		<button type="button" class="icon-button back-button" aria-label="Tilbake" onclick={onBack}>
 			<Icon name="arrow_back" />
 		</button>
 	{/if}
 
 	<div class="title">
 		<CalendarTitle {level} {date} />
-		<p class="summary">
-			{#if workHoursSummary}
-				<a class="work-hours-summary" href={workHoursSummary.href}>{workHoursSummary.text}</a>
-			{:else}
-				{summary}
-			{/if}
-		</p>
+		<p class="compact-title" aria-hidden="true">{formatCompactPeriod(level, date)}</p>
 	</div>
 
 	<div class="period-navigation">
@@ -58,24 +48,12 @@
 	</div>
 
 	<div class="level-switcher">
-		<div class="level-switcher-control">
-			<CalendarLevelSwitcher {level} {onLevelChange} />
-		</div>
-		<button type="button" class="icon-button mobile-today-button" aria-label="I dag" onclick={onToday}>
-			<Icon name="today" />
-		</button>
-		<div class="mobile-work-hours-toggle">
-			<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
-		</div>
+		<CalendarLevelSwitcher {level} {onLevelChange} />
 	</div>
 
 	<div class="actions">
-		<div class="desktop-work-hours-toggle">
-			<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
-		</div>
-		<div class="bell">
-			<NotificationBell />
-		</div>
+		<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
+		<NotificationBell />
 		<NewBookingButton iconOnlyOnMobile />
 	</div>
 </header>
@@ -97,12 +75,7 @@
 		margin-inline-end: 0.125rem;
 	}
 
-	.mobile-work-hours-toggle,
-	.icon-button.mobile-today-button {
-		display: none;
-	}
-
-	.summary {
+	.compact-title {
 		display: none;
 	}
 
@@ -149,73 +122,58 @@
 		}
 	}
 
-	/* På mobil står tittelen og knappene på en rad, og visningsvalget får en rad for seg selv. */
+	/* På mobil er toppen to rader: pilene med «I dag» og perioden i liten tekst, og så visningsvalget. Resten rører man ikke på mobil. */
 	@media (max-width: 57.5rem) {
 		.toolbar {
-			flex-wrap: wrap;
 			gap: 0.5rem;
 		}
 
-		.title {
-			flex: 1;
-			min-width: 0;
-		}
-
-		.summary {
-			display: block;
-			color: var(--pg-ink-muted);
-			font-size: 0.8125rem;
-		}
-
-		.work-hours-summary {
-			color: var(--pg-pink-deep);
-			font-weight: 600;
+		.back-button {
+			order: 1;
 		}
 
 		.period-navigation {
+			order: 2;
 			gap: 0.5rem;
 			margin-inline-end: 0;
 		}
 
-		.bell,
-		.desktop-work-hours-toggle {
-			display: none;
-		}
-
-		.has-back-button .title :global(.calendar-title) {
-			font-size: 1.125rem;
-		}
-
-		.today-button {
-			display: none;
-		}
-
 		.title {
-			overflow: hidden;
+			order: 3;
+			flex: 1;
+			min-width: 0;
+			margin-inline-end: 0;
+			text-align: right;
 		}
 
-		.icon-button {
+		.title :global(.calendar-title) {
+			position: absolute;
+			width: 0.0625rem;
+			height: 0.0625rem;
+			overflow: hidden;
+			clip-path: inset(50%);
+		}
+
+		.compact-title {
+			display: block;
+			color: var(--pg-ink-muted);
+			font-size: 0.8125rem;
+			font-weight: 600;
+			line-height: 1.25;
+		}
+
+		.icon-button,
+		.today-button {
 			border-radius: 0.625rem;
 		}
 
 		.level-switcher {
-			display: flex;
+			order: 4;
 			flex: 1 0 100%;
-			gap: 0.5rem;
-			order: 1;
 		}
 
-		.level-switcher-control {
-			flex: 1;
-			min-width: 0;
-		}
-
-		.mobile-work-hours-toggle {
-			display: block;
-		}
-
-		.icon-button.mobile-today-button {
-			display: grid;
+		.actions {
+			display: none;
 		}
 	}
 </style>

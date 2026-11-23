@@ -8,7 +8,7 @@
 	import { getWorkDay } from "#lib/workHours.svelte.ts"
 	import { getWorkedHours } from "#lib/workHours.ts"
 	import { findAppointmentsOnDay } from "./calendarAppointments.ts"
-	import { formatCalendarTitle, formatIsoDate, formatTime, getDaysInRange, getPeriodRange, isSameDay } from "./calendarDates.ts"
+	import { formatCalendarTitle, formatIsoDate, formatTime, isSameDay } from "./calendarDates.ts"
 
 	interface Props {
 		date: Date
@@ -22,7 +22,6 @@
 	const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 	const maxDotsPerDay = 3
 
-	let agenda: HTMLDivElement
 	let selectedDay = $state(today)
 
 	const firstOfMonth = $derived(new Date(date.getFullYear(), date.getMonth(), 1))
@@ -30,12 +29,12 @@
 	const weeks = $derived(
 		Array.from({ length: 6 }, (_, week) => Array.from({ length: 7 }, (_, weekday) => new Date(firstGridDay.getFullYear(), firstGridDay.getMonth(), firstGridDay.getDate() + week * 7 + weekday)))
 	)
-	const agendaDays = $derived(getDaysInRange(getPeriodRange("month", date)))
+	const selectedDayAppointments = $derived(findAppointmentsOnDay(scheduledAppointments, selectedDay))
+	const selectedWorkDay = $derived(getWorkDay(formatIsoDate(selectedDay)))
 	const daysWithNotifications = $derived(getDaysWithOpenNotifications())
 
 	$effect(() => {
 		selectedDay = findStartDay(date)
-		agenda?.scrollTo({ top: 0 })
 	})
 
 	function findStartDay(month: Date): Date {
@@ -50,14 +49,6 @@
 		const hasNotification = daysWithNotifications.has(formatIsoDate(day))
 		const typeDots = findAppointmentsOnDay(scheduledAppointments, day).map((appointment) => appointmentTypeDetails[appointment.type].dot)
 		return [...(hasNotification ? ["var(--pg-pink-deep)"] : []), ...typeDots].slice(0, maxDotsPerDay)
-	}
-
-	function selectDay(day: Date) {
-		selectedDay = day
-		const section = agenda.querySelector<HTMLElement>(`[data-agenda-date="${formatIsoDate(day)}"]`)
-		if (section) {
-			agenda.scrollTo({ top: section.offsetTop, behavior: "smooth" })
-		}
 	}
 </script>
 
@@ -79,7 +70,7 @@
 						aria-pressed={isSameDay(selectedDay, day)}
 						aria-label={formatCalendarTitle("day", day).heading}
 						data-date={formatIsoDate(day)}
-						onclick={() => selectDay(day)}
+						onclick={() => (selectedDay = day)}
 					>
 						<span class="day-number" class:is-today={isSameDay(today, day)} class:is-selected={isSameDay(selectedDay, day) && isInMonth(day)}>{day.getDate()}</span>
 						<span class="dots">
@@ -95,37 +86,31 @@
 		{/each}
 	</div>
 
-	<div class="agenda" bind:this={agenda}>
-		{#each agendaDays as day (day.getTime())}
-			{@const isoDate = formatIsoDate(day)}
-			{@const appointments = findAppointmentsOnDay(scheduledAppointments, day)}
-			{@const workDay = getWorkDay(isoDate)}
-			<section class="agenda-day" data-agenda-date={isoDate}>
-				<button type="button" class="agenda-day-header" onclick={(event) => onOpenDay(day, event.currentTarget)}>
-					<span class="agenda-day-title">{formatCalendarTitle("day", day).heading}</span>
-					{#if showWorkHours}
-						<span class="agenda-day-hours" class:is-worked={getWorkedHours(workDay) !== undefined}>{formatWorkDayLine(workDay)}</span>
-					{/if}
-					<Icon name="chevron_right" size="1.125rem" />
-				</button>
-				{#each appointments as appointment (appointment.start)}
-					<div class="agenda-row">
-						<span class="agenda-time">{formatTime(appointment.start)}</span>
-						<span class="agenda-client">{appointmentTitle(appointment)}</span>
-						<AppointmentTypeTag type={appointment.type} />
-					</div>
-				{:else}
-					<p class="no-appointments">Ingen avtaler</p>
-				{/each}
-			</section>
-		{/each}
+	<div class="agenda">
+		<button type="button" class="day-panel" onclick={(event) => onOpenDay(selectedDay, event.currentTarget)}>
+			<span class="day-panel-header">
+				<span class="day-panel-title">{formatCalendarTitle("day", selectedDay).heading}</span>
+				<Icon name="chevron_right" size="1.25rem" />
+			</span>
+			{#if showWorkHours}
+				<span class="day-panel-hours" class:is-worked={getWorkedHours(selectedWorkDay) !== undefined}>{formatWorkDayLine(selectedWorkDay)}</span>
+			{/if}
+			{#each selectedDayAppointments as appointment (appointment.start)}
+				<span class="agenda-row">
+					<span class="agenda-time">{formatTime(appointment.start)}</span>
+					<span class="agenda-client">{appointmentTitle(appointment)}</span>
+					<AppointmentTypeTag type={appointment.type} />
+				</span>
+			{:else}
+				<span class="no-appointments">Ingen avtaler denne dagen</span>
+			{/each}
+		</button>
 	</div>
 </div>
 
 <style>
 	.month,
-	.grid,
-	.agenda-day {
+	.grid {
 		display: flex;
 		flex-direction: column;
 	}
@@ -218,51 +203,46 @@
 	}
 
 	.agenda {
-		position: relative;
 		flex: 1;
 		min-height: 0;
 		overflow-y: auto;
 		overscroll-behavior: contain;
-		border-top: 0.0625rem solid var(--pg-row-line);
 	}
 
-	.agenda-day {
-		gap: 0.375rem;
-		padding-bottom: 0.625rem;
-	}
-
-	.agenda-day-header {
+	.day-panel {
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		gap: 0.5rem;
-		min-height: 2.75rem;
-		padding: 0;
-		border: 0;
-		background: transparent;
+		width: 100%;
+		padding: 0.75rem 0.875rem;
+		border: 0.0625rem solid var(--pg-card-border);
+		border-radius: 0.75rem;
+		background: var(--pg-pink-wash);
 		color: var(--pg-ink);
 		font-family: var(--pg-font-body);
 		text-align: left;
 		cursor: pointer;
 	}
 
-	.agenda-day-title {
+	.day-panel-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.day-panel-title {
 		font-family: var(--pg-font-heading);
-		font-size: 1rem;
+		font-size: 1.0625rem;
 		font-weight: 700;
 	}
 
-	.agenda-day-hours {
-		flex: 1;
-		min-width: 0;
-		overflow: hidden;
+	.day-panel-hours {
 		color: var(--pg-ink-muted);
-		font-size: 0.75rem;
-		text-align: right;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		font-size: 0.8125rem;
 	}
 
-	.agenda-day-hours.is-worked {
+	.day-panel-hours.is-worked {
 		color: var(--pg-pink-deep);
 		font-weight: 600;
 	}
@@ -289,6 +269,6 @@
 
 	.no-appointments {
 		color: var(--pg-ink-subtle);
-		font-size: 0.8125rem;
+		font-size: 0.875rem;
 	}
 </style>

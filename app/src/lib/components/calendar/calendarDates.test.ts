@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
 	formatCalendarTitle,
+	formatCompactPeriod,
 	formatIsoDate,
 	formatPeriodLabel,
 	formatPeriodName,
@@ -191,5 +192,20 @@ describe("isIsoDate", () => {
 		expect(isIsoDate(null)).toBe(false)
 		expect(isIsoDate("05.11.2026")).toBe(false)
 		expect(isIsoDate("2026-11-5")).toBe(false)
+	})
+})
+
+describe("formatCompactPeriod", () => {
+	it("writes every level short enough for a small screen", () => {
+		const date = new Date(2026, 10, 24)
+
+		expect(formatCompactPeriod("year", date)).toBe("2026")
+		expect(formatCompactPeriod("month", date)).toBe("Nov 2026")
+		expect(formatCompactPeriod("week", date)).toBe("Uke 48 · 23.–29. nov")
+		expect(formatCompactPeriod("day", date)).toBe("Tir 24. nov")
+	})
+
+	it("names both months when the week goes over a change of month", () => {
+		expect(formatCompactPeriod("week", new Date(2026, 9, 28))).toBe("Uke 44 · 26. okt–1. nov")
 	})
 })

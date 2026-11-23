@@ -37,7 +37,7 @@
 		{/each}
 		<li class="legend-item notification-day">
 			<span class="dot"></span>
-			<span class="type-name"><span class="long-label">Dag med varsel</span><span class="short-label">Varsel</span></span>
+			<span class="type-name">Dag med varsel</span>
 		</li>
 	</ul>
 </section>
@@ -127,10 +127,6 @@
 		color: var(--pg-ink-muted);
 	}
 
-	.short-label {
-		display: none;
-	}
-
 	/* På mobil blir fordelingen én rad med tegnforklaring over kalenderen. */
 	@media (max-width: 57.5rem) {
 		.distribution {
@@ -147,7 +143,7 @@
 		.legend {
 			flex-direction: row;
 			flex-wrap: wrap;
-			gap: 0.25rem 0.875rem;
+			gap: 0.25rem 0.75rem;
 		}
 
 		.legend-item {
@@ -166,16 +162,7 @@
 		}
 
 		.notification-day {
-			padding-top: 0;
-			border-top: none;
-		}
-
-		.long-label {
 			display: none;
-		}
-
-		.short-label {
-			display: inline;
 		}
 	}
 </style>

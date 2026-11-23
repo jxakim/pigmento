@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BackButton from "#lib/components/BackButton.svelte"
 	import { formatCalendarTitle, formatIsoDate, formatPeriodName, getDaysInRange, getPeriodRange, isIsoDate, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import Icon from "#lib/components/Icon.svelte"
 	import MonthSummary from "#lib/components/work-hours/MonthSummary.svelte"
@@ -49,6 +50,7 @@
 <div class="hours-page">
 	<header class="header">
 		<div class="title">
+			<BackButton fallbackHref="/calendar" />
 			<h1>Arbeidstimer</h1>
 			<p class="summary">{summary}</p>
 		</div>
@@ -164,6 +166,10 @@
 		.hours-page {
 			gap: 0.875rem;
 			padding: 0.875rem 1rem;
+		}
+
+		.title {
+			align-items: center;
 		}
 
 		h1 {

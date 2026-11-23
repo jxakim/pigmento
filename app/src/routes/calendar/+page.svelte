@@ -7,7 +7,7 @@
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
 	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
 	import { formatIsoDate, isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
-	import { type CalendarLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
+	import { type CalendarLevel, getParentLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
 	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
 	import DayView from "#lib/components/calendar/DayView.svelte"
 	import MobileMonthView from "#lib/components/calendar/MobileMonthView.svelte"
@@ -17,11 +17,9 @@
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
-	import { formatWorkDayLine } from "#lib/components/work-hours/summarizeWorkDay.ts"
 	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { swipe } from "#lib/swipe.ts"
-	import { getWorkDay } from "#lib/workHours.svelte.ts"
 
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
@@ -38,7 +36,7 @@
 
 	let previousViews = $state<CalendarView[]>([])
 
-	const workHoursSummary = $derived(showWorkHours && level === "day" ? { text: formatWorkDayLine(getWorkDay(formatIsoDate(date))), href: `/hours?dato=${formatIsoDate(date)}` } : undefined)
+	const parentLevel = $derived(getParentLevel(level))
 	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
 
 	function showView(view: CalendarView, zoomTarget?: Element) {
@@ -87,6 +85,8 @@
 		const previousView = previousViews.pop()
 		if (previousView) {
 			showView(previousView)
+		} else if (parentLevel) {
+			showView({ level: parentLevel, date, selectedDay })
 		}
 	}
 
@@ -152,7 +152,7 @@
 </script>
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} {workHoursSummary} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
+	<CalendarToolbar {level} {date} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && (previousViews.length > 0 || parentLevel) ? goBack : undefined} />
 
 	<div class="banner">
 		<UrgentNotificationsBanner isCompact />
@@ -173,7 +173,7 @@
 				<WeekView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
 				<div class="day">
-					{#if showWorkHours && !compactScreen.current}
+					{#if showWorkHours}
 						<WorkHoursLine isoDate={formatIsoDate(date)} />
 					{/if}
 					<div class="day-view">
@@ -187,7 +187,7 @@
 			<CalendarNotes {level} {date} />
 		</div>
 
-		<div class="calendar-distribution" class:is-hidden-on-mobile={level === "week" || level === "day"}>
+		<div class="calendar-distribution">
 			<CalendarDistribution appointments={periodAppointments} />
 		</div>
 	</div>
@@ -286,14 +286,10 @@
 			order: 4;
 		}
 
-		.calendar-distribution.is-hidden-on-mobile {
-			display: none;
-		}
 	}
 
-	/* Er skjermen lav, går plassen til kalenderen: tegnforklaringen og varselstripen er ikke med. */
+	/* Er skjermen lav, går plassen til kalenderen: varselstripen er ikke med. */
 	@media (max-width: 57.5rem) and (max-height: 47rem) {
-		.calendar-distribution,
 		.banner {
 			display: none;
 		}
