@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { tick, untrack } from "svelte"
+	import { onMount, tick, untrack } from "svelte"
 	import { calendarHomeRequests } from "#lib/calendarHome.svelte.ts"
 	import { compactScreen } from "#lib/compactScreen.svelte.ts"
 	import CalendarDistribution from "#lib/components/calendar/CalendarDistribution.svelte"
 	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
+	import { formatCalendarAddress, parseCalendarAddress } from "#lib/components/calendar/calendarAddress.ts"
 	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
 	import { formatIsoDate, isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import { type CalendarLevel, getParentLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
@@ -21,9 +22,14 @@
 	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { swipe } from "#lib/swipe.ts"
+	import { goto } from "$app/navigation"
+	import { page } from "$app/state"
 
-	let level = $state<CalendarLevel>("year")
-	let date = $state(new Date())
+	const addressedView = parseCalendarAddress(page.url.searchParams)
+
+	let level = $state<CalendarLevel>(addressedView?.level ?? "year")
+	let date = $state(addressedView?.date ?? new Date())
+	let isMounted = $state(false)
 	let selectedDay = $state<Date>()
 	let showWorkHours = $state(true)
 	let dayMenu = $state<{ day: Date; position: { x: number; y: number } }>()
@@ -39,6 +45,16 @@
 
 	const parentLevel = $derived(getParentLevel(level))
 	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
+
+	onMount(() => {
+		isMounted = true
+	})
+
+	$effect(() => {
+		if (isMounted) {
+			goto(formatCalendarAddress(level, date), { replaceState: true, reset: false })
+		}
+	})
 
 	function showView(view: CalendarView, zoomTarget?: Element) {
 		const direction = isZoomingIn(level, view.level) ? "in" : "out"

@@ -1,14 +1,22 @@
 import type { EventInput } from "fullcalendar"
 import { getTrackPosition } from "#lib/components/work-hours/workHoursTrack.ts"
 import { formatDuration, formatHours, getDurationInMinutes, getWorkedHours, isSameHours, timeToMinutes, type WorkDay, type WorkHours } from "#lib/workHours.ts"
-import type { DateRange } from "./calendarDates.ts"
+import { type DateRange, formatIsoDate, parseIsoDate } from "./calendarDates.ts"
 
 type WorkHoursKind = "planned" | "worked"
+
+function getEndOfDay(isoDate: string, end: string): string {
+	if (end !== "24:00") {
+		return `${isoDate}T${end}`
+	}
+	const day = parseIsoDate(isoDate)
+	return `${formatIsoDate(new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1))}T00:00`
+}
 
 function toBackgroundEvent(isoDate: string, hours: WorkHours, kind: WorkHoursKind): EventInput {
 	return {
 		start: `${isoDate}T${hours.start}`,
-		end: `${isoDate}T${hours.end}`,
+		end: getEndOfDay(isoDate, hours.end),
 		display: "background",
 		extendedProps: { workHoursKind: kind, workHoursLabel: kind === "worked" ? formatHours(hours) : "" }
 	}
@@ -41,6 +49,7 @@ function renderBarPart(hours: WorkHours, kind: WorkHoursKind): string {
 	return `<span class="calendar-work-bar-${kind}" style="left:${left};width:${width}"></span>`
 }
 
+const millisecondsPerHour = 60 * 60 * 1000
 const defaultFirstHour = 7
 const defaultLastHour = 19
 
@@ -52,7 +61,10 @@ function formatSlotTime(hour: number): string {
 export function getSlotRange(events: EventInput[], { start, end }: DateRange): { slotMinTime: string; slotMaxTime: string } {
 	const eventsInRange = events.filter((event) => new Date(String(event.start)) >= start && new Date(String(event.start)) < end)
 	const firstHours = eventsInRange.map((event) => timeToMinutes(String(event.start).slice(11, 16)) / 60)
-	const lastHours = eventsInRange.map((event) => timeToMinutes(String(event.end).slice(11, 16)) / 60)
+	const lastHours = eventsInRange.map((event) => {
+		const startOfDay = new Date(`${String(event.start).slice(0, 10)}T00:00`)
+		return (new Date(String(event.end)).getTime() - startOfDay.getTime()) / millisecondsPerHour
+	})
 
 	return {
 		slotMinTime: formatSlotTime(Math.min(defaultFirstHour, ...firstHours.map(Math.floor))),

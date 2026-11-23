@@ -2,7 +2,19 @@
 	import { formatCalendarTitle, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import Icon from "#lib/components/Icon.svelte"
 	import TimeSelect from "#lib/components/TimeSelect.svelte"
-	import { defaultWorkHours, formatDuration, formatHours, getDurationInMinutes, getWorkedHours, type WorkDay, type WorkHours, withEnd, withStart } from "#lib/workHours.ts"
+	import {
+		defaultWorkHours,
+		formatDuration,
+		formatHours,
+		getDurationInMinutes,
+		getWorkedHours,
+		type WorkDay,
+		type WorkHours,
+		withEnd,
+		withStart,
+		workEndOptions,
+		workStartOptions
+	} from "#lib/workHours.ts"
 
 	interface Props {
 		day: WorkDay
@@ -23,8 +35,8 @@
 		<p class="planned-summary">{plannedSummary}</p>
 	</div>
 	<div class="fields">
-		<TimeSelect label="Jeg startet" value={hours.start} onChange={(start) => onLog(withStart(hours, start))} />
-		<TimeSelect label="Jeg sluttet" value={hours.end} onChange={(end) => onLog(withEnd(hours, end))} />
+		<TimeSelect label="Jeg startet" value={hours.start} options={workStartOptions} onChange={(start) => onLog(withStart(hours, start))} />
+		<TimeSelect label="Jeg sluttet" value={hours.end} options={workEndOptions} onChange={(end) => onLog(withEnd(hours, end))} />
 		<div class="buttons">
 			<button type="button" class="editor-button" disabled={!day.planned} onclick={() => day.planned && onLog(day.planned)}>Som planlagt</button>
 			<button type="button" class="editor-button" onclick={onDidNotWork}>Jobbet ikke</button>

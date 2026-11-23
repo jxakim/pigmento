@@ -15,6 +15,12 @@ describe("toWorkHoursEvents", () => {
 		])
 	})
 
+	it("ends a day that lasts to midnight at the start of the next day", () => {
+		const day: WorkDay = { isoDate: "2026-11-30", planned: { start: "14:00", end: "24:00" } }
+
+		expect(toWorkHoursEvents([day])[0]).toMatchObject({ start: "2026-11-30T14:00", end: "2026-12-01T00:00" })
+	})
+
 	it("only has the planned hours for a day that is not logged, and nothing for a day that was not worked and has no plan", () => {
 		expect(toWorkHoursEvents([{ isoDate: "2026-11-06", planned }])).toHaveLength(1)
 		expect(toWorkHoursEvents([{ isoDate: "2026-11-07", logged: { didWork: false } }])).toEqual([])
@@ -61,6 +67,7 @@ describe("getSlotRange", () => {
 	it("goes on to the hour after the latest end, also for a late evening", () => {
 		expect(getSlotRange([event("2026-11-13T12:00", "2026-11-13T23:00")], { start: new Date(2026, 10, 9), end: new Date(2026, 10, 16) })).toEqual({ slotMinTime: "07:00:00", slotMaxTime: "23:00:00" })
 		expect(getSlotRange([event("2026-11-05T12:00", "2026-11-05T23:30")], week).slotMaxTime).toBe("24:00:00")
+		expect(getSlotRange([event("2026-11-05T14:00", "2026-11-06T00:00")], week).slotMaxTime).toBe("24:00:00")
 	})
 
 	it("starts at the hour before the earliest start", () => {

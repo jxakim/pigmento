@@ -15,7 +15,8 @@ import {
 	timeToMinutes,
 	withEnd,
 	withStart,
-	workTimeOptions
+	workEndOptions,
+	workStartOptions
 } from "./workHours.ts"
 
 const dayShift = { start: "08:00", end: "16:00" }
@@ -28,11 +29,17 @@ describe("time conversion", () => {
 		expect(minutesToTime(timeToMinutes("17:00"))).toBe("17:00")
 	})
 
-	it("offers every half hour from 06:00 to 23:30", () => {
-		expect(workTimeOptions[0]).toBe("06:00")
-		expect(workTimeOptions[1]).toBe("06:30")
-		expect(workTimeOptions.at(-1)).toBe("23:30")
-		expect(workTimeOptions).toHaveLength(36)
+	it("offers every half hour from 06:00 to 23:30 for a start", () => {
+		expect(workStartOptions[0]).toBe("06:00")
+		expect(workStartOptions[1]).toBe("06:30")
+		expect(workStartOptions.at(-1)).toBe("23:30")
+		expect(workStartOptions).toHaveLength(36)
+	})
+
+	it("offers every half hour from 06:30 to midnight for an end", () => {
+		expect(workEndOptions[0]).toBe("06:30")
+		expect(workEndOptions.at(-1)).toBe("24:00")
+		expect(workEndOptions).toHaveLength(36)
 	})
 })
 
@@ -61,7 +68,7 @@ describe("changing the hours", () => {
 	})
 
 	it("keeps a late start inside the day so there is still room for an end", () => {
-		expect(withStart({ start: "20:00", end: "23:00" }, "23:30")).toEqual({ start: "23:00", end: "23:30" })
+		expect(withStart({ start: "20:00", end: "23:00" }, "23:30")).toEqual({ start: "23:30", end: "24:00" })
 	})
 
 	it("moves the start before an earlier end", () => {

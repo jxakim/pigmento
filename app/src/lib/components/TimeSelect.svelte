@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { workTimeOptions } from "#lib/workHours.ts"
-
 	interface Props {
 		label: string
 		value: string
+		options: string[]
 		isLabelHidden?: boolean
 		onChange: (time: string) => void
 	}
 
-	let { label, value, isLabelHidden = false, onChange }: Props = $props()
+	let { label, value, options, isLabelHidden = false, onChange }: Props = $props()
 
 	const id = $props.id()
 </script>
@@ -16,7 +15,7 @@
 <div class="time-select">
 	<label class="label" class:is-hidden={isLabelHidden} for={id}>{label}</label>
 	<select {id} {value} onchange={(event) => onChange(event.currentTarget.value)}>
-		{#each workTimeOptions as time (time)}
+		{#each options as time (time)}
 			<option value={time}>{time}</option>
 		{/each}
 	</select>

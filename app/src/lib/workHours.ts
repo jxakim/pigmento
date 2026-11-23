@@ -30,7 +30,7 @@ export interface WorkDay {
 const minutesPerHour = 60
 const timeStepInMinutes = 30
 const earliestTimeInMinutes = 6 * minutesPerHour
-const latestTimeInMinutes = 23 * minutesPerHour + 30
+const latestTimeInMinutes = 24 * minutesPerHour
 
 export function timeToMinutes(time: string): number {
 	const [hours, minutes] = time.split(":").map(Number)
@@ -43,9 +43,13 @@ export function minutesToTime(minutes: number): string {
 	return `${hours}:${remainingMinutes}`
 }
 
-export const workTimeOptions = Array.from({ length: (latestTimeInMinutes - earliestTimeInMinutes) / timeStepInMinutes + 1 }, (_, step) =>
-	minutesToTime(earliestTimeInMinutes + step * timeStepInMinutes)
-)
+function listTimes(firstInMinutes: number, lastInMinutes: number): string[] {
+	return Array.from({ length: (lastInMinutes - firstInMinutes) / timeStepInMinutes + 1 }, (_, step) => minutesToTime(firstInMinutes + step * timeStepInMinutes))
+}
+
+export const workStartOptions = listTimes(earliestTimeInMinutes, latestTimeInMinutes - timeStepInMinutes)
+
+export const workEndOptions = listTimes(earliestTimeInMinutes + timeStepInMinutes, latestTimeInMinutes)
 
 export function getDurationInMinutes(hours: WorkHours | undefined): number {
 	return hours ? timeToMinutes(hours.end) - timeToMinutes(hours.start) : 0
