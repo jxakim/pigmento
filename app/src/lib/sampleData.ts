@@ -2,6 +2,7 @@
 // Alle timer står i scheduledAppointments; «I dag» og «Kommende dager» hentes derfra.
 
 import type { AppointmentType } from "#lib/appointmentTypes.ts"
+import type { LoggedWorkDay, StandardWorkWeek } from "#lib/workHours.ts"
 
 export interface ScheduledAppointment {
 	clientName?: string
@@ -80,6 +81,31 @@ export const scheduledAppointments: ScheduledAppointment[] = [
 	{ clientName: "Hedda Lunde", type: "tattoo", start: "2026-11-27T11:00", end: "2026-11-27T15:00" },
 	{ clientName: "Magnus Ås", type: "tattoo", start: "2026-11-28T12:00", end: "2026-11-28T16:00" }
 ]
+
+const standardWorkDay = { start: "08:00", end: "16:00" }
+
+export const standardWorkWeek: StandardWorkWeek = {
+	monday: standardWorkDay,
+	tuesday: standardWorkDay,
+	wednesday: standardWorkDay,
+	thursday: standardWorkDay,
+	friday: standardWorkDay,
+	saturday: undefined,
+	sunday: undefined
+}
+
+export const loggedWorkDays: Record<string, LoggedWorkDay> = {
+	"2026-11-02": { didWork: true, hours: { start: "08:00", end: "16:00" } },
+	"2026-11-03": { didWork: true, hours: { start: "09:00", end: "17:00" } },
+	"2026-11-04": { didWork: true, hours: { start: "09:00", end: "15:00" } },
+	"2026-11-05": { didWork: true, hours: { start: "09:00", end: "17:30" } },
+	"2026-11-09": { didWork: true, hours: { start: "08:00", end: "16:00" } },
+	"2026-11-10": { didWork: true, hours: { start: "08:30", end: "16:30" } },
+	"2026-11-11": { didWork: false },
+	"2026-11-12": { didWork: true, hours: { start: "09:00", end: "17:00" } },
+	"2026-11-13": { didWork: true, hours: { start: "08:00", end: "16:00" } },
+	"2026-11-14": { didWork: true, hours: { start: "12:00", end: "17:00" } }
+}
 
 function dayOf(isoDateTime: string): string {
 	return isoDateTime.slice(0, 10)
