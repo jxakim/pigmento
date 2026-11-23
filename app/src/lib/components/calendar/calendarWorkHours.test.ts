@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { WorkDay } from "#lib/workHours.ts"
-import { renderMonthWorkHours, toWorkHoursEvents } from "./calendarWorkHours.ts"
+import { getSlotRange, renderMonthWorkHours, toWorkHoursEvents } from "./calendarWorkHours.ts"
 
 const planned = { start: "08:00", end: "16:00" }
 const lateShift = { start: "09:00", end: "17:30" }
@@ -46,5 +46,28 @@ describe("renderMonthWorkHours", () => {
 		const html = renderMonthWorkHours({ isoDate: "2026-11-02", planned, logged: { didWork: true, hours: planned } })
 
 		expect(html).not.toContain("calendar-work-deviation")
+	})
+})
+
+describe("getSlotRange", () => {
+	const week = { start: new Date(2026, 10, 2), end: new Date(2026, 10, 9) }
+	const event = (start: string, end: string) => ({ start, end })
+
+	it("shows 07:00 to 19:00 when everything fits", () => {
+		expect(getSlotRange([event("2026-11-05T10:00", "2026-11-05T17:30")], week)).toEqual({ slotMinTime: "07:00:00", slotMaxTime: "19:00:00" })
+		expect(getSlotRange([], week)).toEqual({ slotMinTime: "07:00:00", slotMaxTime: "19:00:00" })
+	})
+
+	it("goes on to the hour after the latest end, also for a late evening", () => {
+		expect(getSlotRange([event("2026-11-13T12:00", "2026-11-13T23:00")], { start: new Date(2026, 10, 9), end: new Date(2026, 10, 16) })).toEqual({ slotMinTime: "07:00:00", slotMaxTime: "23:00:00" })
+		expect(getSlotRange([event("2026-11-05T12:00", "2026-11-05T23:30")], week).slotMaxTime).toBe("24:00:00")
+	})
+
+	it("starts at the hour before the earliest start", () => {
+		expect(getSlotRange([event("2026-11-03T06:30", "2026-11-03T12:00")], week).slotMinTime).toBe("06:00:00")
+	})
+
+	it("ignores events outside the period", () => {
+		expect(getSlotRange([event("2026-11-13T12:00", "2026-11-13T23:00")], week)).toEqual({ slotMinTime: "07:00:00", slotMaxTime: "19:00:00" })
 	})
 })

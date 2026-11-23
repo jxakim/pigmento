@@ -103,7 +103,7 @@ export const loggedWorkDays: Record<string, LoggedWorkDay> = {
 	"2026-11-10": { didWork: true, hours: { start: "08:30", end: "16:30" } },
 	"2026-11-11": { didWork: false },
 	"2026-11-12": { didWork: true, hours: { start: "09:00", end: "17:00" } },
-	"2026-11-13": { didWork: true, hours: { start: "08:00", end: "16:00" } },
+	"2026-11-13": { didWork: true, hours: { start: "12:00", end: "23:00" } },
 	"2026-11-14": { didWork: true, hours: { start: "12:00", end: "17:00" } }
 }
 

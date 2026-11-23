@@ -28,11 +28,11 @@ describe("time conversion", () => {
 		expect(minutesToTime(timeToMinutes("17:00"))).toBe("17:00")
 	})
 
-	it("offers every half hour from 06:00 to 22:00", () => {
+	it("offers every half hour from 06:00 to 23:30", () => {
 		expect(workTimeOptions[0]).toBe("06:00")
 		expect(workTimeOptions[1]).toBe("06:30")
-		expect(workTimeOptions.at(-1)).toBe("22:00")
-		expect(workTimeOptions).toHaveLength(33)
+		expect(workTimeOptions.at(-1)).toBe("23:30")
+		expect(workTimeOptions).toHaveLength(36)
 	})
 })
 
@@ -60,9 +60,17 @@ describe("changing the hours", () => {
 		expect(withStart(dayShift, "16:00")).toEqual({ start: "16:00", end: "16:30" })
 	})
 
+	it("keeps a late start inside the day so there is still room for an end", () => {
+		expect(withStart({ start: "20:00", end: "23:00" }, "23:30")).toEqual({ start: "23:00", end: "23:30" })
+	})
+
 	it("moves the start before an earlier end", () => {
 		expect(withEnd(dayShift, "15:00")).toEqual({ start: "08:00", end: "15:00" })
 		expect(withEnd(dayShift, "08:00")).toEqual({ start: "07:30", end: "08:00" })
+	})
+
+	it("keeps an early end inside the day so there is still room for a start", () => {
+		expect(withEnd({ start: "06:00", end: "09:00" }, "06:00")).toEqual({ start: "06:00", end: "06:30" })
 	})
 
 	it("compares hours by start and end, also when there are none", () => {

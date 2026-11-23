@@ -30,7 +30,7 @@ export interface WorkDay {
 const minutesPerHour = 60
 const timeStepInMinutes = 30
 const earliestTimeInMinutes = 6 * minutesPerHour
-const latestTimeInMinutes = 22 * minutesPerHour
+const latestTimeInMinutes = 23 * minutesPerHour + 30
 
 export function timeToMinutes(time: string): number {
 	const [hours, minutes] = time.split(":").map(Number)
@@ -72,13 +72,13 @@ export function isSameHours(first: WorkHours | undefined, second: WorkHours | un
 }
 
 export function withStart(hours: WorkHours, start: string): WorkHours {
-	const earliestEnd = timeToMinutes(start) + timeStepInMinutes
-	return { start, end: minutesToTime(Math.max(timeToMinutes(hours.end), earliestEnd)) }
+	const startInMinutes = Math.min(timeToMinutes(start), latestTimeInMinutes - timeStepInMinutes)
+	return { start: minutesToTime(startInMinutes), end: minutesToTime(Math.max(timeToMinutes(hours.end), startInMinutes + timeStepInMinutes)) }
 }
 
 export function withEnd(hours: WorkHours, end: string): WorkHours {
-	const latestStart = timeToMinutes(end) - timeStepInMinutes
-	return { start: minutesToTime(Math.min(timeToMinutes(hours.start), latestStart)), end }
+	const endInMinutes = Math.max(timeToMinutes(end), earliestTimeInMinutes + timeStepInMinutes)
+	return { start: minutesToTime(Math.min(timeToMinutes(hours.start), endInMinutes - timeStepInMinutes)), end: minutesToTime(endInMinutes) }
 }
 
 export function getWeekday(isoDate: string): Weekday {

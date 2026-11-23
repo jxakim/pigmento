@@ -1,7 +1,7 @@
 import { timeToMinutes, type WorkHours } from "#lib/workHours.ts"
 
 const trackStartHour = 6
-const trackEndHour = 22
+const trackEndHour = 24
 const tickIntervalInHours = 2
 const minutesPerHour = 60
 

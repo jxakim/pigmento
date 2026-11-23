@@ -1,6 +1,7 @@
 import type { EventInput } from "fullcalendar"
 import { getTrackPosition } from "#lib/components/work-hours/workHoursTrack.ts"
-import { formatDuration, formatHours, getDurationInMinutes, getWorkedHours, isSameHours, type WorkDay, type WorkHours } from "#lib/workHours.ts"
+import { formatDuration, formatHours, getDurationInMinutes, getWorkedHours, isSameHours, timeToMinutes, type WorkDay, type WorkHours } from "#lib/workHours.ts"
+import type { DateRange } from "./calendarDates.ts"
 
 type WorkHoursKind = "planned" | "worked"
 
@@ -38,4 +39,23 @@ export function renderMonthWorkHours(day: WorkDay): string {
 function renderBarPart(hours: WorkHours, kind: WorkHoursKind): string {
 	const { left, width } = getTrackPosition(hours)
 	return `<span class="calendar-work-bar-${kind}" style="left:${left};width:${width}"></span>`
+}
+
+const defaultFirstHour = 7
+const defaultLastHour = 19
+
+function formatSlotTime(hour: number): string {
+	return `${String(hour).padStart(2, "0")}:00:00`
+}
+
+// Uke og dag viser 07:00 til 19:00, og blir lengre når en avtale eller arbeidsdag starter tidligere eller slutter senere.
+export function getSlotRange(events: EventInput[], { start, end }: DateRange): { slotMinTime: string; slotMaxTime: string } {
+	const eventsInRange = events.filter((event) => new Date(String(event.start)) >= start && new Date(String(event.start)) < end)
+	const firstHours = eventsInRange.map((event) => timeToMinutes(String(event.start).slice(11, 16)) / 60)
+	const lastHours = eventsInRange.map((event) => timeToMinutes(String(event.end).slice(11, 16)) / 60)
+
+	return {
+		slotMinTime: formatSlotTime(Math.min(defaultFirstHour, ...firstHours.map(Math.floor))),
+		slotMaxTime: formatSlotTime(Math.max(defaultLastHour, ...lastHours.map(Math.ceil)))
+	}
 }
