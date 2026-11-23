@@ -21,7 +21,7 @@
 	const today = new Date()
 	const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 	const maxDotsPerDay = 3
-	const maxShownAppointments = 3
+	const maxShownAppointments = 4
 
 	let selectedDay = $state(today)
 
@@ -101,7 +101,12 @@
 				{#each selectedDayAppointments.slice(0, maxShownAppointments) as appointment (appointment.start)}
 					<span class="agenda-row">
 						<span class="agenda-time">{formatTime(appointment.start)}</span>
-						<span class="agenda-client">{appointmentTitle(appointment)}</span>
+						<span class="agenda-details">
+							<span class="agenda-client">{appointmentTitle(appointment)}</span>
+							{#if appointment.description}
+								<span class="agenda-description">{appointment.description}</span>
+							{/if}
+						</span>
 						<AppointmentTypeTag type={appointment.type} />
 					</span>
 				{:else}
@@ -244,7 +249,7 @@
 
 	.day-panel-title {
 		font-family: var(--pg-font-heading);
-		font-size: 1.375rem;
+		font-size: 1.0625rem;
 		font-weight: 700;
 		letter-spacing: -0.01em;
 		line-height: 1.15;
@@ -252,7 +257,7 @@
 
 	.day-panel-hours {
 		color: var(--pg-ink-muted);
-		font-size: 0.9375rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
 	}
 
@@ -270,31 +275,47 @@
 		display: flex;
 		align-items: center;
 		gap: 0.625rem;
-		font-size: 1rem;
+		font-size: 0.875rem;
 	}
 
 	.agenda-time {
-		flex: 0 0 3.25rem;
+		flex: 0 0 2.75rem;
 		font-weight: 700;
 	}
 
-	.agenda-client {
+	.agenda-details {
+		display: flex;
 		flex: 1;
+		flex-direction: column;
 		min-width: 0;
+	}
+
+	.agenda-client,
+	.agenda-description {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
+	.agenda-client {
+		font-weight: 600;
+	}
+
+	.agenda-description {
+		color: var(--pg-ink-muted);
+		font-size: 0.75rem;
+	}
+
 	.no-appointments,
 	.more-appointments {
 		color: var(--pg-ink-muted);
-		font-size: 0.9375rem;
+		font-size: 0.875rem;
 	}
 
-	/* På lave skjermer er det plass til to avtaler. Resten ser man når dagen er åpen. */
+	/* På lave skjermer er det plass til to avtaler uten beskrivelse. Resten ser man når dagen er åpen. */
 	@media (max-height: 47rem) {
 		.agenda-row:nth-child(n + 3),
+		.agenda-description,
 		.more-appointments {
 			display: none;
 		}

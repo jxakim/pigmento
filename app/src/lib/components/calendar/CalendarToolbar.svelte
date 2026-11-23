@@ -156,10 +156,11 @@
 
 		.compact-title {
 			display: block;
-			color: var(--pg-ink-muted);
-			font-size: 0.8125rem;
-			font-weight: 600;
-			line-height: 1.25;
+			font-family: var(--pg-font-heading);
+			font-size: 1.1875rem;
+			font-weight: 700;
+			letter-spacing: -0.01em;
+			line-height: 1.15;
 		}
 
 		.icon-button,
