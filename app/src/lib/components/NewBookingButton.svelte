@@ -3,13 +3,13 @@
 
 	interface Props {
 		iconOnlyOnMobile?: boolean
-		isFloatingOnMobile?: boolean
+		isRoundOnMobile?: boolean
 	}
 
-	let { iconOnlyOnMobile = false, isFloatingOnMobile = false }: Props = $props()
+	let { iconOnlyOnMobile = false, isRoundOnMobile = false }: Props = $props()
 </script>
 
-<button type="button" class="new-booking-button" class:icon-only-on-mobile={iconOnlyOnMobile || isFloatingOnMobile} class:is-floating-on-mobile={isFloatingOnMobile} aria-label="Ny booking">
+<button type="button" class="new-booking-button" class:icon-only-on-mobile={iconOnlyOnMobile || isRoundOnMobile} class:is-round-on-mobile={isRoundOnMobile} aria-label="Ny booking">
 	<Icon name="add" />
 	<span class="label">Ny booking</span>
 </button>
@@ -50,15 +50,11 @@
 			display: none;
 		}
 
-		.is-floating-on-mobile {
-			position: fixed;
-			right: 1rem;
-			bottom: calc(var(--pg-bottom-bar-space) + 1rem);
-			z-index: 20;
+		.is-round-on-mobile {
+			flex: none;
 			width: 3.5rem;
 			height: 3.5rem;
 			border-radius: 50%;
-			box-shadow: 0 0.375rem 1rem rgb(20 23 26 / 0.22);
 		}
 	}
 </style>

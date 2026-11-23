@@ -110,8 +110,10 @@
 		align-items: center;
 		gap: 0.75rem;
 		width: 100%;
-		min-height: 4.5rem;
-		padding: 0.625rem 4.75rem 0.625rem 0.875rem;
+		flex: 1;
+		min-width: 0;
+		min-height: 3.5rem;
+		padding: 0.375rem 0.875rem;
 		border: 0.0625rem solid var(--pg-card-border);
 		border-radius: var(--pg-card-radius);
 		background: var(--pg-card);
@@ -136,12 +138,10 @@
 	}
 
 	.notes-bar-preview {
-		display: -webkit-box;
 		overflow: hidden;
 		font-size: 0.875rem;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.notes-sheet {

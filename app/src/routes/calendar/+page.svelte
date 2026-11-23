@@ -186,16 +186,15 @@
 
 		<div class="calendar-notes">
 			<CalendarNotes {level} {date} />
+			{#if compactScreen.current}
+				<NewBookingButton isRoundOnMobile />
+			{/if}
 		</div>
 
 		<div class="calendar-distribution">
 			<CalendarDistribution appointments={periodAppointments} />
 		</div>
 	</div>
-
-	{#if compactScreen.current}
-		<NewBookingButton isFloatingOnMobile />
-	{/if}
 
 	{#if dayMenu}
 		<DayContextMenu day={dayMenu.day} position={dayMenu.position} canOpenDay={level !== "day"} onSelect={handleDayAction} onClose={() => (dayMenu = undefined)} />
@@ -288,6 +287,9 @@
 		}
 
 		.calendar-notes {
+			display: flex;
+			align-items: center;
+			gap: 0.625rem;
 			order: 4;
 		}
 
