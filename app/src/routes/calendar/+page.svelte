@@ -288,9 +288,10 @@
 
 	}
 
-	/* Er skjermen lav, går plassen til kalenderen: varselstripen er ikke med. */
+	/* Er skjermen lav, går plassen til kalenderen: varselstripen og tegnforklaringen er ikke med. */
 	@media (max-width: 57.5rem) and (max-height: 47rem) {
-		.banner {
+		.banner,
+		.calendar-distribution {
 			display: none;
 		}
 	}

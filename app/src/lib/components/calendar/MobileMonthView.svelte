@@ -21,6 +21,7 @@
 	const today = new Date()
 	const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 	const maxDotsPerDay = 3
+	const maxShownAppointments = 3
 
 	let selectedDay = $state(today)
 
@@ -30,6 +31,7 @@
 		Array.from({ length: 6 }, (_, week) => Array.from({ length: 7 }, (_, weekday) => new Date(firstGridDay.getFullYear(), firstGridDay.getMonth(), firstGridDay.getDate() + week * 7 + weekday)))
 	)
 	const selectedDayAppointments = $derived(findAppointmentsOnDay(scheduledAppointments, selectedDay))
+	const hiddenAppointmentCount = $derived(Math.max(0, selectedDayAppointments.length - maxShownAppointments))
 	const selectedWorkDay = $derived(getWorkDay(formatIsoDate(selectedDay)))
 	const daysWithNotifications = $derived(getDaysWithOpenNotifications())
 
@@ -95,15 +97,20 @@
 			{#if showWorkHours}
 				<span class="day-panel-hours" class:is-worked={getWorkedHours(selectedWorkDay) !== undefined}>{formatWorkDayLine(selectedWorkDay)}</span>
 			{/if}
-			{#each selectedDayAppointments as appointment (appointment.start)}
-				<span class="agenda-row">
-					<span class="agenda-time">{formatTime(appointment.start)}</span>
-					<span class="agenda-client">{appointmentTitle(appointment)}</span>
-					<AppointmentTypeTag type={appointment.type} />
-				</span>
-			{:else}
-				<span class="no-appointments">Ingen avtaler denne dagen</span>
-			{/each}
+			<span class="agenda-rows">
+				{#each selectedDayAppointments.slice(0, maxShownAppointments) as appointment (appointment.start)}
+					<span class="agenda-row">
+						<span class="agenda-time">{formatTime(appointment.start)}</span>
+						<span class="agenda-client">{appointmentTitle(appointment)}</span>
+						<AppointmentTypeTag type={appointment.type} />
+					</span>
+				{:else}
+					<span class="no-appointments">Ingen avtaler denne dagen</span>
+				{/each}
+				{#if hiddenAppointmentCount > 0}
+					<span class="more-appointments">+{hiddenAppointmentCount} til</span>
+				{/if}
+			</span>
 		</button>
 	</div>
 </div>
@@ -121,8 +128,9 @@
 	}
 
 	.grid {
-		flex: none;
+		flex: 1;
 		gap: 0.0625rem;
+		min-height: 0;
 	}
 
 	.weekdays,
@@ -133,11 +141,17 @@
 	}
 
 	.weekdays {
+		flex: none;
 		padding-bottom: 0.125rem;
 		color: var(--pg-ink-muted);
 		font-size: 0.6875rem;
 		font-weight: 600;
 		text-align: center;
+	}
+
+	.week {
+		flex: 1;
+		min-height: 2rem;
 	}
 
 	.day {
@@ -146,7 +160,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.0625rem;
-		height: 2.5rem;
+		height: 100%;
 		padding: 0;
 		border: 0;
 		border-radius: 0.625rem;
@@ -203,10 +217,7 @@
 	}
 
 	.agenda {
-		flex: 1;
-		min-height: 0;
-		overflow-y: auto;
-		overscroll-behavior: contain;
+		flex: none;
 	}
 
 	.day-panel {
@@ -233,29 +244,37 @@
 
 	.day-panel-title {
 		font-family: var(--pg-font-heading);
-		font-size: 1.0625rem;
+		font-size: 1.375rem;
 		font-weight: 700;
+		letter-spacing: -0.01em;
+		line-height: 1.15;
 	}
 
 	.day-panel-hours {
 		color: var(--pg-ink-muted);
-		font-size: 0.8125rem;
+		font-size: 0.9375rem;
+		font-weight: 600;
 	}
 
 	.day-panel-hours.is-worked {
 		color: var(--pg-pink-deep);
-		font-weight: 600;
+	}
+
+	.agenda-rows {
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
 	}
 
 	.agenda-row {
 		display: flex;
 		align-items: center;
 		gap: 0.625rem;
-		font-size: 0.875rem;
+		font-size: 1rem;
 	}
 
 	.agenda-time {
-		flex: 0 0 2.75rem;
+		flex: 0 0 3.25rem;
 		font-weight: 700;
 	}
 
@@ -267,8 +286,17 @@
 		white-space: nowrap;
 	}
 
-	.no-appointments {
-		color: var(--pg-ink-subtle);
-		font-size: 0.875rem;
+	.no-appointments,
+	.more-appointments {
+		color: var(--pg-ink-muted);
+		font-size: 0.9375rem;
+	}
+
+	/* På lave skjermer er det plass til to avtaler. Resten ser man når dagen er åpen. */
+	@media (max-height: 47rem) {
+		.agenda-row:nth-child(n + 3),
+		.more-appointments {
+			display: none;
+		}
 	}
 </style>
