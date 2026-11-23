@@ -6,6 +6,7 @@
 	import CalendarTitle from "./CalendarTitle.svelte"
 	import { formatCalendarTitle } from "./calendarDates.ts"
 	import { type CalendarLevel, levelLabels } from "./calendarLevels.ts"
+	import WorkHoursToggle from "./WorkHoursToggle.svelte"
 
 	interface Props {
 		level: CalendarLevel
@@ -43,21 +44,28 @@
 		<button type="button" class="icon-button" aria-label="Forrige {periodName}" onclick={onPrevious}>
 			<Icon name="chevron_left" />
 		</button>
-		<button type="button" class="today-button" onclick={onToday}>I dag</button>
+		<button type="button" class="today-button" onclick={onToday}>
+			<span class="today-icon"><Icon name="today" /></span>
+			<span class="today-label">I dag</span>
+		</button>
 		<button type="button" class="icon-button" aria-label="Neste {periodName}" onclick={onNext}>
 			<Icon name="chevron_right" />
 		</button>
 	</div>
 
 	<div class="level-switcher">
-		<CalendarLevelSwitcher {level} {onLevelChange} />
+		<div class="level-switcher-control">
+			<CalendarLevelSwitcher {level} {onLevelChange} />
+		</div>
+		<div class="mobile-work-hours-toggle">
+			<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
+		</div>
 	</div>
 
 	<div class="actions">
-		<button type="button" class="work-hours-toggle" aria-pressed={isWorkHoursVisible} onclick={onToggleWorkHours}>
-			<Icon name="schedule" />
-			<span class="work-hours-toggle-label">Arbeidstid</span>
-		</button>
+		<div class="desktop-work-hours-toggle">
+			<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
+		</div>
 		<div class="bell">
 			<NotificationBell />
 		</div>
@@ -82,6 +90,11 @@
 		margin-inline-end: 0.125rem;
 	}
 
+	.mobile-work-hours-toggle,
+	.today-icon {
+		display: none;
+	}
+
 	.summary {
 		display: none;
 	}
@@ -93,47 +106,6 @@
 
 	.actions {
 		gap: 0.75rem;
-	}
-
-	.work-hours-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 2.75rem;
-		padding: 0 0.875rem;
-		border: 0.0625rem solid var(--pg-button-border);
-		border-radius: 62.5rem;
-		background: var(--pg-card);
-		color: var(--pg-ink);
-		font-family: var(--pg-font-body);
-		font-size: 0.875rem;
-		font-weight: 600;
-		cursor: pointer;
-	}
-
-	.work-hours-toggle[aria-pressed="true"] {
-		border-color: var(--pg-pink);
-		background: var(--pg-pink);
-	}
-
-	@media (max-width: 90rem) {
-		.work-hours-toggle {
-			padding: 0 0.75rem;
-		}
-
-		.work-hours-toggle-label {
-			position: absolute;
-			width: 0.0625rem;
-			height: 0.0625rem;
-			overflow: hidden;
-			clip-path: inset(50%);
-		}
-	}
-
-	@media (hover: hover) {
-		.work-hours-toggle:hover {
-			border-color: var(--pg-ink);
-		}
 	}
 
 	.icon-button,
@@ -194,7 +166,7 @@
 		}
 
 		.bell,
-		.work-hours-toggle {
+		.desktop-work-hours-toggle {
 			display: none;
 		}
 
@@ -207,9 +179,21 @@
 		}
 
 		.today-button {
-			padding: 0 0.75rem;
-			font-size: 0.8125rem;
+			width: 2.75rem;
+			padding: 0;
 			border-radius: 0.625rem;
+		}
+
+		.today-icon {
+			display: block;
+		}
+
+		.today-label {
+			position: absolute;
+			width: 0.0625rem;
+			height: 0.0625rem;
+			overflow: hidden;
+			clip-path: inset(50%);
 		}
 
 		.title {
@@ -221,8 +205,19 @@
 		}
 
 		.level-switcher {
+			display: flex;
 			flex: 1 0 100%;
+			gap: 0.5rem;
 			order: 1;
+		}
+
+		.level-switcher-control {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobile-work-hours-toggle {
+			display: block;
 		}
 	}
 </style>

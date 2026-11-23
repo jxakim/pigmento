@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { appointmentTitle, appointmentTypeDetails } from "#lib/appointmentTypes.ts"
 	import AppointmentTypeTag from "#lib/components/AppointmentTypeTag.svelte"
+	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { getDaysWithOpenNotifications } from "#lib/notifications.svelte.ts"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 	import { findAppointmentsOnDay } from "./calendarAppointments.ts"
@@ -8,12 +9,13 @@
 
 	interface Props {
 		date: Date
+		showWorkHours: boolean
 		selectedDay?: Date
 		onSelectDay: (day: Date) => void
 		onOpenDay: (day: Date) => void
 	}
 
-	let { date, selectedDay, onSelectDay, onOpenDay }: Props = $props()
+	let { date, showWorkHours, selectedDay, onSelectDay, onOpenDay }: Props = $props()
 
 	const today = new Date()
 	const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
@@ -79,6 +81,9 @@
 			<h2 id="agenda-title">{shownDayLabel}</h2>
 			<button type="button" class="open-day" onclick={() => onOpenDay(shownDay)}>Åpne dagen</button>
 		</div>
+		{#if showWorkHours}
+			<WorkHoursLine isoDate={formatIsoDate(shownDay)} />
+		{/if}
 		{#each shownDayAppointments as appointment (appointment.start)}
 			<div class="agenda-row">
 				<span class="agenda-time">{formatTime(appointment.start)}</span>

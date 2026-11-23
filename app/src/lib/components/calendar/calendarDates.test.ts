@@ -11,6 +11,7 @@ import {
 	getMonthViewRange,
 	getPeriodKey,
 	getPeriodRange,
+	isIsoDate,
 	isSameDay,
 	moveByPeriods,
 	parseIsoDate
@@ -178,5 +179,17 @@ describe("formatShortDate", () => {
 describe("getMonthViewRange", () => {
 	it("starts on the Monday of the first week and ends after the Sunday of the last week", () => {
 		expect(getMonthViewRange(new Date(2026, 10, 18))).toEqual({ start: new Date(2026, 10, 2 - 7), end: new Date(2026, 11, 1 + 6) })
+	})
+})
+
+describe("isIsoDate", () => {
+	it("accepts a date written as year, month and day", () => {
+		expect(isIsoDate("2026-11-05")).toBe(true)
+	})
+
+	it("rejects missing values and other formats", () => {
+		expect(isIsoDate(null)).toBe(false)
+		expect(isIsoDate("05.11.2026")).toBe(false)
+		expect(isIsoDate("2026-11-5")).toBe(false)
 	})
 })

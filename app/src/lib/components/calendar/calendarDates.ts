@@ -11,6 +11,10 @@ export function parseIsoDate(isoDate: string): Date {
 	return new Date(year, month - 1, day)
 }
 
+export function isIsoDate(value: string | null): value is string {
+	return value !== null && /^\d{4}-\d{2}-\d{2}$/.test(value)
+}
+
 export function moveByPeriods(level: CalendarLevel, date: Date, periods: number): Date {
 	const year = date.getFullYear()
 	const month = date.getMonth()

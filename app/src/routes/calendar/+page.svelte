@@ -6,7 +6,7 @@
 	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
 	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
-	import { isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
+	import { formatIsoDate, isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import { type CalendarLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
 	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
 	import DayView from "#lib/components/calendar/DayView.svelte"
@@ -17,6 +17,7 @@
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
+	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
 
 	let level = $state<CalendarLevel>("year")
@@ -159,7 +160,7 @@
 			{#if level === "year"}
 				<YearView {date} onOpenMonth={(month, monthElement) => openLevel("month", month, monthElement)} />
 			{:else if level === "month" && compactScreen.current}
-				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => openLevel("day", day)} />
+				<MobileMonthView {date} {showWorkHours} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => openLevel("day", day)} />
 			{:else if level === "month"}
 				<MonthView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else if level === "week" && compactScreen.current}
@@ -167,7 +168,14 @@
 			{:else if level === "week"}
 				<WeekView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
-				<DayView {date} {showWorkHours} />
+				<div class="day">
+					{#if showWorkHours}
+						<WorkHoursLine isoDate={formatIsoDate(date)} />
+					{/if}
+					<div class="day-view">
+						<DayView {date} {showWorkHours} />
+					</div>
+				</div>
 			{/if}
 		</div>
 
@@ -219,6 +227,18 @@
 		/* Hindrer at mobilen markerer tekst eller viser egen meny når man holder inne på en dag. */
 		-webkit-touch-callout: none;
 		user-select: none;
+	}
+
+	.day {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		height: 100%;
+	}
+
+	.day-view {
+		flex: 1;
+		min-height: 0;
 	}
 
 	.calendar-notes {
