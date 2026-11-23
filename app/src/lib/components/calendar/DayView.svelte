@@ -1,21 +1,25 @@
 <script lang="ts">
-	import type { CalendarOptions } from "fullcalendar"
+	import type { Calendar, CalendarOptions } from "fullcalendar"
 	import { joinClasses } from "./calendarAppearance.ts"
-	import { calendarEvents } from "./calendarAppointments.ts"
+	import { getCalendarEvents } from "./calendarWorkHours.svelte.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
 		date: Date
+		showWorkHours: boolean
 	}
 
-	let { date }: Props = $props()
+	let { date, showWorkHours }: Props = $props()
+
+	let calendar = $state<Calendar>()
 
 	const options: CalendarOptions = {
 		initialView: "timeGridDay",
-		events: calendarEvents,
 		eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
 		dayLaneClass: ({ isToday }) => joinClasses("calendar-day-lane", isToday && "is-today")
 	}
+
+	$effect(() => calendar?.setOption("events", getCalendarEvents("day", date, showWorkHours)))
 </script>
 
-<FullCalendar {options} {date} />
+<FullCalendar {options} {date} bind:calendar />

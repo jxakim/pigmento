@@ -58,6 +58,13 @@ export function getDaysInRange({ start, end }: DateRange): Date[] {
 	return Array.from({ length: dayCount }, (_, offset) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + offset))
 }
 
+// Ukene som dekker måneden, også dagene fra forrige og neste måned som vises i rutenettet.
+export function getMonthViewRange(date: Date): DateRange {
+	const { start, end } = getPeriodRange("month", date)
+	const lastDay = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 1)
+	return { start: getPeriodRange("week", start).start, end: getPeriodRange("week", lastDay).end }
+}
+
 export function formatShortDate(date: Date): string {
 	return `${date.getDate()}. ${abbreviateMonth(date)}`
 }

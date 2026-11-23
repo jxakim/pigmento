@@ -32,7 +32,7 @@
 		selectable: true,
 		// Et klikk velger én dag, mens å dra musen over flere dager eller timer velger en periode.
 		selectMinDistance: 5,
-		slotMinTime: "09:00",
+		slotMinTime: "07:00",
 		slotMaxTime: "19:00",
 		slotDuration: "01:00",
 		slotHeaderFormat: { hour: "2-digit", minute: "2-digit", hour12: false },

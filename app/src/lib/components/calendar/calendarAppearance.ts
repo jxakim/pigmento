@@ -19,7 +19,7 @@ export const calendarAppearance: CalendarOptions = {
 		return isTimeGrid ? { html: `<span class="calendar-weekday">${weekday}</span><span class="calendar-date-number${isToday ? " is-today" : ""}">${date.getDate()}</span>` } : weekday
 	},
 	dayCellTopClass: "calendar-day-top",
-	dayCellTopInnerClass: ({ isToday }) => joinClasses("calendar-day-number", isToday && "is-today"),
+	dayCellTopInnerClass: "calendar-day-top-inner",
 	rowEventClass: "calendar-chip",
 	rowEventInnerClass: "calendar-chip-inner",
 	rowMoreLinkClass: "calendar-more-link",
@@ -27,6 +27,8 @@ export const calendarAppearance: CalendarOptions = {
 	slotHeaderClass: "calendar-hour-header",
 	slotHeaderInnerClass: "calendar-hour-label",
 	slotLaneClass: "calendar-hour-lane",
+	backgroundEventClass: ({ event }) => joinClasses("calendar-work-hours", `is-${event.extendedProps.workHoursKind}`),
+	backgroundEventContent: ({ event }) => event.extendedProps.workHoursLabel,
 	columnEventClass: "calendar-block",
 	columnEventInnerClass: "calendar-block-inner",
 	columnEventTimeClass: "calendar-block-time",

@@ -27,6 +27,7 @@
 		font-family: var(--pg-font-body);
 		font-size: 0.9375rem;
 		font-weight: 600;
+		white-space: nowrap;
 		cursor: pointer;
 	}
 
