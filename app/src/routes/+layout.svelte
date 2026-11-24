@@ -14,7 +14,8 @@
 
 	onNavigate((navigation) => {
 		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-		if (!document.startViewTransition || prefersReducedMotion) {
+		const staysOnPage = navigation.from?.url.pathname === navigation.to?.url.pathname
+		if (!document.startViewTransition || prefersReducedMotion || staysOnPage) {
 			return
 		}
 

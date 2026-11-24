@@ -1,7 +1,7 @@
 <script lang="ts">
 	import TimeSelect from "#lib/components/TimeSelect.svelte"
 	import { getStandardWeek, setStandardDay } from "#lib/workHours.svelte.ts"
-	import { defaultWorkHours, formatDuration, getDurationInMinutes, weekdayNames, weekdays, withEnd, withStart } from "#lib/workHours.ts"
+	import { defaultWorkHours, formatDuration, getDurationInMinutes, weekdayNames, weekdays, withEnd, withStart, workEndOptions, workStartOptions } from "#lib/workHours.ts"
 
 	const workdays = weekdays.slice(0, 5)
 	const standardWeek = $derived(getStandardWeek())
@@ -26,8 +26,8 @@
 			<label class="weekday-name" for="works-{weekday}">{weekdayNames[weekday].short}</label>
 			<input id="works-{weekday}" class="weekday-switch" type="checkbox" checked={hours !== undefined} aria-label="Jobber {weekdayNames[weekday].long.toLowerCase()}" onchange={() => setStandardDay(weekday, hours ? undefined : defaultWorkHours)} />
 			{#if hours}
-				<TimeSelect label="Starter {weekdayNames[weekday].long.toLowerCase()}" value={hours.start} isLabelHidden onChange={(start) => setStandardDay(weekday, withStart(hours, start))} />
-				<TimeSelect label="Slutter {weekdayNames[weekday].long.toLowerCase()}" value={hours.end} isLabelHidden onChange={(end) => setStandardDay(weekday, withEnd(hours, end))} />
+				<TimeSelect label="Starter {weekdayNames[weekday].long.toLowerCase()}" value={hours.start} options={workStartOptions} isLabelHidden onChange={(start) => setStandardDay(weekday, withStart(hours, start))} />
+				<TimeSelect label="Slutter {weekdayNames[weekday].long.toLowerCase()}" value={hours.end} options={workEndOptions} isLabelHidden onChange={(end) => setStandardDay(weekday, withEnd(hours, end))} />
 			{:else}
 				<span class="day-off">Fri</span>
 			{/if}

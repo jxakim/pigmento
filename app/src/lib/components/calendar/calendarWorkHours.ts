@@ -1,13 +1,22 @@
 import type { EventInput } from "fullcalendar"
 import { getTrackPosition } from "#lib/components/work-hours/workHoursTrack.ts"
-import { formatDuration, formatHours, getDurationInMinutes, getWorkedHours, isSameHours, type WorkDay, type WorkHours } from "#lib/workHours.ts"
+import { formatDuration, formatHours, getDurationInMinutes, getWorkedHours, isSameHours, timeToMinutes, type WorkDay, type WorkHours } from "#lib/workHours.ts"
+import { type DateRange, formatIsoDate, parseIsoDate } from "./calendarDates.ts"
 
 type WorkHoursKind = "planned" | "worked"
+
+function getEndOfDay(isoDate: string, end: string): string {
+	if (end !== "24:00") {
+		return `${isoDate}T${end}`
+	}
+	const day = parseIsoDate(isoDate)
+	return `${formatIsoDate(new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1))}T00:00`
+}
 
 function toBackgroundEvent(isoDate: string, hours: WorkHours, kind: WorkHoursKind): EventInput {
 	return {
 		start: `${isoDate}T${hours.start}`,
-		end: `${isoDate}T${hours.end}`,
+		end: getEndOfDay(isoDate, hours.end),
 		display: "background",
 		extendedProps: { workHoursKind: kind, workHoursLabel: kind === "worked" ? formatHours(hours) : "" }
 	}
@@ -38,4 +47,27 @@ export function renderMonthWorkHours(day: WorkDay): string {
 function renderBarPart(hours: WorkHours, kind: WorkHoursKind): string {
 	const { left, width } = getTrackPosition(hours)
 	return `<span class="calendar-work-bar-${kind}" style="left:${left};width:${width}"></span>`
+}
+
+const millisecondsPerHour = 60 * 60 * 1000
+const defaultFirstHour = 7
+const defaultLastHour = 19
+
+function formatSlotTime(hour: number): string {
+	return `${String(hour).padStart(2, "0")}:00:00`
+}
+
+// Uke og dag viser 07:00 til 19:00, og blir lengre når en avtale eller arbeidsdag starter tidligere eller slutter senere.
+export function getSlotRange(events: EventInput[], { start, end }: DateRange): { slotMinTime: string; slotMaxTime: string } {
+	const eventsInRange = events.filter((event) => new Date(String(event.start)) >= start && new Date(String(event.start)) < end)
+	const firstHours = eventsInRange.map((event) => timeToMinutes(String(event.start).slice(11, 16)) / 60)
+	const lastHours = eventsInRange.map((event) => {
+		const startOfDay = new Date(`${String(event.start).slice(0, 10)}T00:00`)
+		return (new Date(String(event.end)).getTime() - startOfDay.getTime()) / millisecondsPerHour
+	})
+
+	return {
+		slotMinTime: formatSlotTime(Math.min(defaultFirstHour, ...firstHours.map(Math.floor))),
+		slotMaxTime: formatSlotTime(Math.max(defaultLastHour, ...lastHours.map(Math.ceil)))
+	}
 }

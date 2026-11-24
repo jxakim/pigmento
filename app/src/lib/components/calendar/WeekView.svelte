@@ -2,7 +2,7 @@
 	import type { Calendar, CalendarOptions } from "fullcalendar"
 	import { joinClasses } from "./calendarAppearance.ts"
 	import { isSameDay } from "./calendarDates.ts"
-	import { getCalendarEvents } from "./calendarWorkHours.svelte.ts"
+	import { showCalendarEvents } from "./calendarWorkHours.svelte.ts"
 	import FullCalendar from "./FullCalendar.svelte"
 
 	interface Props {
@@ -29,7 +29,7 @@
 
 	$effect(() => updateDayLanes(selectedDay))
 
-	$effect(() => calendar?.setOption("events", getCalendarEvents("week", date, showWorkHours)))
+	$effect(() => showCalendarEvents(calendar, "week", date, showWorkHours))
 </script>
 
 <FullCalendar {options} {date} bind:calendar />

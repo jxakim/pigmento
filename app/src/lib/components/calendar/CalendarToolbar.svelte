@@ -86,6 +86,7 @@
 
 	.actions {
 		gap: 0.75rem;
+		margin-inline-start: auto;
 	}
 
 	.icon-button,
