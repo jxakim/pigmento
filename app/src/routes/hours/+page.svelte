@@ -1,17 +1,21 @@
 <script lang="ts">
-	import { formatCalendarTitle, formatIsoDate, formatPeriodName, getDaysInRange, getPeriodRange, moveByPeriods } from "#lib/components/calendar/calendarDates.ts"
+	import BackButton from "#lib/components/BackButton.svelte"
+	import { formatCalendarTitle, formatIsoDate, formatPeriodName, getDaysInRange, getPeriodRange, isIsoDate, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
 	import Icon from "#lib/components/Icon.svelte"
 	import MonthSummary from "#lib/components/work-hours/MonthSummary.svelte"
 	import StandardWeek from "#lib/components/work-hours/StandardWeek.svelte"
 	import WorkWeek from "#lib/components/work-hours/WorkWeek.svelte"
 	import { getWorkDay, logDidNotWork, logWorkedHours } from "#lib/workHours.svelte.ts"
 	import { formatDuration, getTotals } from "#lib/workHours.ts"
+	import { page } from "$app/state"
 
 	const today = new Date()
 	const todayIsoDate = formatIsoDate(today)
+	const requestedIsoDate = page.url.searchParams.get("dato")
+	const initialDate = isIsoDate(requestedIsoDate) ? parseIsoDate(requestedIsoDate) : today
 
-	let weekDate = $state(today)
-	let selectedIsoDate = $state<string | undefined>(todayIsoDate)
+	let weekDate = $state(initialDate)
+	let selectedIsoDate = $state<string | undefined>(formatIsoDate(initialDate))
 
 	const weekDays = $derived(getDaysInRange(getPeriodRange("week", weekDate)).map((day) => getWorkDay(formatIsoDate(day))))
 	const monthDaysSoFar = $derived(
@@ -46,6 +50,7 @@
 <div class="hours-page">
 	<header class="header">
 		<div class="title">
+			<BackButton fallbackHref="/calendar" />
 			<h1>Arbeidstimer</h1>
 			<p class="summary">{summary}</p>
 		</div>
@@ -161,6 +166,10 @@
 		.hours-page {
 			gap: 0.875rem;
 			padding: 0.875rem 1rem;
+		}
+
+		.title {
+			align-items: center;
 		}
 
 		h1 {

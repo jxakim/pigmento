@@ -6,8 +6,8 @@
 	import CalendarNotes from "#lib/components/calendar/CalendarNotes.svelte"
 	import CalendarToolbar from "#lib/components/calendar/CalendarToolbar.svelte"
 	import { filterByPeriod } from "#lib/components/calendar/calendarAppointments.ts"
-	import { isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
-	import { type CalendarLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
+	import { formatIsoDate, isSameDay, moveByPeriods, parseIsoDate } from "#lib/components/calendar/calendarDates.ts"
+	import { type CalendarLevel, getParentLevel, isZoomingIn } from "#lib/components/calendar/calendarLevels.ts"
 	import DayContextMenu, { type DayAction } from "#lib/components/calendar/DayContextMenu.svelte"
 	import DayView from "#lib/components/calendar/DayView.svelte"
 	import MobileMonthView from "#lib/components/calendar/MobileMonthView.svelte"
@@ -16,8 +16,11 @@
 	import WeekView from "#lib/components/calendar/WeekView.svelte"
 	import YearView from "#lib/components/calendar/YearView.svelte"
 	import { animateZoom } from "#lib/components/calendar/zoomTransition.ts"
+	import NewBookingButton from "#lib/components/NewBookingButton.svelte"
 	import UrgentNotificationsBanner from "#lib/components/notifications/UrgentNotificationsBanner.svelte"
+	import WorkHoursLine from "#lib/components/work-hours/WorkHoursLine.svelte"
 	import { scheduledAppointments } from "#lib/sampleData.ts"
+	import { swipe } from "#lib/swipe.ts"
 
 	let level = $state<CalendarLevel>("year")
 	let date = $state(new Date())
@@ -34,6 +37,7 @@
 
 	let previousViews = $state<CalendarView[]>([])
 
+	const parentLevel = $derived(getParentLevel(level))
 	const periodAppointments = $derived(filterByPeriod(scheduledAppointments, level, date))
 
 	function showView(view: CalendarView, zoomTarget?: Element) {
@@ -82,6 +86,8 @@
 		const previousView = previousViews.pop()
 		if (previousView) {
 			showView(previousView)
+		} else if (parentLevel) {
+			showView({ level: parentLevel, date, selectedDay })
 		}
 	}
 
@@ -147,7 +153,7 @@
 </script>
 
 <div class="calendar-page">
-	<CalendarToolbar {level} {date} appointmentCount={periodAppointments.length} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && previousViews.length > 0 ? goBack : undefined} />
+	<CalendarToolbar {level} {date} isWorkHoursVisible={showWorkHours} onLevelChange={selectLevel} onPrevious={() => moveToPeriod(-1)} onToday={goToToday} onNext={() => moveToPeriod(1)} onToggleWorkHours={() => (showWorkHours = !showWorkHours)} onBack={compactScreen.current && (previousViews.length > 0 || parentLevel) ? goBack : undefined} />
 
 	<div class="banner">
 		<UrgentNotificationsBanner isCompact />
@@ -155,11 +161,11 @@
 
 	<div class="calendar-body">
 		<!-- svelte-ignore a11y_no_static_element_interactions (høyreklikk-menyen er et tillegg; alle valg finnes også andre steder) -->
-		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu}>
+		<div class="calendar-view" bind:this={viewContainer} oncontextmenu={openDayMenu} {@attach compactScreen.current ? swipe({ onSwipeLeft: () => moveToPeriod(1), onSwipeRight: () => moveToPeriod(-1) }) : undefined}>
 			{#if level === "year"}
 				<YearView {date} onOpenMonth={(month, monthElement) => openLevel("month", month, monthElement)} />
 			{:else if level === "month" && compactScreen.current}
-				<MobileMonthView {date} {selectedDay} onSelectDay={(day) => (selectedDay = day)} onOpenDay={(day) => openLevel("day", day)} />
+				<MobileMonthView {date} {showWorkHours} onOpenDay={(day, dayElement) => openLevel("day", day, dayElement)} />
 			{:else if level === "month"}
 				<MonthView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else if level === "week" && compactScreen.current}
@@ -167,12 +173,22 @@
 			{:else if level === "week"}
 				<WeekView {date} {showWorkHours} {selectedDay} onDayClick={selectOrOpenDay} />
 			{:else}
-				<DayView {date} {showWorkHours} />
+				<div class="day">
+					{#if showWorkHours}
+						<WorkHoursLine isoDate={formatIsoDate(date)} />
+					{/if}
+					<div class="day-view">
+						<DayView {date} {showWorkHours} />
+					</div>
+				</div>
 			{/if}
 		</div>
 
 		<div class="calendar-notes">
 			<CalendarNotes {level} {date} />
+			{#if compactScreen.current}
+				<NewBookingButton isRoundOnMobile />
+			{/if}
 		</div>
 
 		<div class="calendar-distribution">
@@ -221,6 +237,18 @@
 		user-select: none;
 	}
 
+	.day {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		height: 100%;
+	}
+
+	.day-view {
+		flex: 1;
+		min-height: 0;
+	}
+
 	.calendar-notes {
 		grid-area: notes;
 		min-height: 0;
@@ -230,17 +258,9 @@
 		grid-area: distribution;
 	}
 
-	/* På mobil står tegnforklaringen over kalenderen, og notatet er en linje under. De ligger i samme rutenett som resten av siden. */
+	/* På mobil står tegnforklaringen over kalenderen, og notatet er en linje under. Kalenderen får resten av høyden. */
 	@media (max-width: 57.5rem) {
 		.calendar-page {
-			display: grid;
-			grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-			grid-template-areas:
-				"toolbar"
-				"distribution"
-				"banner"
-				"view"
-				"notes";
 			gap: 0.625rem;
 			height: calc(100dvh - var(--pg-bottom-bar-space));
 			padding: 0.875rem 1rem 0.75rem;
@@ -250,22 +270,36 @@
 			display: contents;
 		}
 
-		.calendar-view {
-			grid-area: view;
-			min-height: 0;
-			padding: 0.75rem;
+		.calendar-distribution {
+			order: 1;
 		}
 
 		.banner {
-			grid-area: banner;
+			order: 2;
+		}
+
+		.calendar-view {
+			flex: 1;
+			order: 3;
+			min-height: 0;
+			padding: 0.75rem;
+			touch-action: pan-y;
 		}
 
 		.calendar-notes {
-			grid-area: notes;
+			display: flex;
+			align-items: center;
+			gap: 0.625rem;
+			order: 4;
 		}
 
+	}
+
+	/* Er skjermen lav, går plassen til kalenderen: varselstripen og tegnforklaringen er ikke med. */
+	@media (max-width: 57.5rem) and (max-height: 47rem) {
+		.banner,
 		.calendar-distribution {
-			grid-area: distribution;
+			display: none;
 		}
 	}
 </style>

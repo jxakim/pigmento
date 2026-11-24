@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { WorkDay } from "#lib/workHours.ts"
-import { summarizeWorkDay } from "./summarizeWorkDay.ts"
+import { formatWorkDayLine, summarizeWorkDay } from "./summarizeWorkDay.ts"
 
 const planned = { start: "08:00", end: "16:00" }
 
@@ -33,5 +33,14 @@ describe("summarizeWorkDay", () => {
 
 	it("calls a day without plan or hours free", () => {
 		expect(summarizeWorkDay({ isoDate: "2026-11-07" })).toEqual({ duration: "Fri", hours: "" })
+	})
+})
+
+describe("formatWorkDayLine", () => {
+	it("names what is known about the day, the worked hours first", () => {
+		expect(formatWorkDayLine({ isoDate: "2026-11-05", planned, logged: { didWork: true, hours: { start: "09:00", end: "17:30" } } })).toBe("Jobbet 09:00–17:30")
+		expect(formatWorkDayLine({ isoDate: "2026-11-11", planned, logged: { didWork: false } })).toBe("Jobbet ikke")
+		expect(formatWorkDayLine({ isoDate: "2026-11-09", planned })).toBe("Planlagt 08:00–16:00")
+		expect(formatWorkDayLine({ isoDate: "2026-11-07" })).toBe("Fridag")
 	})
 })

@@ -1,6 +1,7 @@
 import type { CalendarLevel } from "./calendarLevels.ts"
 
 const millisecondsPerDay = 24 * 60 * 60 * 1000
+const shortWeekdayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 
 export function isSameDay(first: Date | undefined, second: Date): boolean {
 	return first?.toDateString() === second.toDateString()
@@ -9,6 +10,10 @@ export function isSameDay(first: Date | undefined, second: Date): boolean {
 export function parseIsoDate(isoDate: string): Date {
 	const [year, month, day] = isoDate.split("-").map(Number)
 	return new Date(year, month - 1, day)
+}
+
+export function isIsoDate(value: string | null): value is string {
+	return value !== null && /^\d{4}-\d{2}-\d{2}$/.test(value)
 }
 
 export function moveByPeriods(level: CalendarLevel, date: Date, periods: number): Date {
@@ -69,6 +74,20 @@ export function formatShortDate(date: Date): string {
 	return `${date.getDate()}. ${abbreviateMonth(date)}`
 }
 
+// Kort nok til å vise perioden på en smal skjerm: «Nov 2026», «Uke 47 · 23.–29. nov», «Man 23. nov».
+export function formatCompactPeriod(level: CalendarLevel, date: Date): string {
+	switch (level) {
+		case "year":
+			return String(date.getFullYear())
+		case "month":
+			return `${capitalize(shortMonthName(date))} ${date.getFullYear()}`
+		case "week":
+			return `Uke ${getIsoWeekNumber(date)} · ${formatShortWeekRange(date)}`
+		case "day":
+			return `${shortWeekdayNames[(date.getDay() + 6) % 7]} ${date.getDate()}. ${shortMonthName(date)}`
+	}
+}
+
 export function formatPeriodLabel(level: CalendarLevel, date: Date): string | undefined {
 	switch (level) {
 		case "year":
@@ -108,6 +127,20 @@ function formatWeekRange(date: Date): string {
 		return `${start.getDate()}.–${lastDay.getDate()}. ${lastDay.toLocaleDateString("nb-NO", { month: "long" })}`
 	}
 	return `${start.getDate()}. ${abbreviateMonth(start)}–${lastDay.getDate()}. ${abbreviateMonth(lastDay)}`
+}
+
+function formatShortWeekRange(date: Date): string {
+	const { start, end } = getPeriodRange("week", date)
+	const lastDay = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 1)
+
+	if (start.getMonth() === lastDay.getMonth()) {
+		return `${start.getDate()}.–${lastDay.getDate()}. ${shortMonthName(lastDay)}`
+	}
+	return `${start.getDate()}. ${shortMonthName(start)}–${lastDay.getDate()}. ${shortMonthName(lastDay)}`
+}
+
+function shortMonthName(day: Date): string {
+	return day.toLocaleDateString("nb-NO", { month: "long" }).slice(0, 3)
 }
 
 function abbreviateMonth(day: Date): string {

@@ -31,8 +31,10 @@
 	/* På mobil står perioden på linjen under tittelen. */
 	@media (max-width: 57.5rem) {
 		.calendar-title {
-			font-size: 1.375rem;
+			font-size: 1.25rem;
 			line-height: 1.15;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.range {

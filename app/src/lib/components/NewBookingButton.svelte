@@ -3,12 +3,13 @@
 
 	interface Props {
 		iconOnlyOnMobile?: boolean
+		isRoundOnMobile?: boolean
 	}
 
-	let { iconOnlyOnMobile = false }: Props = $props()
+	let { iconOnlyOnMobile = false, isRoundOnMobile = false }: Props = $props()
 </script>
 
-<button type="button" class="new-booking-button" class:icon-only-on-mobile={iconOnlyOnMobile} aria-label="Ny booking">
+<button type="button" class="new-booking-button" class:icon-only-on-mobile={iconOnlyOnMobile || isRoundOnMobile} class:is-round-on-mobile={isRoundOnMobile} aria-label="Ny booking">
 	<Icon name="add" />
 	<span class="label">Ny booking</span>
 </button>
@@ -47,6 +48,13 @@
 
 		.icon-only-on-mobile .label {
 			display: none;
+		}
+
+		.is-round-on-mobile {
+			flex: none;
+			width: 3.5rem;
+			height: 3.5rem;
+			border-radius: 50%;
 		}
 	}
 </style>

@@ -4,13 +4,13 @@
 	import NotificationBell from "#lib/components/notifications/NotificationBell.svelte"
 	import CalendarLevelSwitcher from "./CalendarLevelSwitcher.svelte"
 	import CalendarTitle from "./CalendarTitle.svelte"
-	import { formatCalendarTitle } from "./calendarDates.ts"
+	import { formatCompactPeriod } from "./calendarDates.ts"
 	import { type CalendarLevel, levelLabels } from "./calendarLevels.ts"
+	import WorkHoursToggle from "./WorkHoursToggle.svelte"
 
 	interface Props {
 		level: CalendarLevel
 		date: Date
-		appointmentCount: number
 		isWorkHoursVisible: boolean
 		onLevelChange: (level: CalendarLevel) => void
 		onPrevious: () => void
@@ -20,23 +20,21 @@
 		onBack?: () => void
 	}
 
-	let { level, date, appointmentCount, isWorkHoursVisible, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
+	let { level, date, isWorkHoursVisible, onLevelChange, onPrevious, onToday, onNext, onToggleWorkHours, onBack }: Props = $props()
 
 	const periodName = $derived(levelLabels[level].toLowerCase())
-	const appointmentCountLabel = $derived(`${appointmentCount} ${appointmentCount === 1 ? "avtale" : "avtaler"}`)
-	const summary = $derived([formatCalendarTitle(level, date).range, appointmentCountLabel].filter(Boolean).join(" · "))
 </script>
 
-<header class="toolbar" class:has-back-button={onBack}>
+<header class="toolbar">
 	{#if onBack}
-		<button type="button" class="icon-button" aria-label="Tilbake" onclick={onBack}>
+		<button type="button" class="icon-button back-button" aria-label="Tilbake" onclick={onBack}>
 			<Icon name="arrow_back" />
 		</button>
 	{/if}
 
 	<div class="title">
 		<CalendarTitle {level} {date} />
-		<p class="summary">{summary}</p>
+		<p class="compact-title" aria-hidden="true">{formatCompactPeriod(level, date)}</p>
 	</div>
 
 	<div class="period-navigation">
@@ -54,13 +52,8 @@
 	</div>
 
 	<div class="actions">
-		<button type="button" class="work-hours-toggle" aria-pressed={isWorkHoursVisible} onclick={onToggleWorkHours}>
-			<Icon name="schedule" />
-			<span class="work-hours-toggle-label">Arbeidstid</span>
-		</button>
-		<div class="bell">
-			<NotificationBell />
-		</div>
+		<WorkHoursToggle isPressed={isWorkHoursVisible} onToggle={onToggleWorkHours} />
+		<NotificationBell />
 		<NewBookingButton iconOnlyOnMobile />
 	</div>
 </header>
@@ -82,7 +75,7 @@
 		margin-inline-end: 0.125rem;
 	}
 
-	.summary {
+	.compact-title {
 		display: none;
 	}
 
@@ -93,47 +86,6 @@
 
 	.actions {
 		gap: 0.75rem;
-	}
-
-	.work-hours-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 2.75rem;
-		padding: 0 0.875rem;
-		border: 0.0625rem solid var(--pg-button-border);
-		border-radius: 62.5rem;
-		background: var(--pg-card);
-		color: var(--pg-ink);
-		font-family: var(--pg-font-body);
-		font-size: 0.875rem;
-		font-weight: 600;
-		cursor: pointer;
-	}
-
-	.work-hours-toggle[aria-pressed="true"] {
-		border-color: var(--pg-pink);
-		background: var(--pg-pink);
-	}
-
-	@media (max-width: 90rem) {
-		.work-hours-toggle {
-			padding: 0 0.75rem;
-		}
-
-		.work-hours-toggle-label {
-			position: absolute;
-			width: 0.0625rem;
-			height: 0.0625rem;
-			overflow: hidden;
-			clip-path: inset(50%);
-		}
-	}
-
-	@media (hover: hover) {
-		.work-hours-toggle:hover {
-			border-color: var(--pg-ink);
-		}
 	}
 
 	.icon-button,
@@ -170,59 +122,71 @@
 		}
 	}
 
-	/* På mobil står tittelen og knappene på en rad, og visningsvalget får en rad for seg selv. */
+	/* På mobil er toppen to rader: perioden i midten med «I dag» til høyre, og så visningsvalget. Man blar med sveip, så pilene er ikke med. */
 	@media (max-width: 57.5rem) {
 		.toolbar {
-			flex-wrap: wrap;
+			display: grid;
+			grid-template-columns: 4rem minmax(0, 1fr) 4rem;
 			gap: 0.5rem;
 		}
 
-		.title {
-			flex: 1;
-			min-width: 0;
+		.back-button {
+			grid-column: 1;
+			grid-row: 1;
+			justify-self: start;
 		}
 
-		.summary {
+		.title {
+			grid-column: 2;
+			grid-row: 1;
+			margin-inline-end: 0;
+			text-align: center;
+		}
+
+		.title :global(.calendar-title) {
+			position: absolute;
+			width: 0.0625rem;
+			height: 0.0625rem;
+			overflow: hidden;
+			clip-path: inset(50%);
+		}
+
+		.compact-title {
 			display: block;
-			color: var(--pg-ink-muted);
-			font-size: 0.8125rem;
+			font-family: var(--pg-font-heading);
+			font-size: 1.1875rem;
+			font-weight: 700;
+			letter-spacing: -0.01em;
+			line-height: 1.15;
 		}
 
 		.period-navigation {
-			gap: 0.5rem;
-			margin-inline-end: 0;
+			display: contents;
 		}
 
-		.bell,
-		.work-hours-toggle {
+		.period-navigation .icon-button {
 			display: none;
-		}
-
-		.has-back-button .today-button {
-			display: none;
-		}
-
-		.has-back-button .title :global(.calendar-title) {
-			font-size: 1.125rem;
 		}
 
 		.today-button {
-			padding: 0 0.75rem;
-			font-size: 0.8125rem;
+			grid-column: 3;
+			grid-row: 1;
+			justify-self: end;
+			padding: 0 0.875rem;
 			border-radius: 0.625rem;
 		}
 
-		.title {
-			overflow: hidden;
-		}
-
-		.icon-button {
+		.back-button {
 			border-radius: 0.625rem;
 		}
 
 		.level-switcher {
-			flex: 1 0 100%;
-			order: 1;
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+
+		.actions {
+			display: none;
 		}
 	}
 </style>

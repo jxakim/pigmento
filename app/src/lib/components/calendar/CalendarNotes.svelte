@@ -110,8 +110,10 @@
 		align-items: center;
 		gap: 0.75rem;
 		width: 100%;
+		flex: 1;
+		min-width: 0;
 		min-height: 3.5rem;
-		padding: 0.5rem 0.875rem;
+		padding: 0.375rem 0.875rem;
 		border: 0.0625rem solid var(--pg-card-border);
 		border-radius: var(--pg-card-radius);
 		background: var(--pg-card);
@@ -125,14 +127,14 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		gap: 0.0625rem;
+		gap: 0.125rem;
 		min-width: 0;
 	}
 
 	.notes-bar-title {
-		color: var(--pg-ink-muted);
-		font-size: 0.75rem;
-		font-weight: 600;
+		color: var(--pg-ink);
+		font-size: 0.8125rem;
+		font-weight: 700;
 	}
 
 	.notes-bar-preview {
