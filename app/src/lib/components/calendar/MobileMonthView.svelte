@@ -21,7 +21,7 @@
 	const today = new Date()
 	const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 	const maxDotsPerDay = 3
-	const maxShownAppointments = 4
+	const maxShownAppointments = 2
 
 	let selectedDay = $state(today)
 
@@ -113,7 +113,7 @@
 					<span class="no-appointments">Ingen avtaler denne dagen</span>
 				{/each}
 				{#if hiddenAppointmentCount > 0}
-					<span class="more-appointments">+{hiddenAppointmentCount} til</span>
+					<span class="more-appointments">og {hiddenAppointmentCount} {hiddenAppointmentCount === 1 ? "til" : "fler"}</span>
 				{/if}
 			</span>
 		</button>
@@ -230,7 +230,9 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		width: 100%;
+		height: 11.25rem;
 		padding: 0.75rem 0.875rem;
+		overflow: hidden;
 		border: 0.0625rem solid var(--pg-card-border);
 		border-radius: 0.75rem;
 		background: var(--pg-pink-wash);
@@ -312,11 +314,13 @@
 		font-size: 0.875rem;
 	}
 
-	/* På lave skjermer er det plass til to avtaler uten beskrivelse. Resten ser man når dagen er åpen. */
+	/* Boksen har alltid samme høyde: plass til de to første avtalene og «og N fler», så kalenderen over ikke flytter seg. På lave skjermer er den lavere og uten beskrivelse. */
 	@media (max-height: 47rem) {
-		.agenda-row:nth-child(n + 3),
-		.agenda-description,
-		.more-appointments {
+		.day-panel {
+			height: 9.75rem;
+		}
+
+		.agenda-description {
 			display: none;
 		}
 	}
